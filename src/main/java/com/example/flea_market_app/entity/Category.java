@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Data
 // Lombok：引数なしコンストラクタを生成
 @NoArgsConstructor
+// Lombok：全フィールドを引数に持つコンストラクタを生成
 @AllArgsConstructor
 public class Category {
 	// 主キーを表すフィールド
