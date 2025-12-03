@@ -1,7 +1,6 @@
-
 package com.example.flea_market_app.entity;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,28 +11,30 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import lombok.AllArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "favorite_item")
+@Table(name = "notification")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class FavoriteItem {
+public class Notification {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@ManyToOne
-	@JoinColumn(name = "item_id", nullable = false)
-	private Item item;
+	@Column(nullable = false)
+	private String message;
 
+	@Column(name = "is_read", nullable = false)
+	private boolean isRead = false;
+
+	@CreationTimestamp
 	@Column(name = "created_at", nullable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
+	private Timestamp createdAt;
 }
