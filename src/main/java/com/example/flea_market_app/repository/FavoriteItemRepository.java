@@ -12,7 +12,7 @@ import com.example.flea_market_app.entity.User;
 
 @Repository
 public interface FavoriteItemRepository extends JpaRepository<FavoriteItem, Long> {
-	Optional<FavoriteItem> findByUserAndItem(UserRepository user, Item item);
+	Optional<FavoriteItem> findByUserAndItem(User user, Item item);
 
 	List<FavoriteItem> findByUser(User user);
 
