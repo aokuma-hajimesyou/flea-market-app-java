@@ -16,8 +16,8 @@ import com.example.flea_market_app.entity.Item;
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.repository.AppOrderRepository;
 import com.example.flea_market_app.repository.ItemRepository;
-import com.example.flea_market_app.service.ItemService;
-import com.example.flea_market_app.service.StripeService;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 
 @Service
 public class AppOrderService {
@@ -37,13 +37,13 @@ public class AppOrderService {
 	}
 
 	@Transactional
-	public PaymentInTent initiatePurchase(Long itemId, User buyer) throws StripeException {
+	public PaymentIntent initiatePurchase(Long itemId, User buyer) throws StripeException {
 		Item item = itemRepository.findById(itemId)
 				.orElseThrow(() -> new IllegalArgumentException("Item not found"));
 		if (!"出品中".equals(item.getStatus())) {
 			throw new IllegalStateException("Item is not available for purchase.");
 		}
-		PaymentIntent paymentIntent = stripeService.createPaymentIntent(item.getPrice(),
+		PaymentIntent paymentIntent = stripeService.createPaymentIntent(item.getPrice(), "jpy",
 				"購入: " + item.getName());
 		AppOrder appOrder = new AppOrder();
 		appOrder.setItem(item);
@@ -64,8 +64,8 @@ public class AppOrderService {
 					paymentIntent.getStatus());
 		}
 
-		AppOrder appOrder = appOrderRepository.findByPaymentIntentId(paymentIntent)
-				.orElseThrow(() -> new IllegalStateException("Order for PaymentIntent notfound."));
+		AppOrder appOrder = appOrderRepository.findByPaymentIntentId(paymentIntent.getId())
+				.orElseThrow(() -> new IllegalStateException("Order for PaymentIntent not found."));
 
 		if ("購入済".equals(appOrder.getStatus()) || "発送済".equals(appOrder.getStatus())) {
 			return appOrder;
