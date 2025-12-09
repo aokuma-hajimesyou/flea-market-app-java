@@ -48,9 +48,8 @@ public class AdminUserController {
 				Comparator.nullsLast(String::compareToIgnoreCase))).toList();
 		case "email" -> list.stream().sorted(Comparator.comparing(User::getEmail,
 				Comparator.nullsLast(String::compareToIgnoreCase))).toList();
-		// "banned"ソートはUserにisEnabled()がある場合の例
 		case "banned" -> list.stream()
-				.sorted(Comparator.comparing(User::isEnabled).reversed()).toList();
+				.sorted(Comparator.comparing(User::isBanned).reversed()).toList();
 		default -> list;
 		};
 		model.addAttribute("users", list);
@@ -61,13 +60,13 @@ public class AdminUserController {
 
 	@GetMapping("/{id}")
 	public String detail(@PathVariable Long id, Model model) {
-		User user = service.getUserById(id).orElse(null);
-		// Double avg = service.averageRating(id);
-		// long complaints = service.complaintCount(id);
+		User user = service.getUserById(id);
+		Double avg = service.averageRating(id);
+		long complaints = service.complaintCount(id);
 		model.addAttribute("user", user);
-		// model.addAttribute("avgRating", avg);
-		// model.addAttribute("complaintCount", complaints);
-		// model.addAttribute("complaints", service.complaints(id));
+		model.addAttribute("avgRating", avg);
+		model.addAttribute("complaintCount", complaints);
+		model.addAttribute("complaints", service.complaints(id));
 		return "admin/users/detail";
 	}
 
@@ -77,14 +76,13 @@ public class AdminUserController {
 			@RequestParam(value = "disableLogin", defaultValue = "true") boolean disableLogin,
 			Authentication auth) {
 		Long adminId = users.findByEmail(auth.getName()).map(User::getId).orElse(null);
-		// service.banUser(id, adminId, reason, disableLogin);
+		service.banUser(id, adminId, reason, disableLogin);
 		return "redirect:/admin/users/" + id + "?banned";
 	}
 
 	@PostMapping("/{id}/unban")
 	public String unban(@PathVariable Long id) {
-		// service.unbanUser(id);
+		service.unbanUser(id);
 		return "redirect:/admin/users/" + id + "?unbanned";
 	}
-
 }

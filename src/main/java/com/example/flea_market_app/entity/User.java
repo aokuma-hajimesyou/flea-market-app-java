@@ -1,3 +1,4 @@
+
 package com.example.flea_market_app.entity;
 
 import jakarta.persistence.Column;
@@ -38,4 +39,19 @@ public class User {
 
 	@Column(nullable = false)
 	private boolean enabled = true;
+
+	@Column(nullable = false)
+	private boolean banned = false;
+
+	public boolean isBanned() {
+		return banned;
+	}
+
+	public Boolean getBanned() {
+		return banned;
+	}
+
+	public void setBanned(boolean banned) {
+		this.banned = banned;
+	}
 }
