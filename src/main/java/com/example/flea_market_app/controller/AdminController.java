@@ -1,5 +1,6 @@
 package com.example.flea_market_app.controller;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 
@@ -75,7 +76,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/statistics/csv")
-	public String exportStatisticsCSV(
+	public void exportStatisticsCSV(
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
 			HttpServletResponse response) {
@@ -89,10 +90,11 @@ public class AdminController {
 			writer.append("統計期間: " + startDate + " から " + endDate + "\n\n");
 			writer.append("総売上: " + appOrderService.getTotalSales(startDate, endDate) + "\n\n");
 			writer.append("ステータス別注文数\n");
-
 			appOrderService.getOrderCountByStatus(startDate, endDate).forEach((status, count) -> {
 				writer.append(status + "," + count + "\n");
 			});
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

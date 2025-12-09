@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,10 +29,7 @@ public class AppOrderController {
 	@Value("${stripe.public.key}")
 	private String stripePublicKey;
 
-	public AppOrderController(AppOrderService appOrderService,
-			com.example.flea_market_app.controller.UserService userService,
-			com.example.flea_market_app.controller.ItemService itemService) {
-		super();
+	public AppOrderController(AppOrderService appOrderService, UserService userService, ItemService itemService) {
 		this.appOrderService = appOrderService;
 		this.userService = userService;
 		this.itemService = itemService;
@@ -49,6 +49,15 @@ public class AppOrderController {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 			return "redirect:/items/" + itemId;
 		}
+	}
+
+	@GetMapping("/confirm-payment")
+	public String confirmPayment(@ModelAttribute("clientSecret") String clientSecret,
+			@ModelAttribute("itemId") Long itemId, Model model) {
+		if (clientSecret == null || itemId == null) {
+			return "redirect:/items/" + itemId;
+		}
+		return "confirm_payment";
 	}
 
 }
