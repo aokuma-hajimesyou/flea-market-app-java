@@ -1,3 +1,4 @@
+
 package com.example.flea_market_app.controller;
 
 import java.io.IOException;
@@ -94,6 +95,7 @@ public class AdminController {
 				writer.append(status + "," + count + "\n");
 			});
 		} catch (IOException e) {
+			// 必要に応じてログ出力やエラーハンドリング
 			e.printStackTrace();
 		}
 	}
