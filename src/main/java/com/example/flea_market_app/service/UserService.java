@@ -3,6 +3,7 @@ package com.example.flea_market_app.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +27,8 @@ public class UserService {
 		return userRepository.findById(id).orElse(null);
 	}
 
-	public User getUserByEmail(String email) {
-		return userRepository.findByEmail(email).orElse(null);
+	public Optional<User> getUserByEmail(String email) {
+		return userRepository.findByEmail(email);
 	}
 
 	@Transactional
@@ -46,6 +47,17 @@ public class UserService {
 				.orElseThrow(() -> new IllegalArgumentException("User not found"));
 		user.setBanned(false);
 		user.setEnabled(true);
+		userRepository.save(user);
+	}
+
+	@Transactional
+	public void toggleUserEnabled(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+		// enabledの状態を反転させる (有効 -> 無効, 無効 -> 有効)
+		user.setEnabled(!user.isEnabled());
+
 		userRepository.save(user);
 	}
 
