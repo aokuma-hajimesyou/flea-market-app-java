@@ -43,7 +43,7 @@ public class AppOrderService {
 		if (!"出品中".equals(item.getStatus())) {
 			throw new IllegalStateException("Item is not available for purchase.");
 		}
-		PaymentIntent paymentIntent = stripeService.createPaymentIntent(item.getPrice(),
+		PaymentIntent paymentIntent = stripeService.createPaymentIntent(item.getPrice(), "jpy",
 				"購入: " + item.getName());
 		AppOrder appOrder = new AppOrder();
 		appOrder.setItem(item);
@@ -64,8 +64,8 @@ public class AppOrderService {
 					paymentIntent.getStatus());
 		}
 
-		AppOrder appOrder = appOrderRepository.findByPaymentIntentId(paymentIntent)
-				.orElseThrow(() -> new IllegalStateException("Order for PaymentIntent notfound."));
+		AppOrder appOrder = appOrderRepository.findByPaymentIntentId(paymentIntent.getId())
+				.orElseThrow(() -> new IllegalStateException("Order for PaymentIntent not found."));
 
 		if ("購入済".equals(appOrder.getStatus()) || "発送済".equals(appOrder.getStatus())) {
 			return appOrder;
