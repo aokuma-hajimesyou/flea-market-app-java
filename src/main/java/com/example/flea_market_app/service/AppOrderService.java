@@ -16,8 +16,8 @@ import com.example.flea_market_app.entity.Item;
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.repository.AppOrderRepository;
 import com.example.flea_market_app.repository.ItemRepository;
-import com.example.flea_market_app.service.ItemService;
-import com.example.flea_market_app.service.StripeService;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 
 @Service
 public class AppOrderService {
@@ -37,7 +37,7 @@ public class AppOrderService {
 	}
 
 	@Transactional
-	public PaymentInTent initiatePurchase(Long itemId, User buyer) throws StripeException {
+	public PaymentIntent initiatePurchase(Long itemId, User buyer) throws StripeException {
 		Item item = itemRepository.findById(itemId)
 				.orElseThrow(() -> new IllegalArgumentException("Item not found"));
 		if (!"出品中".equals(item.getStatus())) {
