@@ -57,7 +57,7 @@ public class AppOrderService {
 	}
 
 	@Transactional
-	public AppOrder comletePurchase(String paymentIntentId) throws StripeException {
+	public AppOrder completePurchase(String paymentIntentId) throws StripeException {
 		PaymentIntent paymentIntent = stripeService.retrievePaymentIntent(paymentIntentId);
 		if (!"succeeded".equals(paymentIntent.getStatus())) {
 			throw new IllegalStateException("Payment not succeeded. Status: " +

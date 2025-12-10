@@ -1,7 +1,5 @@
-
 package com.example.flea_market_app.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +21,8 @@ public class UserService {
 		return userRepository.findAll();
 	}
 
-	public User getUserById(Long id) {
-		return userRepository.findById(id).orElse(null);
+	public Optional<User> getUserById(Long id) {
+		return userRepository.findById(id);
 	}
 
 	public Optional<User> getUserByEmail(String email) {
@@ -32,45 +30,20 @@ public class UserService {
 	}
 
 	@Transactional
-	public void banUser(Long userId, Long adminId, String reason, boolean disableLogin) {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new IllegalArgumentException("User not found"));
-		user.setBanned(true);
-		if (disableLogin)
-			user.setEnabled(false);
-		userRepository.save(user);
+	public User saveUser(User user) {
+		return userRepository.save(user);
 	}
 
 	@Transactional
-	public void unbanUser(Long userId) {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new IllegalArgumentException("User not found"));
-		user.setBanned(false);
-		user.setEnabled(true);
-		userRepository.save(user);
+	public void deleteUser(Long id) {
+		userRepository.deleteById(id);
 	}
 
 	@Transactional
 	public void toggleUserEnabled(Long userId) {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-		// enabledの状態を反転させる (有効 -> 無効, 無効 -> 有効)
+		User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
 		user.setEnabled(!user.isEnabled());
-
 		userRepository.save(user);
 	}
 
-	// ダミー実装（必要に応じて本実装に変更）
-	public Double averageRating(Long userId) {
-		return 0.0;
-	}
-
-	public long complaintCount(Long userId) {
-		return 0L;
-	}
-
-	public List<String> complaints(Long userId) {
-		return Collections.emptyList();
-	}
 }
