@@ -157,6 +157,73 @@ public class ItemController {
 			redirectAttributes.addFlashAttribute("errorMessage", "この商品は編集できません");
 			return "redirect:/items";
 		}
+
+		Category category = categoryService.getCategoryById(categoryId)
+				.orElseThrow(() -> new IllegalArgumentException("Category not found"));
+		existingItem.setName(name);
+		existingItem.setDescription(description);
+		existingItem.setPrice(price);
+		existingItem.setCategory(category);
+
+		try {
+			itemService.saveItem(existingItem, imageFile);
+			redirectAttributes.addFlashAttribute("successMessage", "商品を更新しました");
+		} catch (IOException e) {
+			redirectAttributes.addFlashAttribute("errorMessage", "画像のアップロードのに失敗しました" + e.getMessage());
+			return "redirect:/items/{id}/edit";
+		}
+
+		return "redirect:/items/{id}";
+	}
+
+	@PostMapping("/{id}/delete")
+	public String deleteItem(
+			@PathVariable("id") Long id,
+			@AuthenticationPrincipal UserDetails userDetails,
+			RedirectAttributes redirectAttributes) {
+		Item itemToDelete = itemService.getItemById(id)
+				.orElseThrow(() -> new RuntimeException("Item not found"));
+		User currentUser = userService.getUserByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		if (!itemToDelete.getSeller().getId().equals(currentUser.getId())) {
+			redirectAttributes.addFlashAttribute("この商品は削除できません", "errorMessage");
+			return "redirect:/items";
+		}
+		itemService.deleteItem(id);
+		redirectAttributes.addFlashAttribute("successMessage", "商品を削除しました");
+		return "redirect:/items";
+	}
+
+	@PostMapping("/{id}/favorite")
+	public String addFavorite(
+			@PathVariable("id") Long itemId,
+			@AuthenticationPrincipal UserDetails userDetails,
+			RedirectAttributes redirectAttributes) {
+		User currentUser = userService.getUserByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new RuntimeException("user not found"));
+		try {
+			favoriteService.addFavorite(currentUser, itemId);
+			redirectAttributes.addAttribute("successMessage", "お気に入りに追加しました");
+		} catch (IllegalStateException e) {
+			redirectAttributes.addAttribute("errorMessage", e.getMessage());
+		}
+		return "redirect:/items/{id}";
+	}
+
+	@PostMapping("/{id}/unfavorite")
+	public String removeFavorite(
+			@PathVariable("id") Long itemId,
+			@AuthenticationPrincipal UserDetails userDetails,
+			RedirectAttributes redirectAttributes) {
+		User currentUser = userService.getUserByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new RuntimeException("user not found"));
+		try {
+			favoriteService.removeFavorite(currentUser, itemId);
+			redirectAttributes.addAttribute("successMessage", "お気に入りから削除しました");
+		} catch (IllegalStateException e) {
+			redirectAttributes.addAttribute("errorMessage", e.getMessage());
+		}
+		return "redirect:/items/{id}";
 	}
 
 }
