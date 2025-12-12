@@ -38,7 +38,7 @@ public class SecurityConfig {
 				// フォームログイン設定
 				.formLogin(form -> form
 						.loginPage("/login")
-						.defaultSuccessUrl("/items", true)
+						.defaultSuccessUrl("/items", false)
 						.permitAll())
 				// ログアウト設定
 				.logout(logout -> logout

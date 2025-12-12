@@ -1,4 +1,3 @@
-
 package com.example.flea_market_app.controller;
 
 import java.io.IOException;
@@ -19,84 +18,81 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.flea_market_app.service.AppOrderService;
 import com.example.flea_market_app.service.ItemService;
-import com.example.flea_market_app.service.UserService;
 
 @Controller
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
+
 	private final ItemService itemService;
 	private final AppOrderService appOrderService;
-	private final UserService userService;
 
-	public AdminController(ItemService itemService, AppOrderService appOrderService, UserService userService) {
+	public AdminController(ItemService itemService, AppOrderService appOrderService) {
 		this.itemService = itemService;
 		this.appOrderService = appOrderService;
-		this.userService = userService;
 	}
 
 	@GetMapping("/items")
 	public String manageItems(Model model) {
 		model.addAttribute("items", itemService.getAllItems());
-		return "admin_items";
+		return "admin/items";
 	}
 
-	@PostMapping("/items/{Id}/delete")
-	public String deleteItemByIdAdmin(@PathVariable("id") Long itemId) {
+	@PostMapping("/items/{id}/delete")
+	public String deleteItemByAdmin(@PathVariable("id") Long itemId) {
 		itemService.deleteItem(itemId);
 		return "redirect:/admin/items?success=deleted";
-	}
-
-	@GetMapping("/users")
-	public String manageUsers(Model model) {
-		model.addAttribute("users", userService.getAllUsers());
-		return "admin_users";
-	}
-
-	@PostMapping("/users/{id}/toggle-enabled")
-	public String toggleUserEnabled(@PathVariable("id") Long userId) {
-		userService.toggleUserEnabled(userId);
-		return "redirect:/admin/users?success=toggled";
 	}
 
 	@GetMapping("/statistics")
 	public String showStatistics(
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
 			Model model) {
+
 		if (startDate == null)
 			startDate = LocalDate.now().minusMonths(1);
 		if (endDate == null)
 			endDate = LocalDate.now();
+
 		model.addAttribute("startDate", startDate);
 		model.addAttribute("endDate", endDate);
 		model.addAttribute("totalSales", appOrderService.getTotalSales(startDate, endDate));
-		model.addAttribute("orderCountByStatus",
-				appOrderService.getOrderCountByStatus(startDate, endDate));
-		return "admin_statistics";
+		model.addAttribute("orderCountByStatus", appOrderService.getOrderCountByStatus(startDate, endDate));
+
+		return "admin/statistics";
 	}
 
 	@GetMapping("/statistics/csv")
-	public void exportStatisticsCSV(
+	public void exportStatisticsCsv(
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			HttpServletResponse response) {
+
+			HttpServletResponse response) throws IOException {
+
 		if (startDate == null)
 			startDate = LocalDate.now().minusMonths(1);
 		if (endDate == null)
 			endDate = LocalDate.now();
+
 		response.setContentType("text/csv; charset=UTF-8");
-		response.setHeader("Content-Disposition", "attachment;filename=\"flea_market_statistics.csv\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\"flea_market_statistics.csv\"");
+
 		try (PrintWriter writer = response.getWriter()) {
-			writer.append("統計期間: " + startDate + " から " + endDate + "\n\n");
-			writer.append("総売上: " + appOrderService.getTotalSales(startDate, endDate) + "\n\n");
+			writer.append("統計期間: ").append(String.valueOf(startDate))
+					.append(" から ").append(String.valueOf(endDate))
+					.append("\n\n");
+
+			writer.append("総売上: ")
+					.append(String.valueOf(appOrderService.getTotalSales(startDate, endDate)))
+					.append("\n\n");
+
 			writer.append("ステータス別注文数\n");
-			appOrderService.getOrderCountByStatus(startDate, endDate).forEach((status, count) -> {
-				writer.append(status + "," + count + "\n");
-			});
-		} catch (IOException e) {
-			// 必要に応じてログ出力やエラーハンドリング
-			e.printStackTrace();
+			appOrderService.getOrderCountByStatus(startDate, endDate)
+					.forEach((status, count) -> writer.append(status)
+							.append(",").append(String.valueOf(count)).append("\n"));
 		}
 	}
 }
