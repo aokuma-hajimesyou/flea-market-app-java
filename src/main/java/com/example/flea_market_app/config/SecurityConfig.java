@@ -6,13 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import com.example.flea_market_app.repository.UserRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -53,21 +49,21 @@ public class SecurityConfig {
 	}
 
 	// DB からユーザをロードして Spring Security の UserDetails に変換
-	@Bean
-	public UserDetailsService userDetailsService(UserRepository userRepository) {
-		return email -> userRepository.findByEmail(email)
-				.map(user -> org.springframework.security.core.userdetails.User.builder()
-						.username(user.getEmail())
-						.password(user.getPassword())
-						.roles(user.getRole())
-						.disabled(!user.isEnabled())
-						.build())
-				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-	}
+	//	@Bean
+	//	public UserDetailsService userDetailsService(UserRepository userRepository) {
+	//		return email -> userRepository.findByEmail(email)
+	//				.map(user -> org.springframework.security.core.userdetails.User.builder()
+	//						.username(user.getEmail())
+	//						.password(user.getPassword())
+	//						.roles(user.getRole())
+	//						.disabled(!user.isEnabled())
+	//						.build())
+	//				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+	//	}
 
-	// 安全なパスワードハッシュ用エンコーダ（BCrypt）
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		//		return new BCryptPasswordEncoder();
 	}
 }
