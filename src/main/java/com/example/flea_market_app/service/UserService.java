@@ -8,13 +8,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.repository.UserRepository;
+import com.example.flea_market_app.repository.ReviewRepository;
+import com.example.flea_market_app.entity.Review;
 
 @Service
 public class UserService {
 	private final UserRepository userRepository;
+	private final ReviewRepository reviewRepository;
 
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, ReviewRepository reviewRepository) {
 		this.userRepository = userRepository;
+		this.reviewRepository = reviewRepository;
 	}
 
 	public List<User> getAllUsers() {
@@ -46,4 +50,46 @@ public class UserService {
 		userRepository.save(user);
 	}
 
+	public Double averageRating(Long userId) {
+		List<Review> reviews = reviewRepository.findBySellerId(userId);
+		if (reviews.isEmpty()) {
+			return null;
+		}
+		return reviews.stream()
+				.mapToInt(Review::getRating)
+				.average()
+				.orElse(0.0);
+	}
+
+	public long complaintCount(Long userId) {
+		List<Review> reviews = reviewRepository.findBySellerId(userId);
+		return reviews.stream()
+				.filter(review -> review.getRating() <= 2) // 評価2以下を苦情とみなす
+				.count();
+	}
+
+	public List<Review> complaints(Long userId) {
+		List<Review> reviews = reviewRepository.findBySellerId(userId);
+		return reviews.stream()
+				.filter(review -> review.getRating() <= 2) // 評価2以下を苦情とみなす
+				.toList();
+	}
+
+	@Transactional
+	public void banUser(Long userId, Long adminId, String reason, boolean disableLogin) {
+		userRepository.findById(userId).ifPresent(user -> {
+			user.setEnabled(!disableLogin);
+			userRepository.save(user);
+			System.out.println("User " + userId + " banned by admin " + adminId + " for reason: " + reason); // 仮のログ出力
+		});
+	}
+
+	@Transactional
+	public void unbanUser(Long userId) {
+		userRepository.findById(userId).ifPresent(user -> {
+			user.setEnabled(true);
+			userRepository.save(user);
+			System.out.println("User " + userId + " unbanned."); // 仮のログ出力
+		});
+	}
 }

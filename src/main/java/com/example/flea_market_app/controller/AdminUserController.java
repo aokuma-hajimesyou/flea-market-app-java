@@ -64,10 +64,16 @@ public class AdminUserController {
 
 	@GetMapping("/{id}")
 	public String detail(@PathVariable Long id, Model model) {
+<<<<<<< HEAD
 		User user = service.findUser(id);
 		Double avg = service.averageRating(id);
 		long complaints = service.complaintCount(id);
 
+=======
+		User user = service.getUserById(id).orElse(null);
+		Double avg = service.averageRating(id);
+		long complaints = service.complaintCount(id);
+>>>>>>> eb31922 (application.propertiesの修正 2025-12/15-14:33)
 		model.addAttribute("user", user);
 		model.addAttribute("avgRating", avg);
 		model.addAttribute("complaintCount", complaints);
