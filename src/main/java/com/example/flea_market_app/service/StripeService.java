@@ -12,7 +12,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 
 @Service
 public class StripeService {
-	public StripeService(@Value("${stripe.api.secretKey}") String secretKey) {
+	public StripeService(@Value("${stripe.secret.key}") String secretKey) {
 		Stripe.apiKey = secretKey;
 	}
 
