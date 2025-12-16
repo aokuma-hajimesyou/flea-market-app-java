@@ -59,7 +59,7 @@ public class AdminUserController {
 		model.addAttribute("users", list);
 		model.addAttribute("q", q);
 		model.addAttribute("sort", sort);
-		return "admin/users/list";
+		return "admin_dashboard";
 	}
 
 	@GetMapping("/{id}")
@@ -73,7 +73,7 @@ public class AdminUserController {
 		model.addAttribute("avgRating", avg);
 		model.addAttribute("complaintCount", complaints);
 		model.addAttribute("complaints", service.complaints(id));
-		return "admin/users/detail";
+		return "admin_users";
 	}
 
 	@PostMapping("/{id}/ban")
