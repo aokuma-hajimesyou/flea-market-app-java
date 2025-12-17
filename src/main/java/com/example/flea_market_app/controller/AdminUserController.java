@@ -59,7 +59,7 @@ public class AdminUserController {
 		model.addAttribute("users", list);
 		model.addAttribute("q", q);
 		model.addAttribute("sort", sort);
-		return "admin_dashboard";
+		return "admin_users";
 	}
 
 	@GetMapping("/{id}")
