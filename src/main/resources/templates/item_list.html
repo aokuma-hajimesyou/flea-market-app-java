@@ -49,7 +49,7 @@
 			</div>
 		</div>
 
-		<div class="pagination">
+		<div class="pagination" th:if="${items.totalPages > 0}">
 			<a th:if="${items.hasPrevious()}"
 				th:href="@{/items(page=${items.number - 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">前へ</a>
 
