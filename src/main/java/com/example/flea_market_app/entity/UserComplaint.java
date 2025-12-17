@@ -25,7 +25,7 @@ public class UserComplaint {
 	private Long id; // 通報 ID（PK）
 	@Column(name = "reported_user_id", nullable = false)
 	private Long reportedUserId; // 通報されたユーザーの ID（対象者）
-	@Column(name = "reporter_user _id", nullable = false)
+	@Column(name = "reporter_user_id", nullable = false)
 	private Long reporterUserId; // 通報を行ったユーザーID（提出者）
 	@Column(nullable = false)
 	private String reason; // 通報理由（自由記述）
