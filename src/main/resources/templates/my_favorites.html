@@ -12,7 +12,7 @@
 		<h1>お気に入り</h1>
 		<p>あなたがお気に入り登録した商品の一覧です</p>
 		<div class="item-grid">
-			<div class="item_card" th:each="item:${favoriteItems}">
+			<div class="item_card" th:each="item:${myFavorites}">
 				<a th:href="@{/items/{id}(id=${item.id})}">
 					<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像">
 					<h3 th:text="${item.name}"></h3>
@@ -20,7 +20,7 @@
 					<p class="status" th:text="${item.status}"></p>
 				</a>
 			</div>
-			<div th:if="${#lists.isEmpty(favoriteItems)}">
+			<div th:if="${#lists.isEmpty(myFavorites)}">
 				<p>お気に入りの商品はありません</p>
 			</div>
 		</div>

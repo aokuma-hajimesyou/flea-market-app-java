@@ -33,7 +33,7 @@ public class ItemService {
 			return itemRepository.findByNameContainingIgnoreCaseAndCategoryIdAndStatus(keyword, categoryId, "出品中",
 					pageable);
 		} else if (keyword != null && !keyword.isEmpty()) {
-			return itemRepository.findByCategoryIdAndStatus(categoryId, "出品中", pageable);
+			return itemRepository.findByNameContainingIgnoreCaseAndStatus(keyword, "出品中", pageable);
 		} else {
 			return itemRepository.findByStatus("出品中", pageable);
 		}
