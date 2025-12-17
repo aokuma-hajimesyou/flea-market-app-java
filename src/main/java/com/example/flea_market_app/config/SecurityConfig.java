@@ -34,8 +34,21 @@ public class SecurityConfig {
 				// フォームログイン設定
 				.formLogin(form -> form
 						.loginPage("/login")
-						.defaultSuccessUrl("/items", false)
+						// ★★★ 修正された認証成功ハンドラー ★★★
+						.successHandler((request, response, authentication) -> {
+							boolean isAdmin = authentication.getAuthorities().stream()
+									.anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+							if (isAdmin) {
+								// マッピングがある /dashboard へリダイレクト
+								response.sendRedirect("/dashboard");
+							} else {
+								response.sendRedirect("/items");
+							}
+						})
+						// ★★★ 修正ここまで ★★★
 						.permitAll())
+
 				// ログアウト設定
 				.logout(logout -> logout
 						.logoutUrl("/logout")
@@ -48,18 +61,7 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	// DB からユーザをロードして Spring Security の UserDetails に変換
-	//	@Bean
-	//	public UserDetailsService userDetailsService(UserRepository userRepository) {
-	//		return email -> userRepository.findByEmail(email)
-	//				.map(user -> org.springframework.security.core.userdetails.User.builder()
-	//						.username(user.getEmail())
-	//						.password(user.getPassword())
-	//						.roles(user.getRole())
-	//						.disabled(!user.isEnabled())
-	//						.build())
-	//				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-	//	}
+	// ... (PasswordEncoderのBeanは省略)
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
