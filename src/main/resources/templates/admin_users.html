@@ -18,7 +18,7 @@
 					<th>名前</th>
 					<th>メールアドレス</th>
 					<th>役割</th>
-					<th>有効/無効</th>
+					<th>有効状態</th> 
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -28,14 +28,27 @@
 					<td th:text="${user.name}"></td>
 					<td th:text="${user.email}"></td>
 					<td th:text="${user.role}"></td>
-					<td th:text="${user.enabled ? '有効' : '無効'}"></td>
+					
+					<td th:text="${user.banned ? '無効' : '有効'}"></td>
+					
 					<td>
-					    <form th:action="@{/admin/users/{id}/toggle-enabled(id=${user.id})}" method="post"
+					    <form th:if="${!user.banned}" 
+					        th:action="@{/admin/users/{id}/ban(id=${user.id})}" method="post"
 					        style="display:inline;">
-					        <button type="submit" class="button"
-					            th:classappend="${user.enabled} ? 'danger' : 'secondary'"
-					            th:text="${user.enabled} ? '無効にする' : '有効にする'"
-					            onclick="return confirm('本当にこのユーザーを' + (this.innerText === '無効にする' ? '無効' : '有効') + 'にしますか？');">
+					        <input type="hidden" name="reason" value="管理者による一時的な無効" />
+					        <input type="hidden" name="disableLogin" value="true" />
+					        <button type="submit" class="button danger"
+					            th:text="'無効にする'"
+					            onclick="return confirm('本当にこのユーザーを無効にしますか？');">
+					        </button>
+					    </form>
+					    
+					    <form th:if="${user.banned}" 
+					        th:action="@{/admin/users/{id}/unban(id=${user.id})}" method="post"
+					        style="display:inline;">
+					        <button type="submit" class="button secondary"
+					            th:text="'無効解除'"
+					            onclick="return confirm('本当にこのユーザーの無効状態を解除しますか？');">
 					        </button>
 					    </form>
 					</td>
@@ -46,7 +59,7 @@
 			</tbody>
 		</table>
 		<div class="button-group">
-			<a th:href="@{/admin/dashboard}" class="button secondary">管理者ダッシュボードに戻る</a>
+			<a th:href="@{/dashboard}" class="button secondary">管理者ダッシュボードに戻る</a>
 		</div>
 	</div>
 </body>

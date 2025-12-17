@@ -59,7 +59,7 @@ public class AdminUserController {
 		model.addAttribute("users", list);
 		model.addAttribute("q", q);
 		model.addAttribute("sort", sort);
-		return "admin_dashboard";
+		return "admin_users";
 	}
 
 	@GetMapping("/{id}")
@@ -85,12 +85,12 @@ public class AdminUserController {
 		Long adminId = users.findByEmailIgnoreCase(auth.getName()).map(User::getId).orElse(null);
 
 		service.banUser(id, adminId, reason, disableLogin);
-		return "redirect:/admin/users/" + id + "?banned";
+		return "redirect:/admin/users?banned";
 	}
 
 	@PostMapping("/{id}/unban")
 	public String unban(@PathVariable Long id) {
 		service.unbanUser(id);
-		return "redirect:/admin/users/" + id + "?unbanned";
+		return "redirect:/admin/users?unbanned";
 	}
 }
