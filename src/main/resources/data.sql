@@ -2,6 +2,7 @@ INSERT INTO users (name, email, password, role, enabled)
 VALUES
 ('出品者 A', 'sellerA@example.com', '{noop}password', 'USER', TRUE),
 ('購入者 B', 'xyz@example.com', '{noop}password', 'USER', TRUE),
+('購入者 D', 'xyz2@example.com', '{noop}password', 'USER', TRUE),
 ('運営者 C', 'adminC@example.com', '{noop}adminpass', 'ADMIN', TRUE);
 
 INSERT INTO category (name) VALUES
