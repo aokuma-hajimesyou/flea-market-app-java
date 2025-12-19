@@ -54,7 +54,7 @@ CREATE TABLE app_order (
     item_id INT NOT NULL,
     buyer_id INT NOT NULL,
     price NUMERIC(10,2) NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT '決済待ち' CHECK (status IN ('決済待ち','購入済', '取引完了', 'キャンセル')), -- 状態を限定
+    status VARCHAR(20) NOT NULL DEFAULT '決済待ち' CHECK (status IN ('決済待ち','購入済', '取引完了', 'キャンセル','発送済')), -- 状態を限定
     payment_intent_id VARCHAR(128) UNIQUE, -- Stripe PaymentIntent IDはユニーク
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (item_id) REFERENCES item(id),
