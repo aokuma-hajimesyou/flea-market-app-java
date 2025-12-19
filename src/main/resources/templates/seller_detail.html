@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${seller.name} + ' - 出品者詳細'"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="${seller.name} + 'さんのページ'"></h1>
+
+        <div class="seller-profile">
+            <h2>プロフィール</h2>
+            <p>出品者名: <span th:text="${seller.name}"></span></p>
+            <p>平均評価: <span th:text="${#numbers.formatDecimal(averageRating, 1, 1)}"></span> / 5.0</p>
+        </div>
+
+        <div class="seller-reviews">
+            <h2>評価一覧</h2>
+            <div th:if="${#lists.isEmpty(reviews)}">
+                <p>まだ評価はありません。</p>
+            </div>
+            <div th:unless="${#lists.isEmpty(reviews)}" class="review-list">
+                <div th:each="review : ${reviews}" class="review-item">
+                    <p><strong>評価: </strong><span th:text="${review.rating}"></span></p>
+                    <p><strong>コメント: </strong><span th:text="${review.comment}"></span></p>
+                    <p><strong>購入者: </strong><span th:text="${review.reviewer.name}"></span></p>
+                    <small th:text="${#temporals.format(review.createdAt, 'yyyy/MM/dd HH:mm')}"></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="seller-items">
+            <h2>出品商品一覧</h2>
+            <div th:if="${#lists.isEmpty(items)}">
+                <p>出品している商品はありません。</p>
+            </div>
+            <div th:unless="${#lists.isEmpty(items)}" class="item-grid">
+                <div th:each="item : ${items}" class="item-card">
+                    <a th:href="@{/items/{id}(id=${item.id})}">
+                        <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像">
+                        <div class="item-info">
+                            <p class="item-name" th:text="${item.name}"></p>
+                            <p class="item-price" th:text="'¥' + ${#numbers.formatInteger(item.price, 1, 'COMMA')}"></p>
+                            <p class="item-status" th:text="${item.status}"></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a th:href="@{/}" class="button secondary">トップページに戻る</a>
+        </div>
+    </div>
+</body>
+</html>
