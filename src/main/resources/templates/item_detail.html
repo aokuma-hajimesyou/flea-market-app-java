@@ -20,7 +20,7 @@
 			<p class="price">価格: <span th:text="'¥' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></span></p>
 			<p>説明: <span th:text="${item.description}"></span></p>
 			<p>カテゴリ: <span th:text="${item.category != null ? item.category.name : '未分類'}"></span></p>
-			<p>出品者: <span th:text="${item.seller.name}"></span>
+			<p>出品者: <a th:href="@{/users/{id}(id=${item.seller.id})}" th:text="${item.seller.name}"></a>
 				<span th:if="${sellerAverageRating}">(平均評価: <span th:text="${sellerAverageRating}"></span>)</span>
 			</p>
 			<p>ステータス: <span th:text="${item.status}"></span></p>

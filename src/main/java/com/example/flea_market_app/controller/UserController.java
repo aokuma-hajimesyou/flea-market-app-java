@@ -81,6 +81,7 @@ public class UserController {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		model.addAttribute("myReviews", reviewService.getReviewsByReviewer(currentUser));
+		model.addAttribute("reviewsForMe", reviewService.getReviewsBySeller(currentUser));
 		return "user_reviews";
 	}
 }
