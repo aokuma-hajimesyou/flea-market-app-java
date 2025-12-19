@@ -11,7 +11,7 @@ import com.example.flea_market_app.entity.User;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-	List<Review> findByseller(User Seller);
+	List<Review> findBySeller(User Seller);
 
 	Optional<Review> findByOrderId(Long OrderId);
 
