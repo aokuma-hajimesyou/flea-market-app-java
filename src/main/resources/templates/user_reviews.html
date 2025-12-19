@@ -21,7 +21,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="review : ${reviews}">
+				<tr th:each="review : ${myReviews}">
 					<td th:text="${review.item.name}"></td>
 					<td th:text="${review.seller.name}"></td>
 					<td>
@@ -33,7 +33,7 @@
 					<td th:text="${review.comment}"></td>
 					<td th:text="${#temporals.format(review.createdAt, 'yyyy/MM/ddHH:mm')}"></td>
 				</tr>
-				<tr th:if="${#lists.isEmpty(reviews)}">
+				<tr th:if="${#lists.isEmpty(myReviews)}">
 					<td colspan="5">まだ評価を送信していません。</td>
 				</tr>
 			</tbody>

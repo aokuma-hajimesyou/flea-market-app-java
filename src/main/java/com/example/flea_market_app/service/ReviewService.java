@@ -43,11 +43,11 @@ public class ReviewService {
 	}
 
 	public List<Review> getReviewsBySeller(User seller) {
-		return reviewRepository.findByseller(seller);
+		return reviewRepository.findBySeller(seller);
 	}
 
 	public OptionalDouble getAverageRatingForSeller(User seller) {
-		return reviewRepository.findByseller(seller).stream().mapToInt(Review::getRating).average();
+		return reviewRepository.findBySeller(seller).stream().mapToInt(Review::getRating).average();
 	}
 
 	public List<Review> getReviewsByReviewer(User reviewer) {

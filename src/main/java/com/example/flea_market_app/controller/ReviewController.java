@@ -18,7 +18,7 @@ import com.example.flea_market_app.service.ReviewService;
 import com.example.flea_market_app.service.UserService;
 
 @Controller
-@RequestMapping("/review")
+@RequestMapping("/reviews")
 public class ReviewController {
 	private final ReviewService reviewService;
 	private final AppOrderService appOrderService;
