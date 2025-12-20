@@ -3,67 +3,131 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>商品一覧 - フリマアプリ</title>
+	<!-- Google Fonts & FontAwesome (アイコン用) -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
-	<div class="container">
-		<h1>商品一覧</h1>
+	<!-- ヘッダー（検索・ナビゲーション） -->
+	<header class="app-header">
+		<div class="header-inner">
+			<h1 class="app-title"><a th:href="@{/items}">フリマアプリ</a></h1>
 
-		<div class="main-nav">
-			<a th:href="@{/items/new}" class="button">商品を出品する</a>
-			<a th:href="@{/my-page}" class="button">マイページ</a>
-			<form th:action="@{/logout}" method="post" style="display:inline;">
-				<button type="submit" class="button secondary">ログアウト</button>
+			<div class="header-actions">
+				<a th:href="@{/my-page}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
+				<form th:action="@{/logout}" method="post" style="display:inline;">
+					<button type="submit" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+				</form>
+			</div>
+		</div>
+
+		<!-- 検索フォームエリア -->
+		<div class="search-area">
+			<form th:action="@{/items}" method="get" class="search-form">
+				<div class="search-row">
+					<div class="input-group">
+						<i class="fas fa-search search-icon"></i>
+						<input type="text" id="keyword" name="keyword" th:value="${param.keyword}"
+							placeholder="なにをお探しですか？">
+					</div>
+					<div class="select-group">
+						<select id="categoryId" name="categoryId">
+							<option value="">すべてのカテゴリ</option>
+							<option th:each="category : ${categories}" th:value="${category.id}"
+								th:text="${category.name}"
+								th:selected="${param.categoryId != null and param.categoryId.toString() == category.id.toString()}">
+							</option>
+						</select>
+					</div>
+					<button type="submit" class="search-btn">検索</button>
+				</div>
 			</form>
 		</div>
+	</header>
 
-		<form th:action="@{/items}" method="get" class="filter-form">
-			<div>
-				<label for="keyword">キーワード:</label>
-				<input type="text" id="keyword" name="keyword" th:value="${param.keyword}">
-			</div>
-			<div>
-				<label for="categoryId">カテゴリ:</label>
-				<select id="categoryId" name="categoryId">
-					<option value="">全て</option>
-					<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-						th:selected="${param.categoryId == category.id}"></option>
-				</select>
-			</div>
-			<button type="submit" class="button">検索</button>
-		</form>
-
+	<div class="container">
+		<!-- 商品グリッド -->
 		<div class="item-grid">
 			<div class="item-card" th:each="item : ${items.content}">
-				<a th:href="@{/items/{id}(id=${item.id})}">
-					<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像">
-					<h3 th:text="${item.name}"></h3>
-					<p class="price" th:text="'¥' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></p>
-					<p class="status" th:text="${item.status}"></p>
+				<a th:href="@{/items/{id}(id=${item.id})}" class="card-link">
+
+					<!-- 画像エリア（正方形維持） -->
+					<div class="image-container">
+						<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像"
+							class="product-img">
+
+						<!-- 価格タグ -->
+						<div class="price-tag">
+							<span class="currency">¥</span>
+							<span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></span>
+						</div>
+
+						<!-- SOLD OUT等のステータスバッジ（条件によって表示を変える例） -->
+						<!-- ※item.statusの値が'SOLD'などの場合に表示する想定です -->
+						<div th:if="${item.status == 'SOLD'}" class="sold-overlay">
+							<div class="sold-badge"></div>
+							<span class="sold-text">SOLD</span>
+						</div>
+					</div>
+
+					<!-- 商品情報 -->
+					<div class="card-body">
+						<h3 class="item-name" th:text="${item.name}">商品名</h3>
+						<div class="item-footer">
+							<!-- ステータス表示（SOLD以外の場合など） -->
+							<span class="status-label" th:unless="${item.status == 'SOLD'}"
+								th:text="${item.status}"></span>
+							<div class="item-footer">
+							    <div class="like-count" th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
+							        <i class="fa-heart" th:classappend="${item.isFavorited} ? 'fas' : 'far'"></i>
+							        <span th:text="${item.favoriteCount != null ? item.favoriteCount : 0}">0</span>
+							    </div>
+							</div>
+						</div>
+					</div>
 				</a>
 			</div>
-			<div th:if="${#lists.isEmpty(items.content)}">
-				<p>商品が見つかりませんでした。</p>
-			</div>
 		</div>
 
+		<!-- 空の状態 -->
+		<div th:if="${#lists.isEmpty(items.content)}" class="no-items">
+			<p>商品が見つかりませんでした。</p>
+			<a th:href="@{/items}" class="reset-link">検索条件をクリア</a>
+		</div>
+
+		<!-- ページネーション -->
 		<div class="pagination" th:if="${items.totalPages > 0}">
-			<a th:if="${items.hasPrevious()}"
-				th:href="@{/items(page=${items.number - 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">前へ</a>
+			<a th:if="${items.hasPrevious()}" class="page-link prev"
+				th:href="@{/items(page=${items.number - 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">
+				<i class="fas fa-chevron-left"></i> 前へ
+			</a>
 
-			<span th:each="i : ${#numbers.sequence(0, items.totalPages - 1)}">
-				<a th:if="${i != items.number}"
-					th:href="@{/items(page=${i}, keyword=${param.keyword}, categoryId=${param.categoryId})}"
-					th:text="${i + 1}"></a>
-				<span th:if="${i == items.number}" class="current-page" th:text="${i + 1}"></span>
-			</span>
+			<div class="page-numbers">
+				<span th:each="i : ${#numbers.sequence(0, items.totalPages - 1)}">
+					<a th:if="${i != items.number}" class="page-link num"
+						th:href="@{/items(page=${i}, keyword=${param.keyword}, categoryId=${param.categoryId})}"
+						th:text="${i + 1}"></a>
+					<span th:if="${i == items.number}" class="page-link current" th:text="${i + 1}"></span>
+				</span>
+			</div>
 
-			<a th:if="${items.hasNext()}"
-				th:href="@{/items(page=${items.number + 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">次へ</a>
+			<a th:if="${items.hasNext()}" class="page-link next"
+				th:href="@{/items(page=${items.number + 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">
+				次へ <i class="fas fa-chevron-right"></i>
+			</a>
 		</div>
 	</div>
+
+	<!-- 固定出品ボタン (Floating Action Button) -->
+	<a th:href="@{/items/new}" class="fab-sell">
+		<i class="fas fa-camera"></i>
+		<span class="fab-text">出品</span>
+	</a>
+
 </body>
 
 </html>

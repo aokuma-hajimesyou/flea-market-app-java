@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,4 +37,15 @@ public class FavoriteItem {
 
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt = LocalDateTime.now();
+
+	@Transient
+	private boolean isFavorited; // ログインユーザーがお気に入り済みかどうか
+
+	public boolean isFavorited() {
+		return isFavorited;
+	}
+
+	public void setFavorited(boolean favorited) {
+		isFavorited = favorited;
+	}
 }
