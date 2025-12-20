@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -57,4 +58,10 @@ public class Item {
 	// 作成日時。列名を created_at に固定、初期値は現在時刻
 	@Column(name = "created_at", nullable = false)
 	private OffsetDateTime createdAt = OffsetDateTime.now();
+
+	@Transient
+	private Integer favoriteCount = 0;
+
+	@Transient
+	private boolean isFavorited;
 }

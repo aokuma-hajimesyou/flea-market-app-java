@@ -59,12 +59,31 @@ public class ItemController {
 			@RequestParam(value = "categoryId", required = false) Long categoryId,
 			@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "size", defaultValue = "10") int size,
+			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
+
+		// 1. 商品検索とカテゴリ一覧の取得
 		Page<Item> items = itemService.searchItems(keyword, categoryId, page, size);
 		List<Category> categories = categoryService.getAllCategories();
 
+		// 2. 各商品にお気に入り状態とカウントをセット
+		items.forEach(item -> {
+			// お気に入り数を取得して int にキャストしてセット
+			item.setFavoriteCount((int) favoriteService.getFavoriteCount(item.getId()));
+
+			if (userDetails != null) {
+				User currentUser = userService.getUserByEmail(userDetails.getUsername())
+						.orElseThrow(() -> new RuntimeException("user not found"));
+
+				boolean isFav = favoriteService.isFavorited(currentUser, item.getId());
+				item.setFavorited(isFav);
+			}
+		});
+
+		// 3. Modelへの登録
 		model.addAttribute("items", items);
 		model.addAttribute("categories", categories);
+
 		return "item_list";
 	}
 

@@ -57,4 +57,11 @@ public class FavoriteService {
 				.map(FavoriteItem::getItem)
 				.collect(Collectors.toList());
 	}
+
+	public long getFavoriteCount(Long itemId) {
+		Item item = itemRepository.findById(itemId)
+				.orElseThrow(() -> new IllegalArgumentException("Item not found"));
+		// Repositoryに countByItem メソッドがある前提（無ければリポジトリに追加）
+		return favoriteItemRepository.countByItem(item);
+	}
 }

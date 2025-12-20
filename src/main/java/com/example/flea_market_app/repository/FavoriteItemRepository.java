@@ -17,4 +17,6 @@ public interface FavoriteItemRepository extends JpaRepository<FavoriteItem, Long
 	List<FavoriteItem> findByUser(User user);
 
 	boolean existsByUserAndItem(User user, Item item);
+
+	long countByItem(Item item);
 }
