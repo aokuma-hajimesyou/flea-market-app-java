@@ -1,90 +1,88 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>自分の評価</title>
+    <title>自分の評価 - FleaMarketApp</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        /* レイアウト調整用の簡易スタイル */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        .star-rating { color: #ffcc00; }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <header class="app-header">
+        <div class="header-inner">
+            <h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
+        </div>
+    </header>
+
     <div class="container">
         <h1>自分の評価</h1>
 
-        <section>
-            <h2>あなたが送信した評価</h2>
-            <p>あなたが購入者として出品者に送った評価の一覧です。</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>商品名</th>
-                        <th>相手（出品者）</th>
-                        <th>評価</th>
-                        <th>コメント</th>
-                        <th>評価日時</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="review : ${myReviews}">
-                        <td th:text="${review.item.name}"></td>
-                        <td th:text="${review.seller.name}"></td>
-                        <td class="star-rating">
-                            <span th:each="i : ${#numbers.sequence(1, 5)}">
-                                <span th:text="${i <= review.rating ? '★' : '☆'}"></span>
-                            </span>
-                        </td>
-                        <td th:text="${review.comment}"></td>
-                        <td th:text="${#temporals.format(review.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(myReviews)}">
-                        <td colspan="5">まだ評価を送信していません。</td>
-                    </tr>
-                </tbody>
-            </table>
+        <section class="review-section">
+            <h2><i class="fas fa-user-tag"></i> あなたへの評価</h2>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 10px;">出品者として購入者から受け取った評価です。</p>
+            
+            <div class="review-list">
+                <div th:each="review : ${reviewsForMe}" class="review-item">
+                    <div class="review-header">
+                        <span class="review-user">
+                            <i class="fas fa-user-circle"></i> <span th:text="${review.reviewer.name}"></span> さん
+                        </span>
+                        <span class="review-date" th:text="${#temporals.format(review.createdAt, 'yyyy/MM/dd')}"></span>
+                    </div>
+                    
+                    <span class="review-item-name" th:text="'商品: ' + ${review.item.name}"></span>
+                    
+                    <div class="star-rating">
+                        <span th:each="i : ${#numbers.sequence(1, 5)}">
+                            <i th:class="${i <= review.rating ? 'fas fa-star' : 'far fa-star'}"></i>
+                        </span>
+                    </div>
+                    
+                    <div class="review-comment" th:text="${review.comment}"></div>
+                </div>
+                
+                <div th:if="${#lists.isEmpty(reviewsForMe)}" class="empty-state">
+                    まだ評価を受け取っていません。
+                </div>
+            </div>
         </section>
 
-        <hr>
+        <section class="review-section">
+            <h2><i class="fas fa-paper-plane"></i> 送信した評価</h2>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 10px;">購入者として出品者に送った評価です。</p>
+            
+            <div class="review-list">
+                <div th:each="review : ${myReviews}" class="review-item">
+                    <div class="review-header">
+                        <span class="review-user">
+                            相手: <span th:text="${review.seller.name}"></span> さん
+                        </span>
+                        <span class="review-date" th:text="${#temporals.format(review.createdAt, 'yyyy/MM/dd')}"></span>
+                    </div>
 
-        <section>
-            <h2>あなたへの評価</h2>
-            <p>あなたが出品者として購入者から受け取った評価の一覧です。</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>商品名</th>
-                        <th>相手（購入者）</th>
-                        <th>評価</th>
-                        <th>コメント</th>
-                        <th>評価日時</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="review : ${reviewsForMe}">
-                        <td th:text="${review.item.name}"></td>
-                        <td th:text="${review.reviewer.name}"></td>
-                        <td class="star-rating">
-                            <span th:each="i : ${#numbers.sequence(1, 5)}">
-                                <span th:text="${i <= review.rating ? '★' : '☆'}"></span>
-                            </span>
-                        </td>
-                        <td th:text="${review.comment}"></td>
-                        <td th:text="${#temporals.format(review.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(reviewsForMe)}">
-                        <td colspan="5">まだ評価を受け取っていません。</td>
-                    </tr>
-                </tbody>
-            </table>
+                    <span class="review-item-name" th:text="'商品: ' + ${review.item.name}"></span>
+
+                    <div class="star-rating">
+                        <span th:each="i : ${#numbers.sequence(1, 5)}">
+                            <i th:class="${i <= review.rating ? 'fas fa-star' : 'far fa-star'}"></i>
+                        </span>
+                    </div>
+
+                    <div class="review-comment" th:text="${review.comment}"></div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(myReviews)}" class="empty-state">
+                    まだ評価を送信していません。
+                </div>
+            </div>
         </section>
 
         <div class="button-group">
-            <a th:href="@{/my-page}" class="button secondary">マイページに戻る</a>
+            <a th:href="@{/my-page}" class="button secondary" style="width: 100%;">
+                <i class="fas fa-chevron-left"></i> マイページに戻る
+            </a>
         </div>
     </div>
+
+    <div style="height: 40px;"></div>
 </body>
 </html>

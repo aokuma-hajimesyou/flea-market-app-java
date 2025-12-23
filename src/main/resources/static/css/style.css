@@ -1,680 +1,419 @@
 @charset "UTF-8";
 
+/* ==========================================================================
+   1. 変数と基本設定
+   ========================================================================== */
 :root {
-	--primary-color: #E13A33;
-	/* メルカリ風の赤 */
-	--accent-color: #0095EE;
-	/* リンク色など */
-	--bg-color: #F8F9FA;
-	/* 背景色 */
-	--text-main: #333333;
-	--text-sub: #757575;
-	--card-bg: #FFFFFF;
-	--price-bg: rgba(0, 0, 0, 0.7);
+    --primary-color: #E13A33; /* メルカリ風の赤 */
+    --accent-color: #0095EE;  /* リンク色 */
+    --bg-color: #F8F9FA;      /* 背景色 */
+    --text-main: #333333;
+    --text-sub: #757575;
+    --card-bg: #FFFFFF;
+    --price-bg: rgba(0, 0, 0, 0.7);
+    --border-color: #ddd;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* 基本設定 */
 body {
-	font-family: 'Noto Sans JP', 'Segoe UI', Tahoma, sans-serif;
-	margin: 0;
-	padding: 0;
-	background-color: var(--bg-color);
-	color: var(--text-main);
-	line-height: 1.6;
-	padding-bottom: 80px;
-	/* FABが被らないように下部に余白 */
+    font-family: 'Noto Sans JP', sans-serif;
+    margin: 0;
+    padding: 0 0 80px 0; /* 下部にFAB用の余白 */
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
 }
 
-/* 商品一覧画面 */
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; padding: 0; margin: 0; }
 
-a {
-	text-decoration: none;
-	color: inherit;
+.container {
+    max-width: 960px;
+    margin: 20px auto;
+    padding: 0 10px;
 }
 
-ul {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-}
+/* ==========================================================================
+   追加：検索ボタン・ログアウト・セレクトボックスの基本デザイン
+   ========================================================================== */
 
-/* --- ヘッダー --- */
-.app-header {
-	background-color: #fff;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-	position: sticky;
-	top: 0;
-	z-index: 100;
-}
-
-.header-inner {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 10px 15px;
-	max-width: 960px;
-	margin: 0 auto;
-}
-
-.app-title a {
-	color: var(--primary-color);
-	font-weight: bold;
-	font-size: 1.5rem;
-}
-
-.header-actions {
-	display: flex;
-	gap: 15px;
-	align-items: center;
-}
-
-.header-link {
-	font-size: 0.9rem;
-	color: var(--text-main);
-	display: flex;
-	align-items: center;
-	gap: 5px;
-}
-
+/* 1. ログアウトボタンのスタイル (ヘッダー用) */
 .logout-btn {
-	background: none;
-	border: none;
-	cursor: pointer;
-	font-size: 1.1rem;
-	color: var(--text-sub);
-	padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem; /* アイコンを少し大きく */
+    color: var(--text-sub);
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
 }
 
-/* --- 検索フォーム --- */
-.search-area {
-	background-color: #fff;
-	padding: 0 15px 15px;
-	border-bottom: 1px solid #eee;
+.logout-btn:hover {
+    color: var(--primary-color); /* ホバー時にメルカリレッドに */
 }
 
-.search-form {
-	max-width: 960px;
-	margin: 0 auto;
-}
-
-.search-row {
-	display: flex;
-	gap: 8px;
-	flex-wrap: wrap;
-}
-
-.input-group {
-	flex: 1;
-	position: relative;
-	min-width: 200px;
-}
-
-.search-icon {
-	position: absolute;
-	left: 12px;
-	top: 50%;
-	transform: translateY(-50%);
-	color: #aaa;
-}
-
-.input-group input {
-	width: 100%;
-	padding: 10px 10px 10px 36px;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	background-color: #f5f5f5;
-	font-size: 0.95rem;
-	box-sizing: border-box;
+/* 2. セレクトボックス (カテゴリ絞り込み) */
+.select-group {
+    min-width: 150px;
 }
 
 .select-group select {
-	padding: 10px;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	background-color: #fff;
-	height: 100%;
-	font-size: 0.9rem;
-}
-
-.search-btn {
-	background-color: var(--text-main);
-	color: #fff;
-	border: none;
-	padding: 0 20px;
-	border-radius: 4px;
-	cursor: pointer;
-	font-weight: bold;
-}
-
-/* --- コンテナ --- */
-.container {
-	max-width: 960px;
-	margin: 20px auto;
-	padding: 0 10px;
-}
-
-/* --- 商品グリッド --- */
-.item-grid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	/* スマホ: 2列 */
-	gap: 10px;
-}
-
-@media (min-width: 768px) {
-	.item-grid {
-		grid-template-columns: repeat(4, 1fr);
-		/* PC/タブレット: 4列 */
-		gap: 20px;
-	}
-}
-
-/* --- 商品カード --- */
-.item-card {
-	background-color: var(--card-bg);
-	border-radius: 8px;
-	overflow: hidden;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-	transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.item-card:hover {
-	transform: translateY(-3px);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.card-link {
-	display: block;
-	color: inherit;
-}
-
-/* 画像コンテナ (正方形維持) */
-.image-container {
-	position: relative;
-	width: 100%;
-	padding-top: 100%;
-	/* 1:1 Aspect Ratio */
-	background-color: #eee;
-}
-
-.product-img {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	/* 画像のトリミング */
-}
-
-/* 価格タグ */
-.price-tag {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	background: var(--price-bg);
-	color: #fff;
-	padding: 4px 12px;
-	border-top-right-radius: 16px;
-	font-weight: 600;
-	font-size: 1.1rem;
-	z-index: 2;
-}
-
-.currency {
-	font-size: 0.8rem;
-	margin-right: 2px;
-}
-
-/* SOLD OUT 表示 */
-.sold-overlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 3;
-}
-
-.sold-badge {
-	position: absolute;
-	top: 0;
-	left: 0;
-	border-style: solid;
-	border-width: 60px 60px 0 0;
-	border-color: var(--primary-color) transparent transparent transparent;
-}
-
-.sold-text {
-	position: absolute;
-	top: 12px;
-	left: 4px;
-	color: white;
-	font-weight: bold;
-	font-size: 0.9rem;
-	transform: rotate(-45deg);
-	z-index: 4;
-}
-
-/* カード本文 */
-.card-body {
-	padding: 10px;
-}
-
-.item-name {
-	font-size: 0.9rem;
-	margin: 0 0 5px 0;
-	color: var(--text-main);
-	line-height: 1.4;
-	/* 2行で省略 */
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-	height: 2.8em;
-	/* 2行分の高さ確保 */
-}
-
-.item-footer {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	font-size: 0.8rem;
-	color: var(--text-sub);
-}
-
-/* --- お気に入り（like-count）のスタイル修正 --- */
-
-.like-count {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    width: 100%;
+    height: 40px; /* 検索窓と高さを合わせる */
+    padding: 0 30px 0 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 0.9rem;
     cursor: pointer;
+    appearance: none; /* デフォルトの矢印を消す(カスタムする場合) */
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
 }
 
-/* ハートマークの基本（未登録：グレー） */
-.like-count i {
-    color: #ccc; 
-    transition: color 0.2s, transform 0.1s;
+.select-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
 }
 
-/* お気に入り済みの状態：ハートを黒くする */
-/* item_listのアイコン、item_detailのボタン内アイコン両方に適用されます */
-.like-count.is-favorited i,
-.is-favorited i {
-    color: #333 !important; /* 強制的に黒 */
+/* 3. 検索ボタン (虫眼鏡の横のボタン) */
+.search-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.95rem;
+    height: 40px; /* 検索窓と高さを合わせる */
+    transition: opacity 0.2s;
+    white-space: nowrap;
 }
 
-/* ホバー時の演出（任意） */
-.like-count:hover i {
-    transform: scale(1.1);
+.search-btn:hover {
+    opacity: 0.85;
 }
 
-/* --- 商品詳細画面のボタン用（.button.danger をお気に入り解除として使う場合） --- */
-/* 「お気に入り解除」ボタンを白背景・黒文字・黒枠にする設定 */
+/* 検索列の微調整（スマホ対応） */
+@media (max-width: 480px) {
+    .search-row {
+        flex-direction: column; /* スマホでは縦並びに */
+        gap: 10px;
+    }
+    
+    .input-group, .select-group, .search-btn {
+        width: 100%; /* 全幅表示 */
+    }
+}
+
+/* 4. ページネーションのボタン調整 */
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    background: #fff;
+    color: var(--text-main);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 40px;
+}
+
+.page-link.current {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.page-link:hover:not(.current) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* ==========================================================================
+   2. 共通コンポーネント (ボタン・フォーム・メッセージ)
+   ========================================================================== */
+
+/* ボタン基本 */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    transition: opacity 0.2s;
+    background-color: var(--primary-color);
+    color: #fff;
+    min-width: 150px;
+}
+
+.button:hover { opacity: 0.8; }
+
+.button.secondary {
+    background-color: #fff;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.button.danger {
+    background-color: #fff;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+/* お気に入り解除用特殊スタイル */
 .button.danger.is-favorited {
     background-color: #fff;
     color: #333;
     border: 1px solid #333;
 }
 
-/* --- 出品FAB (Floating Action Button) --- */
-.fab-sell {
-	position: fixed;
-	bottom: 20px;
-	right: 20px;
-	width: 76px;
-	height: 76px;
-	background-color: var(--primary-color);
-	color: #fff;
-	border-radius: 50%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	box-shadow: 0 4px 10px rgba(225, 58, 51, 0.4);
-	z-index: 1000;
-	transition: transform 0.2s;
-	font-weight: bold;
-}
-
-.fab-sell:hover {
-	transform: scale(1.05);
-}
-
-.fab-text {
-	font-size: 0.75rem;
-	margin-top: 2px;
-}
-
-.fab-sell i {
-	font-size: 1.8rem;
-}
-
-/* --- ページネーション --- */
-.pagination {
-	margin: 40px 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 10px;
-}
-
-.page-link {
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	min-width: 36px;
-	height: 36px;
-	padding: 0 5px;
-	background-color: #fff;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	color: var(--text-main);
-	font-size: 0.9rem;
-	transition: all 0.2s;
-}
-
-.page-link:hover {
-	border-color: var(--primary-color);
-	color: var(--primary-color);
-}
-
-.page-link.current {
-	background-color: var(--text-main);
-	color: #fff;
-	border-color: var(--text-main);
-}
-
-.page-numbers {
-	display: flex;
-	gap: 5px;
-}
-
-/* --- エラー・空状態 --- */
-.no-items {
-	text-align: center;
-	padding: 50px 20px;
-	background: #fff;
-	border-radius: 8px;
-}
-
-.reset-link {
-	display: inline-block;
-	margin-top: 10px;
-	color: var(--accent-color);
-	text-decoration: underline;
-}
-
-/* --- 商品詳細ページ (item_detail) --- */
-
-/* メインレイアウト */
-.item-detail {
-	background-color: var(--card-bg);
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-	margin-bottom: 30px;
-}
-
-.item-image {
-	width: 100%;
-	max-width: 500px;
-	/* PCでの見え方を調整 */
-	height: auto;
-	display: block;
-	margin: 0 auto 20px;
-	border-radius: 4px;
-	object-fit: contain;
-}
-
-/* 価格・テキスト */
-.price {
-	font-size: 2rem;
-	font-weight: bold;
-	color: var(--text-main);
-	margin: 15px 0;
-	border-bottom: 1px solid #eee;
-	padding-bottom: 10px;
-}
-
-.price span {
-	color: var(--text-main);
-}
-
-.item-detail p {
-	margin: 10px 0;
-	color: var(--text-main);
-}
-
-.item-detail p span {
-	font-weight: 500;
-}
-
-/* ボタン共通 */
-.button-group {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	margin-top: 25px;
-}
-
-.button {
-	display: inline-block;
-	padding: 12px 24px;
-	border-radius: 4px;
-	font-weight: bold;
-	text-align: center;
-	cursor: pointer;
-	border: none;
-	font-size: 1rem;
-	transition: opacity 0.2s;
-	min-width: 150px;
-	flex: 1;
-	/* スマホで横並び、または等幅に */
-}
-
-.button:hover {
-	opacity: 0.8;
-}
-
-/* ボタン色バリエーション */
-.button {
-	background-color: var(--primary-color);
-	color: #fff;
-}
-
-.button.secondary {
-	background-color: #fff;
-	color: var(--text-main);
-	border: 1px solid #ddd;
-}
-
-.button.danger {
-	background-color: #fff;
-	color: var(--primary-color);
-	border: 1px solid var(--primary-color);
-}
-
-/* メッセージ表示 */
-.error-message {
-	background-color: #fff2f2;
-	color: var(--primary-color);
-	padding: 10px;
-	border-radius: 4px;
-	margin-bottom: 15px;
-	border: 1px solid var(--primary-color);
-}
-
-.success-message {
-	background-color: #e6f7ff;
-	color: var(--accent-color);
-	padding: 10px;
-	border-radius: 4px;
-	margin-bottom: 15px;
-	border: 1px solid var(--accent-color);
-}
-
-/* --- チャットセクション --- */
-h2 {
-	font-size: 1.2rem;
-	margin: 30px 0 15px;
-	border-left: 4px solid var(--primary-color);
-	padding-left: 10px;
-}
-
-.chat-box {
-	background-color: #fff;
-	border: 1px solid #eee;
-	border-radius: 8px;
-	padding: 20px;
-	max-height: 500px;
-	overflow-y: auto;
-	margin-bottom: 20px;
-}
-
-.chat-message {
-	margin-bottom: 15px;
-	max-width: 80%;
-	padding: 10px 15px;
-	border-radius: 12px;
-	position: relative;
-}
-
-.my-message {
-	margin-left: auto;
-	background-color: #E1F5FE;
-	/* 薄い青 */
-	color: var(--text-main);
-}
-
-.other-message {
-	margin-right: auto;
-	background-color: #F5F5F5;
-	/* 薄いグレー */
-	color: var(--text-main);
-}
-
-.sender-name {
-	font-size: 0.75rem;
-	font-weight: bold;
-	display: block;
-	margin-bottom: 4px;
-}
-
-.message-time {
-	font-size: 0.7rem;
-	color: var(--text-sub);
-	display: block;
-	margin-top: 4px;
-}
-
-/* チャットフォーム */
-.chat-form {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	margin-bottom: 40px;
-}
-
-.chat-form textarea {
-	width: 100%;
-	height: 80px;
-	padding: 12px;
-	border: 1px solid #ddd;
-	border-radius: 8px;
-	resize: none;
-	box-sizing: border-box;
-	font-family: inherit;
-}
-
-.chat-form button {
-	align-self: flex-end;
-	background-color: var(--text-main);
-	color: #fff;
-	border: none;
-	padding: 10px 30px;
-	border-radius: 4px;
-	cursor: pointer;
-	font-weight: bold;
-}
-
-/* --- 商品出品・編集フォーム専用スタイル --- */
-.form-box {
-    background-color: var(--card-bg);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
+/* フォームグループ (出品・編集・チャット共通) */
+.form-group { margin-bottom: 20px; }
 .form-group label {
     display: block;
     font-weight: bold;
     margin-bottom: 8px;
-    color: var(--text-main);
 }
 
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group select,
-.form-group textarea {
+.input-field {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 1rem;
     font-family: inherit;
+    background-color: #fff;
 }
 
-.form-group textarea {
-    height: 150px;
-    resize: vertical;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.input-field:focus {
     outline: none;
     border-color: var(--primary-color);
 }
 
-/* 画像プレビューエリア */
-.image-preview-container {
-    margin-top: 10px;
-    padding: 15px;
-    border: 1px dashed #ccc;
+/* メッセージ表示 */
+.error-message, .success-message {
+    padding: 10px;
     border-radius: 4px;
-    background-color: #fafafa;
-    display: inline-block;
+    margin-bottom: 15px;
+    border: 1px solid;
+}
+.error-message { background-color: #fff2f2; color: var(--primary-color); border-color: var(--primary-color); }
+.success-message { background-color: #e6f7ff; color: var(--accent-color); border-color: var(--accent-color); }
+
+/* ==========================================================================
+   3. ヘッダー & 検索
+   ========================================================================== */
+.app-header {
+    background-color: #fff;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.current-img-label {
-    font-size: 0.85rem;
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.app-title a { color: var(--primary-color); font-weight: bold; font-size: 1.5rem; }
+
+.header-actions { display: flex; gap: 15px; align-items: center; }
+
+.search-area { background-color: #fff; padding: 0 15px 15px; border-bottom: 1px solid #eee; }
+.search-form { max-width: 960px; margin: 0 auto; }
+.search-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.input-group { flex: 1; position: relative; min-width: 200px; }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #aaa; }
+.input-group input { padding-left: 36px; background-color: #f5f5f5; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; border-radius: 4px; height: 40px; }
+
+/* ==========================================================================
+   4. 商品一覧 (Grid & Card)
+   ========================================================================== */
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+@media (min-width: 768px) {
+    .item-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+}
+
+.item-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+}
+.item-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+.image-container { position: relative; width: 100%; padding-top: 100%; background-color: #eee; }
+.product-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.price-tag {
+    position: absolute; bottom: 0; left: 0;
+    background: var(--price-bg); color: #fff;
+    padding: 4px 12px; border-top-right-radius: 16px;
+    font-weight: bold; z-index: 2;
+}
+
+.card-body { padding: 10px; }
+.item-name {
+    font-size: 0.9rem; margin-bottom: 5px; height: 2.8em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.item-footer { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-sub); }
+
+/* ハートマーク */
+.like-count i { color: #ccc; transition: color 0.2s; }
+.is-favorited i { color: #333 !important; }
+
+/* ==========================================================================
+   5. 商品詳細 & チャット
+   ========================================================================== */
+.detail-box {
+    background-color: var(--card-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.item-image-main {
+    width: 100%; max-width: 500px; height: auto;
+    display: block; margin: 0 auto 20px;
+}
+
+.chat-box {
+    background-color: #fff; border: 1px solid #eee; border-radius: 8px;
+    padding: 20px; max-height: 500px; overflow-y: auto;
+}
+
+.chat-message {
+    margin-bottom: 15px; max-width: 80%; padding: 10px 15px; border-radius: 12px;
+}
+.my-message { margin-left: auto; background-color: #E1F5FE; }
+.other-message { margin-right: auto; background-color: #F5F5F5; }
+
+/* ==========================================================================
+   6. マイページ & その他
+   ========================================================================== */
+.profile-card {
+    background-color: var(--card-bg); padding: 20px;
+    border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 30px;
+}
+
+.mypage-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+/* FAB (Floating Action Button) */
+.fab-sell {
+    position: fixed; bottom: 20px; right: 20px;
+    width: 76px; height: 76px; background-color: var(--primary-color);
+    color: #fff; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(225,58,51,0.4); z-index: 1000;
+}
+
+/* --- 評価一覧専用スタイル --- */
+.review-section {
+    margin-bottom: 40px;
+}
+
+.review-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--text-main);
+}
+
+.review-list {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.review-item:last-child {
+    border-bottom: none;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.review-user {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.review-date {
+    font-size: 0.8rem;
     color: var(--text-sub);
+}
+
+.star-rating {
+    color: #ffc107; /* 綺麗なゴールド */
+    margin-bottom: 5px;
+}
+
+.review-item-name {
+    font-size: 0.85rem;
+    color: var(--accent-color);
     margin-bottom: 5px;
     display: block;
 }
 
-.preview-img {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 4px;
-    border: 1px solid #eee;
+.review-comment {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    line-height: 1.4;
+    white-space: pre-wrap; /* 改行を反映 */
 }
 
-/* レスポンシブ調整 */
-@media (max-width: 480px) {
-	.button-group {
-		flex-direction: column;
-	}
+.empty-state {
+    padding: 30px;
+    text-align: center;
+    color: var(--text-sub);
+    font-size: 0.9rem;
+}
 
-	.button {
-		width: 100%;
-	}
+/* レスポンシブ */
+@media (max-width: 480px) {
+    .button { width: 100%; }
+    .mypage-nav { grid-template-columns: 1fr; }
 }

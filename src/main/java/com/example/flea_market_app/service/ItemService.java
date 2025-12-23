@@ -29,13 +29,23 @@ public class ItemService {
 
 	public Page<Item> searchItems(String keyword, Long categoryId, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
+		String status = "出品中";
+
 		if (keyword != null && !keyword.isEmpty() && categoryId != null) {
-			return itemRepository.findByNameContainingIgnoreCaseAndCategoryIdAndStatus(keyword, categoryId, "出品中",
+			return itemRepository.findByNameContainingIgnoreCaseAndCategoryIdAndStatus(keyword, categoryId, status,
 					pageable);
-		} else if (keyword != null && !keyword.isEmpty()) {
-			return itemRepository.findByNameContainingIgnoreCaseAndStatus(keyword, "出品中", pageable);
-		} else {
-			return itemRepository.findByStatus("出品中", pageable);
+		}
+
+		else if (keyword != null && !keyword.isEmpty()) {
+			return itemRepository.findByNameContainingIgnoreCaseAndStatus(keyword, status, pageable);
+		}
+
+		else if (categoryId != null) {
+			return itemRepository.findByCategoryIdAndStatus(categoryId, status, pageable);
+		}
+
+		else {
+			return itemRepository.findByStatus(status, pageable);
 		}
 	}
 
