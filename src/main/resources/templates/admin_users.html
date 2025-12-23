@@ -1,67 +1,101 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head>
-	<meta charset="UTF-8">
-	<title>管理者: ユーザー管理 - フリマアプリ</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者: ユーザー管理 - FleaMarketApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+<body style="background-color: #f4f7f6;">
+    <header class="app-header" style="background-color: #2c3e50;">
+        <div class="header-inner">
+            <h1 class="app-title"><a th:href="@{/admin/dashboard}" style="color: #fff;">Admin Panel</a></h1>
+            <div class="header-nav">
+                <a th:href="@{/admin/dashboard}" style="color: #fff; text-decoration: none; margin-right: 20px;">
+                    <i class="fas fa-chart-pie"></i> ダッシュボード
+                </a>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="button secondary" style="padding: 5px 15px; font-size: 0.8rem;">ログアウト</button>
+                </form>
+            </div>
+        </div>
+    </header>
 
-<body>
-	<div class="container">
-		<h1>管理者: ユーザー管理</h1>
-		<p>システム内の全てのユーザーを管理します。</p>
-		<table>
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>名前</th>
-					<th>メールアドレス</th>
-					<th>役割</th>
-					<th>有効状態</th> 
-					<th>操作</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="user : ${users}">
-					<td th:text="${user.id}"></td>
-					<td th:text="${user.name}"></td>
-					<td th:text="${user.email}"></td>
-					<td th:text="${user.role}"></td>
-					
-					<td th:text="${user.banned ? '無効' : '有効'}"></td>
-					
-					<td>
-					    <form th:if="${!user.banned}" 
-					        th:action="@{/admin/users/{id}/ban(id=${user.id})}" method="post"
-					        style="display:inline;">
-					        <input type="hidden" name="reason" value="管理者による一時的な無効" />
-					        <input type="hidden" name="disableLogin" value="true" />
-					        <button type="submit" class="button danger"
-					            th:text="'無効にする'"
-					            onclick="return confirm('本当にこのユーザーを無効にしますか？');">
-					        </button>
-					    </form>
-					    
-					    <form th:if="${user.banned}" 
-					        th:action="@{/admin/users/{id}/unban(id=${user.id})}" method="post"
-					        style="display:inline;">
-					        <button type="submit" class="button secondary"
-					            th:text="'無効解除'"
-					            onclick="return confirm('本当にこのユーザーの無効状態を解除しますか？');">
-					        </button>
-					    </form>
-					</td>
-				</tr>
-				<tr th:if="${#lists.isEmpty(users)}">
-					<td colspan="6">ユーザーがいません。</td>
-				</tr>
-			</tbody>
-		</table>
-		<div class="button-group">
-			<a th:href="@{/dashboard}" class="button secondary">管理者ダッシュボードに戻る</a>
-		</div>
-	</div>
+    <div class="container" style="max-width: 1100px;">
+        <div class="page-header">
+            <h1><i class="fas fa-users-cog"></i> ユーザー管理</h1>
+            <p>全ユーザーの利用状況の確認と、アカウントの有効/無効設定を行います。</p>
+        </div>
+
+        <div class="admin-table-container">
+            <table class="admin-table" style="margin: 0;">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th>名前 / メールアドレス</th>
+                        <th>役割</th>
+                        <th>有効状態</th> 
+                        <th style="width: 150px; text-align: center;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td class="item-id" th:text="${user.id}"></td>
+                        <td>
+                            <div style="font-weight: bold;" th:text="${user.name}"></div>
+                            <div class="user-email" th:text="${user.email}"></div>
+                        </td>
+                        <td>
+                            <span class="user-role-badge">
+                                <i class="fas fa-user-tag" style="font-size: 0.7rem;"></i> 
+                                <th:block th:text="${user.role}"></th:block>
+                            </span>
+                        </td>
+                        <td>
+                            <span th:if="${!user.banned}" class="user-status-active">
+                                <i class="fas fa-check-circle"></i> 有効
+                            </span>
+                            <span th:if="${user.banned}" class="user-status-banned">
+                                <i class="fas fa-ban"></i> 無効
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <form th:if="${!user.banned}" 
+                                th:action="@{/admin/users/{id}/ban(id=${user.id})}" method="post"
+                                style="display:inline;">
+                                <input type="hidden" name="reason" value="管理者による一時的な無効" />
+                                <input type="hidden" name="disableLogin" value="true" />
+                                <button type="submit" class="button danger" style="padding: 5px 12px; font-size: 0.8rem;"
+                                    onclick="return confirm('このユーザーを無効にしますか？ログインできなくなります。');">
+                                    無効にする
+                                </button>
+                            </form>
+                            
+                            <form th:if="${user.banned}" 
+                                th:action="@{/admin/users/{id}/unban(id=${user.id})}" method="post"
+                                style="display:inline;">
+                                <button type="submit" class="button" style="padding: 5px 12px; font-size: 0.8rem; background-color: #3498db;"
+                                    onclick="return confirm('ユーザーの無効状態を解除しますか？');">
+                                    無効解除
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-sub);">
+                            登録されているユーザーはいません。
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-group">
+            <a th:href="@{/dashboard}" class="button secondary">
+                <i class="fas fa-arrow-left"></i> ダッシュボードに戻る
+            </a>
+        </div>
+    </div>
 </body>
-
 </html>

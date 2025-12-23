@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${item.id == null ? '商品出品 - MarketApp' : '商品編集 - MarketApp'}"></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${item.id == null ? '商品出品 - FleaMarketApp' : '商品編集 - FleaMarketApp'}"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+	<script th:src="@{/js/style.js}" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
     <header class="app-header">
         <div class="header-inner">
@@ -16,56 +16,72 @@
     </header>
 
     <div class="container">
-        <h2 th:text="${item.id == null ? '商品の出品' : '商品の編集'}"></h2>
+        <div class="page-header" style="text-align: center;">
+            <h1 th:text="${item.id == null ? '商品の出品' : '商品の編集'}"></h1>
+            <p th:text="${item.id == null ? '売りたい商品の情報を入力してください。' : '商品の情報を修正して保存してください。'}"></p>
+        </div>
 
         <div class="form-box">
-            <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+            <div th:if="${errorMessage}" class="error-message:empty error-message" th:text="${errorMessage}"></div>
 
             <form th:action="${item.id == null ? '/items' : '/items/' + item.id}" method="post" enctype="multipart/form-data">
                 <input type="hidden" th:if="${item.id != null}" name="_method" value="put">
 
                 <div class="form-group">
-                    <label for="name">商品名</label>
-                    <input type="text" id="name" name="name" th:value="${item.name}" class="input-field" placeholder="商品名を入力してください" required>
+                    <label for="name"><i class="fas fa-tag"></i> 商品名</label>
+                    <input type="text" id="name" name="name" th:value="${item.name}" class="input-field" 
+                           placeholder="例: 【美品】ワイヤレスイヤホン" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="description">商品の説明</label>
-                    <textarea id="description" name="description" th:text="${item.description}" class="input-field" placeholder="商品の状態、色、素材、注意点など"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="categoryId">カテゴリー</label>
+                    <label for="categoryId"><i class="fas fa-list"></i> カテゴリー</label>
                     <select id="categoryId" name="categoryId" class="input-field" required>
-                        <option value="">選択してください</option>
+                        <option value="">カテゴリーを選択してください</option>
                         <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
                                 th:selected="${item.category != null and item.category.id == category.id}"></option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="price">販売価格 (¥)</label>
-                    <input type="number" id="price" name="price" th:value="${item.price}" class="input-field" placeholder="例: 1000" required>
+                    <label for="price"><i class="fas fa-yen-sign"></i> 販売価格</label>
+                    <input type="number" id="price" name="price" th:value="${item.price}" class="input-field" 
+                           placeholder="商品の値段を入力してください" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="image">商品画像</label>
-                    <input type="file" id="image" name="image" accept="image/*" style="display: block; margin-top: 5px;">
-                    
-                    <div th:if="${item.imageUrl}" class="image-preview-container">
-                        <span class="current-img-label">現在の画像:</span>
-                        <img th:src="${item.imageUrl}" class="preview-img">
-                    </div>
+                    <label for="description"><i class="fas fa-align-left"></i> 商品の説明</label>
+                    <textarea id="description" name="description" th:text="${item.description}" class="input-field" 
+                              rows="6" placeholder="商品の状態（傷、汚れ）、色、素材、サイズ、購入時期などを詳しく書くと売れやすくなります。"></textarea>
                 </div>
 
-                <div class="button-group">
-                    <button type="submit" class="button" th:text="${item.id == null ? '出品する' : '変更を保存する'}"></button>
-                    <a th:href="@{/items}" class="button secondary">キャンセル</a>
+				<div class="form-group">
+				    <label for="image"><i class="fas fa-camera"></i> 商品画像</label>
+				    <div style="border: 2px dashed #ddd; padding: 20px; border-radius: 8px; text-align: center; background: #fafafa;">
+				        <input type="file" id="imageInput" name="image" accept="image/*" style="cursor: pointer;">
+				        <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">※5MB以下の画像を選択してください</p>
+				    </div>
+				    
+				    <div id="new-preview-container" class="image-preview-container" style="display: none;">
+				        <span class="current-img-label">選択中の画像:</span>
+				        <img id="imagePreview" src="" class="preview-img">
+				    </div>
+
+				    <div th:if="${item.imageUrl}" id="existing-preview" class="image-preview-container">
+				        <span class="current-img-label">現在の画像:</span>
+				        <img th:src="${item.imageUrl}" class="preview-img">
+				    </div>
+				</div>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button type="submit" class="button" style="flex: 2;">
+                        <i class="fas fa-check"></i> [[${item.id == null ? '出品する' : '変更を保存する'}]]
+                    </button>
+                    <a th:href="@{/items}" class="button secondary" style="flex: 1; text-align: center;">キャンセル</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <div style="height: 40px;"></div>
+    <div style="height: 60px;"></div>
 </body>
 </html>

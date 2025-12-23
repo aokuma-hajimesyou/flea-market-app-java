@@ -1,47 +1,70 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	<title>販売履歴</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>販売履歴 - FleaMarketApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
-	<div class="container">
-		<h1>販売履歴</h1>
-		<p>あなたが販売した商品の一覧です</p>
-		<table>
-			<thead>
-				<tr>
-					<th>商品名</th>
-					<th>購入者</th>
-					<th>価格</th>
-					<th>ステータス</th>
-					<th>操作</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="order : ${mySales}">
-					<td th:text="${order.item.name}"></td>
-					<td th:text="${order.buyer.name}"></td>
-					<td th:text="'¥' + ${#numbers.formatDecimal(order.price, 0, 'COMMA', 0,'POINT')}"></td>
-					<td th:text="${order.status}"></td>
-					<td>
-						<form th:action="@{/orders/{id}/ship(id=${order.id})}" method="post" th:if="${order.status == '購入済'}">
-							<button type="submit" class="button">発送済みにする</button>
-						</form>
-					</td>
-				</tr>
-				<tr th:if="${#lists.isEmpty(mySales)}">
-					<td colspan="5">販売した商品はありません。</td>
-				</tr>
-			</tbody>
-		</table>
-		<div class="botton-group">
-			<a th:href="@{/my-page}" class="button secondary">マイページに戻る</a>
-		</div>
-	</div>
-</body>
+    <header class="app-header">
+        <div class="header-inner">
+            <h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
+        </div>
+    </header>
 
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-hand-holding-usd"></i> 販売履歴</h1>
+            <p>あなたが販売した商品と、現在の取引状況です。</p>
+        </div>
+
+        <div th:if="${#lists.isEmpty(mySales)}" class="empty-state">
+            <i class="fas fa-coins" style="font-size: 3rem; color: #ccc;"></i>
+            <p>まだ販売した商品はありません。</p>
+        </div>
+
+        <div class="order-list">
+            <div th:each="order : ${mySales}" class="order-card">
+                <div class="order-info">
+                    <div class="status-group" style="margin-bottom: 10px;">
+                        <span class="status-badge" 
+                              th:classappend="${order.status == '購入済' ? 'status-sold-pending' : (order.status == '完了' ? 'status-finished' : 'status-shipped')}"
+                              th:text="${order.status}">ステータス</span>
+                    </div>
+                    <h3 th:text="${order.item.name}">商品名</h3>
+                    <div class="order-details">
+                        <span><i class="fas fa-user-tag"></i> 購入者: <th:block th:text="${order.buyer.name}"></th:block> 様</span>
+                        <span><i class="fas fa-coins"></i> 売上: <th:block th:text="'¥' + ${#numbers.formatDecimal(order.price, 0, 'COMMA', 0, 'POINT')}"></th:block></span>
+                    </div>
+
+                    <div th:if="${order.status == '購入済'}" class="ship-action-box">
+                        <p><i class="fas fa-truck-loading"></i> 商品を発送してください</p>
+                        <form th:action="@{/orders/{id}/ship(id=${order.id})}" method="post" style="margin: 0;">
+                            <button type="submit" class="button" style="padding: 6px 15px; font-size: 0.85rem;">
+                                発送済みにする
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="order-actions" th:if="${order.status != '購入済'}">
+                    <span th:if="${order.status == '発送済'}" style="color: var(--text-sub); font-size: 0.9rem;">
+                        <i class="fas fa-paper-plane"></i> 発送済み（受取待ち）
+                    </span>
+                    <span th:if="${order.status == '完了'}" style="color: var(--primary-color); font-size: 0.9rem; font-weight: bold;">
+                        <i class="fas fa-check-circle"></i> 取引完了
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group" style="margin-top: 40px;">
+            <a th:href="@{/my-page}" class="button secondary">
+                <i class="fas fa-arrow-left"></i> マイページに戻る
+            </a>
+        </div>
+    </div>
+</body>
 </html>

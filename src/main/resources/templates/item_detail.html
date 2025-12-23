@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${item.name} + ' - FleaMarketApp'"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
     <header class="app-header">
         <div class="header-inner">
@@ -16,84 +15,95 @@
     </header>
 
     <div class="container">
-        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+        <div th:if="${errorMessage}" class="error-message:empty error-message" th:text="${errorMessage}"></div>
         <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
 
         <div class="detail-box">
-            <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像"
-                class="item-image-main">
+            <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像" class="item-image-main">
             
-            <h1 th:text="${item.name}" style="margin-top: 0;"></h1>
-            
-            <p class="price">
-                <span th:text="'¥' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></span>
-            </p>
+            <div class="detail-content">
+                <h1 th:text="${item.name}"></h1>
+                <div class="detail-price">
+                    <span th:text="'¥' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                </div>
 
-            <div class="item-info-table" style="margin-bottom: 20px;">
-                <p><strong>説明:</strong> <span th:text="${item.description}"></span></p>
-                <p><strong>カテゴリー:</strong> <span th:text="${item.category != null ? item.category.name : '未分類'}"></span></p>
-                <p><strong>出品者:</strong> 
-                    <a th:href="@{/users/{id}(id=${item.seller.id})}" th:text="${item.seller.name}" style="color: var(--accent-color);"></a>
-                    <span th:if="${sellerAverageRating}" style="color: var(--text-sub); font-size: 0.9rem;">
-                        <i class="fas fa-star" style="color: #ffc107;"></i> <span th:text="${sellerAverageRating}"></span>
-                    </span>
-                </p>
-                <p><strong>ステータス:</strong> 
-                    <span class="badge" th:text="${item.status}" 
-                          th:style="${item.status == '出品中' ? 'background:#e1f5fe; color:#01579b; padding:2px 8px; border-radius:4px;' : 'background:#eee; padding:2px 8px; border-radius:4px;'}"></span>
-                </p>
-            </div>
+                <div class="item-info-table">
+                    <p style="white-space: pre-wrap; margin-bottom: 20px;"><strong style="display:block; margin-bottom:5px;">商品説明</strong><span th:text="${item.description}"></span></p>
+                    <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+                    <p><strong>カテゴリー:</strong> <span class="category-tag" th:text="${item.category != null ? item.category.name : '未分類'}"></span></p>
+                    <p><strong>出品者:</strong> 
+                        <a th:href="@{/users/{id}(id=${item.seller.id})}" th:text="${item.seller.name}" style="color: var(--primary-color); font-weight: bold;"></a>
+                        <span th:if="${sellerAverageRating}" style="margin-left:8px;">
+                            <i class="fas fa-star" style="color: #ffc107;"></i> <span th:text="${sellerAverageRating}"></span>
+                        </span>
+                    </p>
+                    <p><strong>商品の状態:</strong> 
+                        <span class="status-badge" th:classappend="${item.status == '出品中' ? 'status-on-sale' : 'status-sold'}" th:text="${item.status}"></span>
+                    </p>
+                </div>
 
-            <div class="button-group">
-                <form th:action="@{/orders/initiate-purchase}" method="post"
-                    th:if="${item.status == '出品中' and item.seller.email != #authentication.name}"
-                    onsubmit="return confirm('本当にこの商品を購入しますか？');" style="flex: 2;">
-                    <input type="hidden" name="itemId" th:value="${item.id}">
-                    <button type="submit" class="button" style="width: 100%;">
-                        <i class="fas fa-shopping-cart"></i> 購入手続きへ
-                    </button>
-                </form>
-
-                <div sec:authorize="isAuthenticated()" th:if="${item.seller.email != #authentication.name}" style="flex: 1;">
-                    <form th:if="${isFavorited}" th:action="@{/items/{id}/unfavorite(id=${item.id})}" method="post">
-                        <button type="submit" class="button danger is-favorited" style="width: 100%;">
-                            <i class="fas fa-heart"></i> 解除
+                <div class="button-group" style="margin-top: 30px; display: flex; gap: 10px;">
+                    <form th:action="@{/orders/initiate-purchase}" method="post"
+                        th:if="${item.status == '出品中' and item.seller.email != #authentication.name}"
+                        onsubmit="return confirm('本当にこの商品を購入しますか？');" style="flex: 2;">
+                        <input type="hidden" name="itemId" th:value="${item.id}">
+                        <button type="submit" class="button" style="width: 100%; height: 55px; font-size: 1.1rem;">
+                            <i class="fas fa-shopping-cart"></i> 購入手続きへ
                         </button>
                     </form>
-                    <form th:unless="${isFavorited}" th:action="@{/items/{id}/favorite(id=${item.id})}" method="post">
-                        <button type="submit" class="button danger" style="width: 100%; background-color: var(--primary-color); color: white;">
-                            <i class="far fa-heart"></i> お気に入り
-                        </button>
-                    </form>
+
+                    <div sec:authorize="isAuthenticated()" th:if="${item.seller.email != #authentication.name}" style="flex: 1;">
+                        <form th:if="${isFavorited}" th:action="@{/items/{id}/unfavorite(id=${item.id})}" method="post">
+                            <button type="submit" class="button secondary" style="width: 100%; height: 55px; color: #ff4d4f; border-color: #ff4d4f;">
+                                <i class="fas fa-heart"></i> 解除
+                            </button>
+                        </form>
+                        <form th:unless="${isFavorited}" th:action="@{/items/{id}/favorite(id=${item.id})}" method="post">
+                            <button type="submit" class="button secondary" style="width: 100%; height: 55px;">
+                                <i class="far fa-heart"></i> お気に入り
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <h2><i class="far fa-comments"></i> コメント</h2>
-        <div class="chat-box">
-            <div th:each="chat : ${chats}" class="chat-message"
-                th:classappend="${chat.sender.email == #authentication.name ? 'my-message' : 'other-message'}">
-                <span class="sender-name" th:text="${chat.sender.name}"></span>
-                <p th:text="${chat.message}" style="margin: 5px 0;"></p>
-                <span class="message-time" th:text="${#temporals.format(chat.createdAt, 'MM/dd HH:mm')}"></span>
-            </div>
-            <div th:if="${#lists.isEmpty(chats)}" style="text-align: center; color: var(--text-sub); padding: 20px;">
-                <p>まだコメントはありません。不明な点を質問してみましょう。</p>
-            </div>
-        </div>
+		<h2 style="font-size: 1.2rem; margin-top: 40px; margin-bottom: 15px;">
+		    <i class="fas fa-comments"></i> コメント一覧
+		</h2>
 
-        <form th:action="@{/chat/{itemId}(itemId=${item.id})}" method="post" class="chat-form">
-            <textarea name="message" class="input-field" placeholder="値下げ交渉や商品状態の質問など" required></textarea>
-            <button type="submit" class="button" style="background-color: var(--text-main); margin-top: 10px;">コメントを送信する</button>
-        </form>
+		<div class="chat-container">
+		    <div th:each="chat : ${chats}" class="chat-message"
+		        th:classappend="${chat.sender.email == #authentication.name ? 'my-message' : 'other-message'}">
+		        
+		        <span class="sender-name">
+		            <i class="fas fa-user-circle"></i> <th:block th:text="${chat.sender.name}"></th:block>
+		            <th:block th:if="${chat.sender.email == #authentication.name}">(あなた)</th:block>
+		        </span>
+		        
+		        <p th:text="${chat.message}" style="margin: 0;"></p>
+		        
+		        <span class="message-time" th:text="${#temporals.format(chat.createdAt, 'MM/dd HH:mm')}"></span>
+		    </div>
 
-        <div class="button-group" style="margin-top: 20px;">
-            <a th:href="@{/items}" class="button secondary" style="width: 100%;">
+		    <div th:if="${#lists.isEmpty(chats)}" style="text-align: center; color: #bbb; padding: 40px;">
+		        <p>コメントはまだありません。</p>
+		    </div>
+		</div>
+
+		<form th:action="@{/chat/{itemId}(itemId=${item.id})}" method="post" class="chat-form">
+		    <textarea name="message" class="input-field" rows="3" placeholder="コメントを入力してください" required></textarea>
+		    <button type="submit" class="button" style="width: 100%; background: #333; margin-top: 10px;">
+		        <i class="fas fa-paper-plane"></i> コメントを送信する
+		    </button>
+		</form>
+
+        <div class="button-group" style="margin-top: 30px;">
+            <a th:href="@{/items}" class="button secondary" style="width: 100%; text-align: center;">
                 <i class="fas fa-arrow-left"></i> 商品一覧に戻る
             </a>
         </div>
     </div>
-
-    <div style="height: 40px;"></div>
+    <div style="height: 60px;"></div>
 </body>
 </html>

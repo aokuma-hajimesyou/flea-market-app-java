@@ -1,55 +1,92 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head>
-	<meta charset="UTF-8">
-	<title>管理者: 商品管理 - フリマアプリ</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者: 商品管理 - FleaMarketApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+<body style="background-color: #f4f7f6;">
+    <header class="app-header" style="background-color: #2c3e50;">
+        <div class="header-inner">
+            <h1 class="app-title"><a th:href="@{/admin/dashboard}" style="color: #fff;">Admin Panel</a></h1>
+            <div class="header-nav">
+                <a th:href="@{/admin/dashboard}" style="color: #fff; margin-right: 20px; text-decoration: none;">
+                    <i class="fas fa-chart-pie"></i> ダッシュボード
+                </a>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="button secondary" style="padding: 5px 15px; font-size: 0.8rem;">ログアウト</button>
+                </form>
+            </div>
+        </div>
+    </header>
 
-<body>
-	<div class="container">
-		<h1>管理者: 商品管理</h1>
-		<p>システム内の全ての商品を管理します。</p>
+    <div class="container" style="max-width: 1100px;">
+        <div class="page-header">
+            <h1><i class="fas fa-boxes"></i> 商品管理一覧</h1>
+            <p>不適切な商品の削除や、在庫状況の確認を行えます。</p>
+        </div>
 
-		<table>
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>商品名</th>
-					<th>出品者</th>
-					<th>価格</th>
-					<th>カテゴリ</th>
-					<th>ステータス</th>
-					<th>操作</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="item : ${items}">
-					<td th:text="${item.id}"></td>
-					<td th:text="${item.name}"></td>
-					<td th:text="${item.seller.name}"></td>
-					<td th:text="'¥' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></td>
-					<td th:text="${item.category != null ? item.category.name : '未分類'}"></td>
-					<td th:text="${item.status}"></td>
-					<td>
-						<form th:action="@{/admin/items/{id}/delete(id=${item.id})}" method="post"
-							style="display:inline;">
-							<button type="submit" class="button danger"
-								onclick="return confirm('本当にこの商品を削除しますか？');">削除</button>
-						</form>
-					</td>
-				</tr>
-				<tr th:if="${#lists.isEmpty(items)}">
-					<td colspan="7">商品がありません。</td>
-				</tr>
-			</tbody>
-		</table>
+        <div class="admin-table-container">
+            <table class="admin-table" style="margin: 0;">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th>商品名</th>
+                        <th>出品者</th>
+                        <th>価格</th>
+                        <th>カテゴリ</th>
+                        <th>ステータス</th>
+                        <th style="width: 100px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${items}">
+                        <td class="item-id" th:text="${item.id}"></td>
+                        <td>
+                            <a th:href="@{/items/{id}(id=${item.id})}" th:text="${item.name}" target="_blank" 
+                               style="color: var(--primary-color); font-weight: 500;"></a>
+                            <i class="fas fa-external-link-alt" style="font-size: 0.7rem; color: #ccc;"></i>
+                        </td>
+                        <td>
+                            <i class="far fa-user"></i> <span th:text="${item.seller.name}"></span>
+                        </td>
+                        <td style="font-weight: bold;" th:text="'¥' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></td>
+                        <td>
+                            <span class="category-tag">
+                                <i class="fas fa-tag" style="font-size: 0.7rem;"></i> 
+                                <th:block th:text="${item.category != null ? item.category.name : '未分類'}"></th:block>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge" 
+                                  th:classappend="${item.status == '出品中' ? 'status-shipped' : 'status-pending'}"
+                                  th:text="${item.status}"></span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/items/{id}/delete(id=${item.id})}" method="post"
+                                onsubmit="return confirm('管理権限でこの商品を削除しますか？\nこの操作は取り消せません。');">
+                                <button type="submit" class="button danger danger-sm">
+                                    <i class="fas fa-trash"></i> 削除
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(items)}">
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-sub);">
+                            管理対象の商品が見つかりません。
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-		<div class="button-group">
-			<a th:href="@{/dashboard}" class="button secondary">管理者ダッシュボードに戻る</a>
-		</div>
-	</div>
+        <div class="button-group">
+            <a th:href="@{/dashboard}" class="button secondary">
+                <i class="fas fa-arrow-left"></i> ダッシュボードに戻る
+            </a>
+        </div>
+    </div>
 </body>
-
 </html>

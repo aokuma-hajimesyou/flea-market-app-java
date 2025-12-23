@@ -1,33 +1,59 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	<title>お気に入り</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お気に入り - FleaMarketApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
-	<div class="container">
-		<h1>お気に入り</h1>
-		<p>あなたがお気に入り登録した商品の一覧です</p>
-		<div class="item-grid">
-			<div class="item_card" th:each="item:${myFavorites}">
-				<a th:href="@{/items/{id}(id=${item.id})}">
-					<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像">
-					<h3 th:text="${item.name}"></h3>
-					<p class="price" th:text="'¥' + ${#numbers.formatDecimal(item.price, 0,'COMMA', 0, 'POINT')}"></p>
-					<p class="status" th:text="${item.status}"></p>
-				</a>
-			</div>
-			<div th:if="${#lists.isEmpty(myFavorites)}">
-				<p>お気に入りの商品はありません</p>
-			</div>
-		</div>
-		<div class="button-group">
-			<a th:href="@{/my-page}" class="button secondary">マイページに戻る</a>
-		</div>
-	</div>
-</body>
+    <header class="app-header">
+        <div class="header-inner">
+            <h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
+        </div>
+    </header>
 
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-heart" style="color: #ff4d4f;"></i> お気に入り</h1>
+            <p>気になる商品をチェックしておきましょう。</p>
+        </div>
+
+        <div th:if="${#lists.isEmpty(myFavorites)}" class="empty-state" style="padding: 60px 0;">
+            <i class="far fa-heart" style="font-size: 4rem; color: #eee; margin-bottom: 20px;"></i>
+            <p style="color: var(--text-sub);">お気に入りの商品はまだありません。</p>
+            <a th:href="@{/items}" class="button" style="margin-top: 15px;">商品を探しに行く</a>
+        </div>
+
+        <div class="favorite-grid" th:unless="${#lists.isEmpty(myFavorites)}">
+            <div class="fav-card" th:each="item : ${myFavorites}">
+                <a th:href="@{/items/{id}(id=${item.id})}" style="text-decoration: none; color: inherit;">
+                    <div class="fav-image-wrapper">
+                        <span class="fav-status-badge" 
+                              th:if="${item.status != '出品中'}" 
+                              th:classappend="${item.status == '売り切れ' ? 'fav-status-sold' : ''}"
+                              th:text="${item.status}">
+                        </span>
+                        <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像">
+                    </div>
+                    <div style="padding: 12px;">
+                        <h3 th:text="${item.name}" style="font-size: 0.95rem; margin-bottom: 8px; height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                            商品名
+                        </h3>
+                        <p class="price" style="font-weight: bold; color: var(--primary-color); font-size: 1.1rem; margin: 0;">
+                            <th:block th:text="'¥' + ${#numbers.formatDecimal(item.price, 0,'COMMA', 0, 'POINT')}"></th:block>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="button-group" style="margin-top: 50px; text-align: center;">
+            <a th:href="@{/my-page}" class="button secondary">
+                <i class="fas fa-chevron-left"></i> マイページに戻る
+            </a>
+        </div>
+    </div>
+</body>
 </html>
