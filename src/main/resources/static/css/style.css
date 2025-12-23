@@ -34,6 +34,111 @@ ul { list-style: none; padding: 0; margin: 0; }
 }
 
 /* ==========================================================================
+   追加：検索ボタン・ログアウト・セレクトボックスの基本デザイン
+   ========================================================================== */
+
+/* 1. ログアウトボタンのスタイル (ヘッダー用) */
+.logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem; /* アイコンを少し大きく */
+    color: var(--text-sub);
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.logout-btn:hover {
+    color: var(--primary-color); /* ホバー時にメルカリレッドに */
+}
+
+/* 2. セレクトボックス (カテゴリ絞り込み) */
+.select-group {
+    min-width: 150px;
+}
+
+.select-group select {
+    width: 100%;
+    height: 40px; /* 検索窓と高さを合わせる */
+    padding: 0 30px 0 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    appearance: none; /* デフォルトの矢印を消す(カスタムする場合) */
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+}
+
+.select-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* 3. 検索ボタン (虫眼鏡の横のボタン) */
+.search-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.95rem;
+    height: 40px; /* 検索窓と高さを合わせる */
+    transition: opacity 0.2s;
+    white-space: nowrap;
+}
+
+.search-btn:hover {
+    opacity: 0.85;
+}
+
+/* 検索列の微調整（スマホ対応） */
+@media (max-width: 480px) {
+    .search-row {
+        flex-direction: column; /* スマホでは縦並びに */
+        gap: 10px;
+    }
+    
+    .input-group, .select-group, .search-btn {
+        width: 100%; /* 全幅表示 */
+    }
+}
+
+/* 4. ページネーションのボタン調整 */
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    background: #fff;
+    color: var(--text-main);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 40px;
+}
+
+.page-link.current {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.page-link:hover:not(.current) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* ==========================================================================
    2. 共通コンポーネント (ボタン・フォーム・メッセージ)
    ========================================================================== */
 
@@ -233,6 +338,78 @@ ul { list-style: none; padding: 0; margin: 0; }
     color: #fff; border-radius: 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     box-shadow: 0 4px 10px rgba(225,58,51,0.4); z-index: 1000;
+}
+
+/* --- 評価一覧専用スタイル --- */
+.review-section {
+    margin-bottom: 40px;
+}
+
+.review-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--text-main);
+}
+
+.review-list {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.review-item:last-child {
+    border-bottom: none;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.review-user {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.review-date {
+    font-size: 0.8rem;
+    color: var(--text-sub);
+}
+
+.star-rating {
+    color: #ffc107; /* 綺麗なゴールド */
+    margin-bottom: 5px;
+}
+
+.review-item-name {
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.review-comment {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    line-height: 1.4;
+    white-space: pre-wrap; /* 改行を反映 */
+}
+
+.empty-state {
+    padding: 30px;
+    text-align: center;
+    color: var(--text-sub);
+    font-size: 0.9rem;
 }
 
 /* レスポンシブ */
