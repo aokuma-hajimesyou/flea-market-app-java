@@ -2,57 +2,70 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-	<meta charset="UTF-8">
-	<title th:text="${item.id == null ? '商品出品' : '商品編集'}"></title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta charset="UTF-8">
+    <title th:text="${item.id == null ? '商品出品 - MarketApp' : '商品編集 - MarketApp'}"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
-	<div class="container">
-		<h1 th:text="${item.id == null ? '商品出品' : '商品編集'}"></h1>
-		<div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+    <header class="app-header">
+        <div class="header-inner">
+            <h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
+        </div>
+    </header>
 
-		<form th:action="${item.id == null ? '/items' : '/items/' + item.id}" method="post"
-			enctype="multipart/form-data">
-			<input type="hidden" th:if="${item.id != null}" name="_method" value="put">
+    <div class="container">
+        <h2 th:text="${item.id == null ? '商品の出品' : '商品の編集'}"></h2>
 
-			<p>
-				<label for="name">商品名:</label>
-				<input type="text" id="name" name="name" th:value="${item.name}" required>
-			</p>
+        <div class="form-box">
+            <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
 
-			<p>
-				<label for="description">商品説明:</label>
-				<textarea id="description" name="description" th:text="${item.description}"></textarea>
-			</p>
+            <form th:action="${item.id == null ? '/items' : '/items/' + item.id}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:if="${item.id != null}" name="_method" value="put">
 
-			<p>
-				<label for="price">価格 (¥):</label>
-				<input type="number" id="price" name="price" th:value="${item.price}" step="0.01" required>
-			</p>
+                <div class="form-group">
+                    <label for="name">商品名</label>
+                    <input type="text" id="name" name="name" th:value="${item.name}" placeholder="商品名を入力してください" required>
+                </div>
 
-			<p>
-				<label for="categoryId">カテゴリ:</label>
-				<select id="categoryId" name="categoryId" required>
-					<option value="">選択してください</option>
-					<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-						th:selected="${item.category != null and item.category.id == category.id}"></option>
-				</select>
-			</p>
+                <div class="form-group">
+                    <label for="description">商品の説明</label>
+                    <textarea id="description" name="description" th:text="${item.description}" placeholder="商品の状態、色、素材、注意点など"></textarea>
+                </div>
 
-			<p>
-				<label for="image">商品画像:</label>
-				<input type="file" id="image" name="image" accept="image/*">
-				<span th:if="${item.imageUrl}">現在の画像: <img th:src="${item.imageUrl}"
-						style="width: 100px; height: auto;"></span>
-			</p>
+                <div class="form-group">
+                    <label for="categoryId">カテゴリー</label>
+                    <select id="categoryId" name="categoryId" required>
+                        <option value="">選択してください</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
+                                th:selected="${item.category != null and item.category.id == category.id}"></option>
+                    </select>
+                </div>
 
-			<div class="button-group">
-				<button type="submit" th:text="${item.id == null ? '出品する' : '更新する'}"></button>
-				<a th:href="@{/items}" class="button secondary">キャンセル</a>
-			</div>
-		</form>
-	</div>
+                <div class="form-group">
+                    <label for="price">販売価格 (¥)</label>
+                    <input type="number" id="price" name="price" th:value="${item.price}" placeholder="例: 1000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">商品画像</label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    
+                    <div th:if="${item.imageUrl}" class="image-preview-container">
+                        <span class="current-img-label">現在の画像:</span>
+                        <img th:src="${item.imageUrl}" class="preview-img">
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="button" th:text="${item.id == null ? '出品する' : '変更を保存する'}"></button>
+                    <a th:href="@{/items}" class="button secondary">キャンセル</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div style="height: 40px;"></div>
 </body>
-
 </html>
