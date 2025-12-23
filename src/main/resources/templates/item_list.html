@@ -15,7 +15,7 @@
 	<!-- ヘッダー（検索・ナビゲーション） -->
 	<header class="app-header">
 		<div class="header-inner">
-			<h1 class="app-title"><a th:href="@{/items}">フリマアプリ</a></h1>
+			<h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
 
 			<div class="header-actions">
 				<a th:href="@{/my-page}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
@@ -35,12 +35,13 @@
 							placeholder="なにをお探しですか？">
 					</div>
 					<div class="select-group">
-						<select id="categoryId" name="categoryId">
-							<option value="">すべてのカテゴリ</option>
-							<option th:each="category : ${categories}" th:value="${category.id}"
-								th:text="${category.name}"
-								th:selected="${param.categoryId != null and param.categoryId.toString() == category.id.toString()}">
-							</option>
+						<select id="categoryId" name="categoryId" onchange="this.form.submit()">
+						    <option value="">すべてのカテゴリ</option>
+						    <option th:each="category : ${categories}" 
+						            th:value="${category.id}"
+						            th:text="${category.name}"
+						            th:selected="${param.categoryId != null and param.categoryId[0] == category.id.toString()}">
+						    </option>
 						</select>
 					</div>
 					<button type="submit" class="search-btn">検索</button>
