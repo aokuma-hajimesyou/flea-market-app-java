@@ -1,32 +1,59 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	<title>ログイン</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン - FleaMarketApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
-	<div class="container">
-		<h1>フリマアプリ</h1>
-		<h2>ログイン</h2>
-		<form th:action="@{/login}" method="post">
-			<div th:if="${param.error}" class="error-message">メールアドレスかパスワードが不正です。またはアカウントが無効です</div>
-			<div th:if="${param.logout}" class="success-mesage">ログアウトしました</div>
-			<p>
-				<label for="username">メールアドレス:</label>
-				<input type="email" id="username" name="username" required>
-			</p>
-			<p>
-				<label for="password">パスワード</label>
-				<input type="password" id="password" name="password" required>
-			</p>
-			<div class="button-group">
-				<button type="submit">ログイン</button>
-			</div>
-		</form>
-	</div>
-</body>
+    <div class="container auth-container">
+        
+        <div class="auth-header">
+            <h1>FleaMarketApp</h1>
+            <p>おかえりなさい！ログインしてください</p>
+        </div>
 
+        <div class="form-box">
+            <div th:if="${param.error}" class="error-message">
+                <i class="fas fa-exclamation-circle"></i> メールアドレスかパスワードが正しくありません
+            </div>
+            <div th:if="${param.logout}" class="success-message">
+                <i class="fas fa-check-circle"></i> ログアウトしました
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label for="username">メールアドレス</label>
+                    <input type="email" id="username" name="username" class="input-field" 
+                           placeholder="example@mail.com" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" name="password" class="input-field" 
+                           placeholder="••••••••" required>
+                </div>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button type="submit" class="button" style="width: 100%;">
+                        ログイン
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="auth-footer">
+            <p>アカウントをお持ちでないですか？</p>
+            <a th:href="@{/register}">新規会員登録はこちら</a>
+        </div>
+        
+        <!--<div class="auth-footer" style="margin-top: 40px;">
+            <a th:href="@{/items}" style="color: var(--text-sub); font-weight: normal;">
+                <i class="fas fa-arrow-left"></i> 商品一覧をみる
+            </a>
+        </div> -->
+    </div>
+</body>
 </html>
