@@ -124,6 +124,14 @@ public class AppOrderService {
 				.max(Long::compare);
 	}
 
+	public Optional<AppOrder> completeOrder(Long orderId) {
+		return appOrderRepository.findById(orderId)
+				.map(order -> {
+					order.setStatus("到着済");
+					return appOrderRepository.save(order);
+				});
+	}
+
 	public BigDecimal getTotalSales(LocalDate startDate, LocalDate endDate) {
 		return appOrderRepository.findAll().stream()
 				.filter(order -> order.getStatus().equals("購入済") ||
