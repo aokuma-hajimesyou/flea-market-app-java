@@ -84,13 +84,7 @@ public class AppOrderController {
 			appOrderService.completePurchase(paymentIntentId);
 			redirectAttributes.addFlashAttribute("successMessage", "商品を購入しました！");
 
-			return appOrderService.getLatestCompletedOrderId()
-					.map(orderId -> "redirect:/reviews/new/" + orderId)
-					.orElseGet(() -> {
-						redirectAttributes.addFlashAttribute("errorMessage",
-								"購入は完了しましたが、評価ページへのリダイレクトに失敗しました。");
-						return "redirect:/my-page/orders";
-					});
+			return "item_buy_success";
 		} catch (StripeException | IllegalStateException e) {
 			redirectAttributes.addFlashAttribute("errorMessage",
 					"決済処理中にエラーが発生しました: " + e.getMessage());
