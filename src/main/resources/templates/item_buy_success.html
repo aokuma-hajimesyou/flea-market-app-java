@@ -1,15 +1,46 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>購入完了 - FleaMarketApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-	<h2>ご注文ありがとうございます</h2>
-	<p>商品の購入に成功しました</p>
-	<p>到着後に到着完了ボタンを押し、レビューを送信してください</p>
-	<div class="button-group">
-		<a th:href="@{/items}" class="button secondary">商品一覧に戻る</a>
-	</div>
+    <header class="app-header">
+        <div class="header-inner">
+            <h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="success-container">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <div class="success-message">
+                <h2>ご注文ありがとうございます！</h2>
+                <p>商品の購入手続きが正常に完了しました。</p>
+            </div>
+
+            <div class="instruction-box">
+                <p><strong><i class="fas fa-info-circle"></i> 今後の流れ：</strong></p>
+                <p>1. 出品者が商品を発送するまでお待ちください。</p>
+                <p>2. 商品が届きましたら「購入履歴」から<strong>到着完了</strong>ボタンを押してください。</p>
+                <p>3. 出品者の評価（レビュー）を送信して取引完了となります。</p>
+            </div>
+
+            <div class="button-group" style="justify-content: center; margin-top: 40px;">
+                <a th:href="@{/items}" class="button">
+                    <i class="fas fa-search"></i> 他の商品を見る
+                </a>
+                <a th:href="@{/my-page/orders}" class="button secondary">
+                    <i class="fas fa-list-ul"></i> 購入履歴を確認する
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
