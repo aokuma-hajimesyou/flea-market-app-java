@@ -6,10 +6,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.flea_market_app.entity.User;
-import com.example.flea_market_app.repository.UserRepository;
-import com.example.flea_market_app.repository.ReviewRepository;
 import com.example.flea_market_app.entity.Review;
+import com.example.flea_market_app.entity.User;
+import com.example.flea_market_app.repository.ReviewRepository;
+import com.example.flea_market_app.repository.UserRepository;
 
 @Service
 public class UserService {
@@ -91,5 +91,24 @@ public class UserService {
 			userRepository.save(user);
 			System.out.println("User " + userId + " unbanned."); // 仮のログ出力
 		});
+	}
+
+	// UserService.java の registerNewUser メソッドを修正
+
+	@Transactional
+	public void registerNewUser(String name, String email, String password) {
+		User user = new User();
+		user.setName(name);
+		user.setEmail(email);
+
+		// 現在のSecurityConfigの設定に合わせ、生パスワードの頭に {noop} を付与
+		user.setPassword("{noop}" + password);
+
+		// DBの必須項目をセット
+		user.setRole("USER");
+		user.setEnabled(true);
+		user.setBanned(false);
+
+		userRepository.save(user);
 	}
 }
