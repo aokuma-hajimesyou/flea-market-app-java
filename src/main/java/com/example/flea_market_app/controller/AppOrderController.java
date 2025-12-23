@@ -114,4 +114,24 @@ public class AppOrderController {
 
 		return "redirect:/my-page/sales";
 	}
+
+	@PostMapping("/{id}/arrive")
+	public String arriveOrder(
+			@PathVariable("id") Long orderId,
+			RedirectAttributes redirectAttributes) {
+
+		try {
+			appOrderService.markOrderAsShipped(orderId);
+			redirectAttributes.addFlashAttribute("successMessage", "商品を到着済みにしました。");
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+		}
+
+		return appOrderService.completeOrder(orderId)
+				.map(order -> "redirect:/reviews/new/" + orderId)
+				.orElseGet(() -> {
+					redirectAttributes.addFlashAttribute("errorMessage", "評価ページへのリダイレクトに失敗しました。");
+					return "redirect:/my-page/orders";
+				});
+	}
 }

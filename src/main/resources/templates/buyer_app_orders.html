@@ -19,6 +19,7 @@
 					<th>出品者</th>
 					<th>価格</th>
 					<th>ステータス</th>
+					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -27,6 +28,12 @@
 					<td th:text="${order.item.seller.name}"></td>
 					<td th:text="'¥' + ${#numbers.formatDecimal(order.price, 0, 'COMMA', 0, 'POINT')}"></td>
 					<td th:text="${order.status}"></td>
+					<td>
+						<form th:action="@{/orders/{id}/arrive(id=${order.id})}" method="post"
+							th:if="${order.status == '発送済'}" onsubmit="return confirm('本当に到着しましたか？');">
+							<button type="submit" class="button">到着済みにする</button>
+						</form>
+					</td>
 				</tr>
 				<tr th:if="${#lists.isEmpty(myOrders)}">
 					<td colspan="4">購入した商品はありません。</td>
