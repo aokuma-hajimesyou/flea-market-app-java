@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,7 @@ import com.example.flea_market_app.service.CategoryService;
 import com.example.flea_market_app.service.ChatService;
 import com.example.flea_market_app.service.FavoriteService;
 import com.example.flea_market_app.service.ItemService;
+import com.example.flea_market_app.service.ItemViewHistoryService;
 import com.example.flea_market_app.service.ReviewService;
 import com.example.flea_market_app.service.UserService;
 
@@ -37,6 +39,9 @@ public class ItemController {
 	private final ChatService chatService;
 	private final FavoriteService favoriteService;
 	private final ReviewService reviewService;
+
+	@Autowired
+	ItemViewHistoryService itemViewHistoryService;
 
 	public ItemController(
 			ItemService itemService,
@@ -92,20 +97,32 @@ public class ItemController {
 			@PathVariable("id") Long id,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
-		Optional<Item> item = itemService.getItemById(id);
-		if (item.isEmpty()) {
+
+		Optional<Item> itemOpt = itemService.getItemById(id);
+		if (itemOpt.isEmpty()) {
 			return "redirect:/items";
 		}
-		model.addAttribute("item", item.get());
+		Item item = itemOpt.get();
+
+		model.addAttribute("item", item);
 		model.addAttribute("chats", chatService.getChatMessageByItem(id));
-		reviewService.getAverageRatingForSeller(item.get().getSeller())
-				.ifPresent(avg -> model.addAttribute("sellerAverageRating",
-						String.format("%.1f", avg)));
+
+		// 出品者の平均評価
+		reviewService.getAverageRatingForSeller(item.getSeller())
+				.ifPresent(avg -> model.addAttribute("sellerAverageRating", String.format("%.1f", avg)));
+
+		// 2. ログインユーザーに関連する処理
 		if (userDetails != null) {
-			User currenUser = userService.getUserByEmail(userDetails.getUsername())
-					.orElseThrow(() -> new RuntimeException("user not fonund"));
-			model.addAttribute("isFavorited", favoriteService.isFavorited(currenUser, id));
+			User currentUser = userService.getUserByEmail(userDetails.getUsername())
+					.orElseThrow(() -> new RuntimeException("user not found"));
+
+			// お気に入り状況の確認
+			model.addAttribute("isFavorited", favoriteService.isFavorited(currentUser, id));
+
+			itemViewHistoryService.recordView(currentUser, item);
+
 		}
+
 		return "item_detail";
 	}
 
