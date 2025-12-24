@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS favorite_item CASCADE;
 DROP TABLE IF EXISTS review CASCADE;
 DROP TABLE IF EXISTS app_order CASCADE;
 DROP TABLE IF EXISTS item CASCADE;
+DROP TABLE IF EXISTS item_view_history CASCADE;
 DROP TABLE IF EXISTS category CASCADE;
 DROP TABLE IF EXISTS user_complaint CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
@@ -108,6 +109,15 @@ CREATE TABLE user_complaint (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (reported_user_id) REFERENCES users(id),
     FOREIGN KEY (reporter_user_id) REFERENCES users(id)
+);
+
+CREATE TABLE item_view_history (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,    
+    item_id INT NOT NULL,  
+    viewed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES item(id) 
 );
 
 -- ========== INDEX ==========
