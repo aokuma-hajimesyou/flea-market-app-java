@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS chat CASCADE;
 DROP TABLE IF EXISTS favorite_item CASCADE;
 DROP TABLE IF EXISTS review CASCADE;
+DROP TABLE IF EXISTS notification CASCADE;
 DROP TABLE IF EXISTS app_order CASCADE;
 DROP TABLE IF EXISTS item CASCADE;
 DROP TABLE IF EXISTS item_view_history CASCADE;
@@ -100,6 +101,18 @@ CREATE TABLE review (
     FOREIGN KEY (item_id) REFERENCES item(id)
 );
 
+-- 通知テーブル
+CREATE TABLE notification (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    link_url VARCHAR(255),
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- 通報情報（ユーザー同士）
 CREATE TABLE user_complaint (
     id SERIAL PRIMARY KEY,
@@ -140,6 +153,8 @@ CREATE INDEX idx_fav_user_id ON favorite_item(user_id);
 CREATE INDEX idx_fav_item_id ON favorite_item(item_id);
 
 CREATE INDEX idx_review_order_id ON review(order_id);
+
+CREATE INDEX idx_notification_user_unread ON notification(user_id, is_read);
 
 CREATE INDEX idx_uc_reported ON user_complaint(reported_user_id);
 CREATE INDEX idx_uc_reporter ON user_complaint(reporter_user_id);
