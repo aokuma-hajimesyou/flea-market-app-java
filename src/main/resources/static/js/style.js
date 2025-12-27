@@ -30,3 +30,21 @@ const imageInput = document.getElementById('imageInput');
             }
         }
     });
+	
+	document.addEventListener('DOMContentLoaded', function() {
+	    const btn = document.getElementById('notificationBtn');
+	    const modal = document.getElementById('notificationModal');
+
+	    // ベルマーククリックで表示切り替え
+	    btn.addEventListener('click', function(e) {
+	        e.stopPropagation();
+	        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+	    });
+
+	    // モーダル以外をクリックしたら閉じる
+	    document.addEventListener('click', function(e) {
+	        if (!modal.contains(e.target)) {
+	            modal.style.display = 'none';
+	        }
+	    });
+	});

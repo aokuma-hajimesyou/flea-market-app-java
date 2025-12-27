@@ -39,14 +39,15 @@
                         <span><i class="fas fa-coins"></i> 売上: <th:block th:text="'¥' + ${#numbers.formatDecimal(order.price, 0, 'COMMA', 0, 'POINT')}"></th:block></span>
                     </div>
 
-                    <div th:if="${order.status == '購入済'}" class="ship-action-box">
-                        <p><i class="fas fa-truck-loading"></i> 商品を発送してください</p>
-                        <form th:action="@{/orders/{id}/ship(id=${order.id})}" method="post" style="margin: 0;">
-                            <button type="submit" class="button" style="padding: 6px 15px; font-size: 0.85rem;">
-                                発送済みにする
-                            </button>
-                        </form>
-                    </div>
+					<div th:if="${order.status == '購入済'}" class="ship-action-box">
+					    <p class="ship-notice"><i class="fas fa-truck-loading"></i> 商品を発送してください</p>
+					    
+					    <form th:action="@{/orders/{id}/ship(id=${order.id})}" method="post" class="ship-form">
+					        <button type="submit" class="button ship-btn">
+					            発送済みにする
+					        </button>
+					    </form>
+					</div>
                 </div>
 
                 <div class="order-actions" th:if="${order.status != '購入済'}">
