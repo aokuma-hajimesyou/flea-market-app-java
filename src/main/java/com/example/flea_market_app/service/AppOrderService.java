@@ -113,6 +113,19 @@ public class AppOrderService {
 		}
 	}
 
+	/**
+	 * 注文ステータスを「到着済」に更新する
+	 */
+	@Transactional
+	public void markOrderAsArrived(Long orderId) {
+		AppOrder order = appOrderRepository.findById(orderId)
+				.orElseThrow(() -> new IllegalArgumentException("注文が見つかりません ID: " + orderId));
+
+		// ステータスを「到着済」に更新
+		order.setStatus("到着済");
+		appOrderRepository.save(order);
+	}
+
 	public Optional<AppOrder> getOrderById(Long orderId) {
 		return appOrderRepository.findById(orderId);
 	}

@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.flea_market_app.entity.AppOrder;
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.service.AppOrderService;
+import com.example.flea_market_app.service.NotificationService;
 import com.example.flea_market_app.service.ReviewService;
 import com.example.flea_market_app.service.UserService;
 
@@ -23,11 +24,14 @@ public class ReviewController {
 	private final ReviewService reviewService;
 	private final AppOrderService appOrderService;
 	private final UserService userService;
+	private final NotificationService notificationService;
 
-	public ReviewController(ReviewService reviewService, AppOrderService appOrderService, UserService userService) {
+	public ReviewController(ReviewService reviewService, AppOrderService appOrderService, UserService userService,
+			NotificationService notificationService) {
 		this.reviewService = reviewService;
 		this.appOrderService = appOrderService;
 		this.userService = userService;
+		this.notificationService = notificationService;
 	}
 
 	@GetMapping("/new/{orderId}")
@@ -45,10 +49,34 @@ public class ReviewController {
 			@RequestParam("rating") int rating,
 			@RequestParam("comment") String comment,
 			RedirectAttributes redirectAttributes) {
+
 		User reviewer = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("user not found"));
+
 		try {
+			// ★ ここで order を取得する（これがないと下の if 文で order が使えません）
+			AppOrder order = appOrderService.getOrderById(orderId)
+					.orElseThrow(() -> new IllegalArgumentException("order not found"));
+
+			// 1. レビューを保存
 			reviewService.submitReview(orderId, reviewer, rating, comment);
+
+			// 2. 通知の宛先（評価された人）を判定
+			User reviewee;
+			// 購入者がレビューを書いた場合
+			if (reviewer.getId().equals(order.getBuyer().getId())) {
+				reviewee = order.getItem().getSeller();
+			} else {
+				// 出品者がレビューを書いた場合
+				reviewee = order.getBuyer();
+			}
+
+			notificationService.createNotification(
+					reviewee,
+					"評価（レビュー）受領通知",
+					"「" + order.getItem().getName() + "」の取引について評価が届きました。",
+					"/my-page/reviews");
+
 			redirectAttributes.addFlashAttribute("successMessage", "評価を送信しました");
 		} catch (IllegalStateException | IllegalArgumentException e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());

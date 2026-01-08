@@ -25,9 +25,12 @@ public class LineNotifyService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		headers.setBearerAuth(accessToken);
+
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 		map.add("message", message);
+
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+
 		try {
 			restTemplate.postForEntity(lineNotifyApiUrl, request, String.class);
 			System.out.println("LINE Notify message sent successfully.");

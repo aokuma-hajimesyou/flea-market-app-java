@@ -28,6 +28,7 @@ import com.example.flea_market_app.service.ChatService;
 import com.example.flea_market_app.service.FavoriteService;
 import com.example.flea_market_app.service.ItemService;
 import com.example.flea_market_app.service.ItemViewHistoryService;
+import com.example.flea_market_app.service.NotificationService;
 import com.example.flea_market_app.service.ReviewService;
 import com.example.flea_market_app.service.UserService;
 
@@ -40,6 +41,7 @@ public class ItemController {
 	private final ChatService chatService;
 	private final FavoriteService favoriteService;
 	private final ReviewService reviewService;
+	private final NotificationService notificationService;
 
 	@Autowired
 	ItemViewHistoryService itemViewHistoryService;
@@ -50,13 +52,15 @@ public class ItemController {
 			UserService userService,
 			ChatService chatService,
 			FavoriteService favoriteService,
-			ReviewService reviewService) {
+			ReviewService reviewService,
+			NotificationService notificationService) {
 		this.itemService = itemService;
 		this.categoryService = categoryService;
 		this.userService = userService;
 		this.chatService = chatService;
 		this.favoriteService = favoriteService;
 		this.reviewService = reviewService;
+		this.notificationService = notificationService;
 	}
 
 	@GetMapping
@@ -86,6 +90,15 @@ public class ItemController {
 				List<ItemViewHistory> itemViewHistories = itemViewHistoryService.getRecordView(currentUser);
 			}
 		});
+
+		if (userDetails != null) {
+			User user = userService.getUserByEmail(userDetails.getUsername()).orElse(null);
+			if (user != null) {
+				// Serviceを使って未読数を取得
+				model.addAttribute("unreadCount", notificationService.getUnreadCount(user));
+				model.addAttribute("notifications", notificationService.getNotificationsForUser(user));
+			}
+		}
 
 		// 3. Modelへの登録
 		model.addAttribute("items", items);

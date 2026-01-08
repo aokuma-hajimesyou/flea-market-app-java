@@ -767,15 +767,47 @@ ul { list-style: none; padding: 0; margin: 0; }
     border-right: 1px solid var(--border-color);
 }
 
-/* --- 販売履歴・発送管理スタイル --- */
+/* 発送アクションボックスの調整 */
 .ship-action-box {
-    background: #fff9c4; /* 発送待ちを目立たせる薄い黄色 */
-    padding: 10px 15px;
-    border-radius: 6px;
-    margin-top: 10px;
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #fff9f0; /* 少し注意を引く背景色（任意） */
+    border: 1px dashed #ff9500;
+    border-radius: 8px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; /* 縦に並べる */
+    gap: 12px;              /* 要素間の隙間を確保 */
+    align-items: flex-start; /* 左寄せ */
+}
+
+/* テキストのスタイル */
+.ship-notice {
+    margin: 0 !important;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #e67e22;
+}
+
+/* フォームとボタンの調整 */
+.ship-form {
+    margin: 0;
+    width: 100%; /* スマホでボタンを押しやすくする場合 */
+}
+
+.ship-btn {
+    padding: 8px 20px !important;
+    font-size: 0.85rem !important;
+    white-space: nowrap; /* テキストの折り返しを防ぐ */
+    cursor: pointer;
+}
+
+/* レスポンシブ：画面が広いときは横並びにする場合（お好みで） */
+@media (min-width: 600px) {
+    .ship-action-box {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
 }
 
 .ship-action-box p {
@@ -1162,6 +1194,140 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { 
     -webkit-appearance: none; 
     margin: 0; 
+}
+
+/* --- 通知機能のスタイル --- */
+
+/* 通知コンテナの相対配置 */
+.notification-container {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px; /* 他のアイコン（マイページ等）との間隔 */
+    vertical-align: middle;
+}
+
+/* 通知アイコン（ベル）の大型化 */
+.notification-icon {
+    font-size: 1.6rem; /* アイコンを大きく */
+    color: #555;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    position: relative;
+}
+
+.notification-icon:hover {
+    color: #000;
+}
+
+/* LINE風の未読バッジ（アイコンの右上に配置） */
+.notification-icon .badge {
+    position: absolute;
+    top: -2px;      /* 位置を少し調整 */
+    right: -4px;    /* アイコンに少しだけ重ねる */
+    background-color: #ff3b30;
+    color: white;
+    
+    /* 完全な円を作るための設定 */
+    font-size: 10px;       /* 文字を少し小さく */
+    font-weight: bold;
+    width: 16px;           /* 幅と高さを固定値にする */
+    height: 16px;
+    line-height: 16px;     /* 文字を中央に */
+    text-align: center;
+    border-radius: 50%;    /* これで完全な丸になります */
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #fff; /* 白縁を少し細く */
+    z-index: 10;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    pointer-events: none;  /* バッジがクリックを邪魔しないように */
+}
+
+/* モーダルの基本スタイル */
+.notification-modal {
+    display: none; /* JSで切り替え */
+    position: absolute;
+    top: 45px;     /* アイコンが大きくなったので位置を微調整 */
+    right: 0;
+    width: 320px;  /* 少し幅を広げて読みやすく */
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+}
+
+/* モーダルのヘッダー */
+.modal-header {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.9em;
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.mark-all-link {
+    font-size: 0.8em;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.mark-all-link:hover {
+    text-decoration: underline;
+}
+
+/* 通知アイテム */
+.notification-item {
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.notification-item a {
+    display: block;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #333;
+}
+
+.notification-item.unread {
+    background-color: #f0f7ff; /* 未読は薄い青 */
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notif-title {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.notif-message {
+    font-size: 0.85em;
+    color: #555;
+    margin: 4px 0;
+    line-height: 1.4;
+}
+
+.notif-time {
+    font-size: 0.75em;
+    color: #999;
+}
+
+.no-notif {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 0.9em;
 }
 /* レスポンシブ */
 @media (max-width: 480px) {

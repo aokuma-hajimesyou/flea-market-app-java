@@ -11,6 +11,7 @@ import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.service.AppOrderService;
 import com.example.flea_market_app.service.FavoriteService;
 import com.example.flea_market_app.service.ItemService;
+import com.example.flea_market_app.service.NotificationService;
 import com.example.flea_market_app.service.ReviewService;
 import com.example.flea_market_app.service.UserService;
 
@@ -22,25 +23,31 @@ public class UserController {
 	private final ItemService itemService;
 	private final FavoriteService favoriteService;
 	private final ReviewService reviewService;
+	private final NotificationService notificationService;
 
 	public UserController(
 			UserService userService,
 			AppOrderService appOrderService,
 			ItemService itemService,
 			FavoriteService favoriteService,
-			ReviewService reviewService) {
+			ReviewService reviewService,
+			NotificationService notificationService) {
 		this.userService = userService;
 		this.appOrderService = appOrderService;
 		this.itemService = itemService;
 		this.favoriteService = favoriteService;
 		this.reviewService = reviewService;
+		this.notificationService = notificationService;
 	}
 
 	@GetMapping
 	public String myPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("User not found"));
+		// --- 通知情報の追加 ---
 		model.addAttribute("user", currentUser);
+		model.addAttribute("unreadCount", notificationService.getUnreadCount(currentUser));
+		model.addAttribute("notifications", notificationService.getNotificationsForUser(currentUser));
 		return "my-page";
 	}
 
