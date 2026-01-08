@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.flea_market_app.entity.Category;
 import com.example.flea_market_app.entity.Item;
+import com.example.flea_market_app.entity.ItemViewHistory;
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.service.CategoryService;
 import com.example.flea_market_app.service.ChatService;
@@ -82,6 +83,7 @@ public class ItemController {
 
 				boolean isFav = favoriteService.isFavorited(currentUser, item.getId());
 				item.setFavorited(isFav);
+				List<ItemViewHistory> itemViewHistories = itemViewHistoryService.getRecordView(currentUser);
 			}
 		});
 

@@ -36,12 +36,11 @@
 					</div>
 					<div class="select-group">
 						<select id="categoryId" name="categoryId" onchange="this.form.submit()">
-						    <option value="">すべてのカテゴリ</option>
-						    <option th:each="category : ${categories}" 
-						            th:value="${category.id}"
-						            th:text="${category.name}"
-						            th:selected="${param.categoryId != null and param.categoryId[0] == category.id.toString()}">
-						    </option>
+							<option value="">すべてのカテゴリ</option>
+							<option th:each="category : ${categories}" th:value="${category.id}"
+								th:text="${category.name}"
+								th:selected="${param.categoryId != null and param.categoryId[0] == category.id.toString()}">
+							</option>
 						</select>
 					</div>
 					<button type="submit" class="search-btn">検索</button>
@@ -83,10 +82,10 @@
 							<span class="status-label" th:unless="${item.status == 'SOLD'}"
 								th:text="${item.status}"></span>
 							<div class="item-footer">
-							    <div class="like-count" th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
-							        <i class="fa-heart" th:classappend="${item.isFavorited} ? 'fas' : 'far'"></i>
-							        <span th:text="${item.favoriteCount != null ? item.favoriteCount : 0}">0</span>
-							    </div>
+								<div class="like-count" th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
+									<i class="fa-heart" th:classappend="${item.isFavorited} ? 'fas' : 'far'"></i>
+									<span th:text="${item.favoriteCount != null ? item.favoriteCount : 0}">0</span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -121,6 +120,9 @@
 				次へ <i class="fas fa-chevron-right"></i>
 			</a>
 		</div>
+
+		
+
 	</div>
 
 	<!-- 固定出品ボタン (Floating Action Button) -->
