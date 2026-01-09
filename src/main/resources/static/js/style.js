@@ -30,21 +30,24 @@ const imageInput = document.getElementById('imageInput');
             }
         }
     });
-	
+
 	document.addEventListener('DOMContentLoaded', function() {
-	    const btn = document.getElementById('notificationBtn');
-	    const modal = document.getElementById('notificationModal');
+				const btn = document.getElementById('notificationBtn');
+				const modal = document.getElementById('notificationModal');
 
-	    // ベルマーククリックで表示切り替え
-	    btn.addEventListener('click', function(e) {
-	        e.stopPropagation();
-	        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-	    });
+				if (btn && modal) {
+					// ベルマーククリックで表示切り替え
+					btn.addEventListener('click', function(e) {
+						e.stopPropagation(); // 親要素へのクリック伝播を阻止
+						const isDisplayed = modal.style.display === 'block';
+						modal.style.display = isDisplayed ? 'none' : 'block';
+					});
 
-	    // モーダル以外をクリックしたら閉じる
-	    document.addEventListener('click', function(e) {
-	        if (!modal.contains(e.target)) {
-	            modal.style.display = 'none';
-	        }
-	    });
-	});
+					// モーダル以外をクリックしたら閉じる
+					document.addEventListener('click', function(e) {
+						if (!modal.contains(e.target) && e.target !== btn) {
+							modal.style.display = 'none';
+						}
+					});
+				}
+			});
