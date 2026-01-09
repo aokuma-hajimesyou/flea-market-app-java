@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.flea_market_app.entity.Category;
 import com.example.flea_market_app.entity.Item;
+import com.example.flea_market_app.entity.ItemViewHistory;
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.service.CategoryService;
 import com.example.flea_market_app.service.ChatService;
@@ -28,12 +29,14 @@ import com.example.flea_market_app.service.FavoriteService;
 import com.example.flea_market_app.service.ItemService;
 import com.example.flea_market_app.service.ItemViewHistoryService;
 import com.example.flea_market_app.service.NotificationService;
+import com.example.flea_market_app.service.RecommendationService;
 import com.example.flea_market_app.service.ReviewService;
 import com.example.flea_market_app.service.UserService;
 
 @Controller
 @RequestMapping("/items")
 public class ItemController {
+
 	private final ItemService itemService;
 	private final CategoryService categoryService;
 	private final UserService userService;
@@ -41,6 +44,7 @@ public class ItemController {
 	private final FavoriteService favoriteService;
 	private final ReviewService reviewService;
 	private final NotificationService notificationService;
+	private final RecommendationService recommendationService;
 
 	@Autowired
 	ItemViewHistoryService itemViewHistoryService;
@@ -52,7 +56,8 @@ public class ItemController {
 			ChatService chatService,
 			FavoriteService favoriteService,
 			ReviewService reviewService,
-			NotificationService notificationService) {
+			NotificationService notificationService,
+			RecommendationService recommendationService) {
 		this.itemService = itemService;
 		this.categoryService = categoryService;
 		this.userService = userService;
@@ -60,6 +65,8 @@ public class ItemController {
 		this.favoriteService = favoriteService;
 		this.reviewService = reviewService;
 		this.notificationService = notificationService;
+		this.recommendationService = recommendationService;
+
 	}
 
 	@GetMapping
@@ -83,15 +90,19 @@ public class ItemController {
 			if (userDetails != null) {
 				User currentUser = userService.getUserByEmail(userDetails.getUsername())
 						.orElseThrow(() -> new RuntimeException("user not found"));
-
 				boolean isFav = favoriteService.isFavorited(currentUser, item.getId());
 				item.setFavorited(isFav);
+
 			}
 		});
 
 		if (userDetails != null) {
 			User user = userService.getUserByEmail(userDetails.getUsername()).orElse(null);
 			if (user != null) {
+				List<ItemViewHistory> itemViewHistories = itemViewHistoryService.getRecordView(user);
+				List<Item> recommendedItems = recommendationService.getRecommendedItems(user);
+				model.addAttribute("itemViewHistories", itemViewHistories);
+				model.addAttribute("recommendedItems", recommendedItems);
 				// Serviceを使って未読数を取得
 				model.addAttribute("unreadCount", notificationService.getUnreadCount(user));
 				model.addAttribute("notifications", notificationService.getNotificationsForUser(user));

@@ -1,6 +1,7 @@
 package com.example.flea_market_app.service;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,4 +42,10 @@ public class ItemViewHistoryService {
 			repository.save(history);
 		}
 	}
+
+	@Transactional
+	public List<ItemViewHistory> getRecordView(User user) {
+		return repository.findTop10ByUserOrderByViewedAtDesc(user);
+	}
+
 }
