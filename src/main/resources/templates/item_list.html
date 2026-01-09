@@ -80,7 +80,6 @@
 		<div class="item-grid">
 			<div class="item-card" th:each="item : ${items.content}">
 				<a th:href="@{/items/{id}(id=${item.id})}" class="card-link">
-
 					<div class="image-container">
 						<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像"
 							class="product-img">
@@ -95,7 +94,6 @@
 							<span class="sold-text">SOLD</span>
 						</div>
 					</div>
-
 					<div class="card-body">
 						<h3 class="item-name" th:text="${item.name}">商品名</h3>
 						<div class="item-footer">
@@ -107,15 +105,17 @@
 							</div>
 						</div>
 					</div>
+				</a>
 			</div>
-			</a>
 		</div>
 	</div>
+
 
 	<div th:if="${#lists.isEmpty(items.content)}" class="no-items">
 		<p>商品が見つかりませんでした。</p>
 		<a th:href="@{/items}" class="reset-link">検索条件をクリア</a>
 	</div>
+
 
 	<div class="pagination" th:if="${items.totalPages > 0}">
 		<a th:if="${items.hasPrevious()}" class="page-link prev"
@@ -137,10 +137,62 @@
 			次へ <i class="fas fa-chevron-right"></i>
 		</a>
 	</div>
+	
+	<div class="container">
+			<h2>おすすめの商品</h2>
+			<div class="item-grid">
+				<div class="item-card" th:each="recommended : ${recommendedItems}">
+					<a th:href="@{/items/{id}(id=${recommended.id})}" class="card-link">
+						<div class="image-container">
+							<img th:src="${recommended.imageUrl != null ? recommended.imageUrl : '/images/placeholder.png'}"
+								alt="商品画像" class="product-img">
 
+							<div class="price-tag">
+								<span class="currency">¥</span>
+								<span th:text="${#numbers.formatDecimal(recommended.price, 0, 'COMMA', 0, 'POINT')}"></span>
+							</div>
 
-
+						</div>
+						<div class="card-body">
+							<h3 class="item-name" th:text="${recommended.name}">商品名</h3>
+						</div>
+					</a>
+				</div>
+			</div>
 	</div>
+	
+	<div class="container" th:if="${recommendedItems == null or #lists.isEmpty(recommendedItems)}">
+			<p>おすすめの商品はありません。</p>
+		</div>
+
+
+	<div class="container">
+		<h2>最近見た商品</h2>
+		<div class="item-grid">
+			<div class="item-card" th:each="history : ${itemViewHistories}">
+				<a th:href="@{/items/{id}(id=${history.item.id})}" class="card-link">
+					<div class="image-container">
+						<img th:src="${history.item.imageUrl != null ? history.item.imageUrl : '/images/placeholder.png'}"
+							alt="商品画像" class="product-img">
+
+						<div class="price-tag">
+							<span class="currency">¥</span>
+							<span th:text="${#numbers.formatDecimal(history.item.price, 0, 'COMMA', 0, 'POINT')}"></span>
+						</div>
+
+					</div>
+					<div class="card-body">
+						<h3 class="item-name" th:text="${history.item.name}">商品名</h3>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="container" th:if="${itemViewHistories == null or #lists.isEmpty(itemViewHistories)}">
+		<p>なにもありません</p>
+	</div>
+
 
 	<a th:href="@{/items/new}" class="fab-sell">
 		<i class="fas fa-camera"></i>

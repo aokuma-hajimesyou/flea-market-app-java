@@ -24,4 +24,18 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 	Page<Item> findByStatus(String status, Pageable pageable);
 
 	List<Item> findBySeller(User seller);
+
+	@Query(value = """
+			    SELECT *
+			    FROM item i
+			    WHERE i.category_id IN (:categoryIds)
+			      AND i.status = '出品中'
+			      AND i.user_id <> :userId
+			    ORDER BY RANDOM()
+			    LIMIT 8
+			""", nativeQuery = true)
+	List<Item> findRecommendedItems(
+			List<Long> categoryIds,
+			Long userId);
+
 }
