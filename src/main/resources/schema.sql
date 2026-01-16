@@ -29,11 +29,15 @@ CREATE TABLE users (
     FOREIGN KEY (banned_by_admin_id) REFERENCES users(id) -- 自己参照キーを追加
 );
 
--- カテゴリ（ファッション、家具、家電など）
 CREATE TABLE category (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE
+    name VARCHAR(50) NOT NULL,
+    parent_id INT, -- 親カテゴリーを示すカラムを追加
+    FOREIGN KEY (parent_id) REFERENCES category(id) ON DELETE CASCADE
 );
+
+-- インデックスも追加しておくと検索が速くなるらしい
+CREATE INDEX idx_category_parent_id ON category(parent_id);
 
 -- 出品商品テーブル
 CREATE TABLE item (

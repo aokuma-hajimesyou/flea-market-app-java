@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -66,7 +67,6 @@ public class ItemController {
 		this.reviewService = reviewService;
 		this.notificationService = notificationService;
 		this.recommendationService = recommendationService;
-
 	}
 
 	@GetMapping
@@ -78,21 +78,19 @@ public class ItemController {
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
 
-		// 1. 商品検索とカテゴリ一覧の取得
+		// 階層対応した検索サービスを呼び出す
 		Page<Item> items = itemService.searchItems(keyword, categoryId, page, size);
-		List<Category> categories = categoryService.getAllCategories();
 
-		// 2. 各商品にお気に入り状態とカウントをセット
+		// 修正：全カテゴリーではなく、第1階層（親なし）のカテゴリーのみを取得して画面に渡す
+		List<Category> categories = categoryService.getRootCategories();
+
 		items.forEach(item -> {
-			// お気に入り数を取得して int にキャストしてセット
 			item.setFavoriteCount((int) favoriteService.getFavoriteCount(item.getId()));
-
 			if (userDetails != null) {
 				User currentUser = userService.getUserByEmail(userDetails.getUsername())
 						.orElseThrow(() -> new RuntimeException("user not found"));
 				boolean isFav = favoriteService.isFavorited(currentUser, item.getId());
 				item.setFavorited(isFav);
-
 			}
 		});
 
@@ -103,17 +101,22 @@ public class ItemController {
 				List<Item> recommendedItems = recommendationService.getRecommendedItems(user);
 				model.addAttribute("itemViewHistories", itemViewHistories);
 				model.addAttribute("recommendedItems", recommendedItems);
-				// Serviceを使って未読数を取得
 				model.addAttribute("unreadCount", notificationService.getUnreadCount(user));
 				model.addAttribute("notifications", notificationService.getNotificationsForUser(user));
 			}
 		}
 
-		// 3. Modelへの登録
 		model.addAttribute("items", items);
 		model.addAttribute("categories", categories);
 
 		return "item_list";
+	}
+
+	// 追加：子カテゴリーをAjaxで取得するためのAPI
+	@GetMapping("/categories/{parentId}/children")
+	@ResponseBody
+	public List<Category> getChildren(@PathVariable("parentId") Long parentId) {
+		return categoryService.getChildCategories(parentId);
 	}
 
 	@GetMapping("/{id}")
@@ -131,20 +134,14 @@ public class ItemController {
 		model.addAttribute("item", item);
 		model.addAttribute("chats", chatService.getChatMessageByItem(id));
 
-		// 出品者の平均評価
 		reviewService.getAverageRatingForSeller(item.getSeller())
 				.ifPresent(avg -> model.addAttribute("sellerAverageRating", String.format("%.1f", avg)));
 
-		// 2. ログインユーザーに関連する処理
 		if (userDetails != null) {
 			User currentUser = userService.getUserByEmail(userDetails.getUsername())
 					.orElseThrow(() -> new RuntimeException("user not found"));
-
-			// お気に入り状況の確認
 			model.addAttribute("isFavorited", favoriteService.isFavorited(currentUser, id));
-
 			itemViewHistoryService.recordView(currentUser, item);
-
 		}
 
 		return "item_detail";
@@ -153,7 +150,8 @@ public class ItemController {
 	@GetMapping("/new")
 	public String showAddItemForm(Model model) {
 		model.addAttribute("item", new Item());
-		model.addAttribute("categories", categoryService.getAllCategories());
+		// 修正：第1階層のカテゴリーのみを初期値として渡す
+		model.addAttribute("categories", categoryService.getRootCategories());
 		return "item_form";
 	}
 
@@ -195,7 +193,8 @@ public class ItemController {
 		}
 
 		model.addAttribute("item", item.get());
-		model.addAttribute("categories", categoryService.getAllCategories());
+		// 修正：第1階層のカテゴリーのみを渡す
+		model.addAttribute("categories", categoryService.getRootCategories());
 		return "item_form";
 	}
 
@@ -246,7 +245,7 @@ public class ItemController {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		if (!itemToDelete.getSeller().getId().equals(currentUser.getId())) {
-			redirectAttributes.addFlashAttribute("この商品は削除できません", "errorMessage");
+			redirectAttributes.addFlashAttribute("errorMessage", "この商品は削除できません");
 			return "redirect:/items";
 		}
 		itemService.deleteItem(id);
@@ -263,9 +262,9 @@ public class ItemController {
 				.orElseThrow(() -> new RuntimeException("user not found"));
 		try {
 			favoriteService.addFavorite(currentUser, itemId);
-			redirectAttributes.addAttribute("successMessage", "お気に入りに追加しました");
+			redirectAttributes.addFlashAttribute("successMessage", "お気に入りに追加しました");
 		} catch (IllegalStateException e) {
-			redirectAttributes.addAttribute("errorMessage", e.getMessage());
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 		}
 		return "redirect:/items/{id}";
 	}
@@ -279,11 +278,10 @@ public class ItemController {
 				.orElseThrow(() -> new RuntimeException("user not found"));
 		try {
 			favoriteService.removeFavorite(currentUser, itemId);
-			redirectAttributes.addAttribute("successMessage", "お気に入りから削除しました");
+			redirectAttributes.addFlashAttribute("successMessage", "お気に入りから削除しました");
 		} catch (IllegalStateException e) {
-			redirectAttributes.addAttribute("errorMessage", e.getMessage());
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 		}
 		return "redirect:/items/{id}";
 	}
-
 }

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.flea_market_app.entity.FavoriteItem;
@@ -19,4 +21,7 @@ public interface FavoriteItemRepository extends JpaRepository<FavoriteItem, Long
 	boolean existsByUserAndItem(User user, Item item);
 
 	long countByItem(Item item);
+
+	@Query("SELECT DISTINCT f.item.category.id FROM FavoriteItem f WHERE f.user = :user")
+	List<Long> findCategoryIdsByUser(@Param("user") User user);
 }

@@ -31,19 +31,19 @@ public class ItemService {
 		Pageable pageable = PageRequest.of(page, size);
 		String status = "出品中";
 
+		// キーワードあり ＋ カテゴリー指定あり
 		if (keyword != null && !keyword.isEmpty() && categoryId != null) {
-			return itemRepository.findByNameContainingIgnoreCaseAndCategoryIdAndStatus(keyword, categoryId, status,
-					pageable);
+			return itemRepository.findByNameAndHierarchyCategoryAndStatus(keyword, categoryId, status, pageable);
 		}
-
+		// キーワードのみ
 		else if (keyword != null && !keyword.isEmpty()) {
 			return itemRepository.findByNameContainingIgnoreCaseAndStatus(keyword, status, pageable);
 		}
-
+		// カテゴリー指定のみ（階層対応メソッドを呼び出し）
 		else if (categoryId != null) {
-			return itemRepository.findByCategoryIdAndStatus(categoryId, status, pageable);
+			return itemRepository.findByHierarchyCategoryAndStatus(categoryId, status, pageable);
 		}
-
+		// 条件なし
 		else {
 			return itemRepository.findByStatus(status, pageable);
 		}
@@ -88,5 +88,4 @@ public class ItemService {
 			itemRepository.save(item);
 		});
 	}
-
 }
