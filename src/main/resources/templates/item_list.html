@@ -54,55 +54,65 @@
 		</div>
 
 		<div class="search-area">
-			<form th:action="@{/items}" method="get" class="search-form">
-				<div class="search-row">
-					<div class="input-group">
-						<i class="fas fa-search search-icon"></i>
-						<input type="text" id="keyword" name="keyword" th:value="${param.keyword}"
-							placeholder="なにをお探しですか？">
-					</div>
-					<div class="select-group">
-						<select id="categoryId" name="categoryId" onchange="this.form.submit()">
-							<option value="">すべてのカテゴリ</option>
-							<option th:each="category : ${categories}" th:value="${category.id}"
-								th:text="${category.name}"
-								th:selected="${param.categoryId != null and param.categoryId[0] == category.id.toString()}">
-							</option>
-						</select>
-					</div>
-					<button type="submit" class="search-btn">検索</button>
-				</div>
-			</form>
+		    <form th:action="@{/items}" method="get" class="search-form">
+		        <div class="search-row">
+		            <div class="keyword-row">
+		                <div class="input-group">
+		                    <i class="fas fa-search search-icon"></i>
+		                    <input type="text" id="keyword" name="keyword" th:value="${param.keyword}" placeholder="なにをお探しですか？">
+		                </div>
+		                <button type="submit" class="search-btn">検索</button>
+		            </div>
+
+		            <div class="category-row category-selects">
+		                <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${param.categoryId}">
+
+		                <select id="parentCategory" class="category-select">
+		                    <option value="">選択してください</option>
+		                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+		                </select>
+
+		                <select id="childCategory" class="category-select" style="display:none;"></select>
+
+		                <select id="grandChildCategory" class="category-select" style="display:none;"></select>
+		            </div>
+		        </div>
+		    </form>
 		</div>
 	</header>
-	
+
 
 	<div class="container">
-			<h2>おすすめの商品</h2>
-			<div class="item-grid">
-				<div class="item-card" th:each="recommended : ${recommendedItems}">
-					<a th:href="@{/items/{id}(id=${recommended.id})}" class="card-link">
-						<div class="image-container">
-							<img th:src="${recommended.imageUrl != null ? recommended.imageUrl : '/images/placeholder.png'}"
-								alt="商品画像" class="product-img">
+	    <h2>おすすめの商品</h2>
+	    <div class="item-grid">
+	        <div class="item-card" th:each="recommended : ${recommendedItems}">
+	            <a th:href="@{/items/{id}(id=${recommended.id})}" class="card-link">
+	                <div class="image-container">
+	                    <div class="recommend-reason-badge" 
+	                         th:if="${recommended.recommendReason != null}"
+	                         th:text="${recommended.recommendReason}">
+	                        お気に入り登録商品に関連
+	                    </div>
 
-							<div class="price-tag">
-								<span class="currency">¥</span>
-								<span th:text="${#numbers.formatDecimal(recommended.price, 0, 'COMMA', 0, 'POINT')}"></span>
-							</div>
+	                    <img th:src="${recommended.imageUrl != null ? recommended.imageUrl : '/images/placeholder.png'}"
+	                        alt="商品画像" class="product-img">
 
-						</div>
-						<div class="card-body">
-							<h3 class="item-name" th:text="${recommended.name}">商品名</h3>
-						</div>
-					</a>
-				</div>
-			</div>
+	                    <div class="price-tag">
+	                        <span class="currency">¥</span>
+	                        <span th:text="${#numbers.formatDecimal(recommended.price, 0, 'COMMA', 0, 'POINT')}"></span>
+	                    </div>
+	                </div>
+	                <div class="card-body">
+	                    <h3 class="item-name" th:text="${recommended.name}">商品名</h3>
+	                </div>
+	            </a>
+	        </div>
+	    </div>
 	</div>
 
 	<div class="container" th:if="${recommendedItems == null or #lists.isEmpty(recommendedItems)}">
-			<p>おすすめの商品はありません。</p>
-		</div>
+		<p>おすすめの商品はありません。</p>
+	</div>
 
 	<div class="container">
 		<div class="item-grid">
@@ -125,8 +135,7 @@
 					<div class="card-body">
 						<h3 class="item-name" th:text="${item.name}">商品名</h3>
 						<div class="item-footer">
-							<span class="status-label" th:unless="${item.status == 'SOLD'}"
-								th:text="${item.status}"></span>
+							<span class="status-label" th:unless="${item.status == 'SOLD'}" th:text="${item.status}"></span>
 							<div class="like-count" th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
 								<i class="fa-heart" th:classappend="${item.isFavorited} ? 'fas' : 'far'"></i>
 								<span th:text="${item.favoriteCount != null ? item.favoriteCount : 0}">0</span>
@@ -154,8 +163,7 @@
 		<div class="page-numbers">
 			<span th:each="i : ${#numbers.sequence(0, items.totalPages - 1)}">
 				<a th:if="${i != items.number}" class="page-link num"
-					th:href="@{/items(page=${i}, keyword=${param.keyword}, categoryId=${param.categoryId})}"
-					th:text="${i + 1}"></a>
+					th:href="@{/items(page=${i}, keyword=${param.keyword}, categoryId=${param.categoryId})}" th:text="${i + 1}"></a>
 				<span th:if="${i == items.number}" class="page-link current" th:text="${i + 1}"></span>
 			</span>
 		</div>
@@ -165,7 +173,7 @@
 			次へ <i class="fas fa-chevron-right"></i>
 		</a>
 	</div>
-	
+
 
 
 	<div class="container">
@@ -201,29 +209,118 @@
 		<span class="fab-text">出品</span>
 	</a>
 
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-						const btn = document.getElementById('notificationBtn');
-						const modal = document.getElementById('notificationModal');
+	<script th:inline="javascript">
+	    document.addEventListener('DOMContentLoaded', async function () {
+	        // --- 通知モーダル (省略) ---
+	        const btn = document.getElementById('notificationBtn');
+	        const modal = document.getElementById('notificationModal');
+	        if (btn && modal) {
+	            btn.addEventListener('click', (e) => {
+	                e.stopPropagation();
+	                modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+	            });
+	            document.addEventListener('click', (e) => {
+	                if (!modal.contains(e.target) && e.target !== btn) modal.style.display = 'none';
+	            });
+	        }
 
-						if (btn && modal) {
-							// ベルマーククリックで表示切り替え
-							btn.addEventListener('click', function(e) {
-								e.stopPropagation(); // 親要素へのクリック伝播を阻止
-								const isDisplayed = modal.style.display === 'block';
-								modal.style.display = isDisplayed ? 'none' : 'block';
-							});
+	        const parentSelect = document.getElementById('parentCategory');
+	        const childSelect = document.getElementById('childCategory');
+	        const grandChildSelect = document.getElementById('grandChildCategory');
+	        const finalInput = document.getElementById('finalCategoryId');
+	        const searchForm = document.querySelector('.search-form');
 
-							// モーダル以外をクリックしたら閉じる
-							document.addEventListener('click', function(e) {
-								if (!modal.contains(e.target) && e.target !== btn) {
-									modal.style.display = 'none';
-								}
-							});
-						}
-					});
+	        async function getData(url) {
+	            try {
+	                const res = await fetch(url);
+	                return res.ok ? await res.json() : null;
+	            } catch (e) { return null; }
+	        }
+
+	        function buildOptions(select, data, selectedId) {
+	            select.innerHTML = '<option value="">選択してください</option>';
+	            if (!data || data.length === 0) {
+	                select.style.display = 'none';
+	                return;
+	            }
+	            data.forEach(c => {
+	                const opt = document.createElement('option');
+	                opt.value = c.id;
+	                opt.text = c.name;
+	                if (c.id == selectedId) opt.selected = true;
+	                select.appendChild(opt);
+	            });
+	            select.style.display = 'inline-block';
+	        }
+
+	        // --- 【完全版】全階層対応の復元ロジック ---
+	        async function completeRestore() {
+	            const urlParams = new URLSearchParams(window.location.search);
+	            const categoryId = urlParams.get('categoryId');
+	            if (!categoryId) return;
+
+	            // すべての大カテゴリーの選択肢をループ
+	            for (let pOpt of parentSelect.options) {
+	                if (!pOpt.value) continue;
+
+	                // 中カテゴリーを取得
+	                const children = await getData(`/items/categories/${pOpt.value}/children`);
+	                if (!children) continue;
+
+	                // A. もし選択IDが大カテゴリー自身だった場合
+	                if (pOpt.value == categoryId) {
+	                    parentSelect.value = categoryId;
+	                    buildOptions(childSelect, children, null);
+	                    return;
+	                }
+
+	                // B. 中カテゴリーの中に選択IDがあるかチェック
+	                const matchedChild = children.find(c => c.id == categoryId);
+	                if (matchedChild) {
+	                    parentSelect.value = pOpt.value;
+	                    buildOptions(childSelect, children, categoryId);
+	                    const grandChildren = await getData(`/items/categories/${categoryId}/children`);
+	                    buildOptions(grandChildSelect, grandChildren, null);
+	                    return;
+	                }
+
+	                // C. 孫カテゴリーの中に選択IDがあるか全探索
+	                for (let child of children) {
+	                    const grandChildren = await getData(`/items/categories/${child.id}/children`);
+	                    if (!grandChildren) continue;
+
+	                    const matchedGrand = grandChildren.find(g => g.id == categoryId);
+	                    if (matchedGrand) {
+	                        // 孫が見つかった！親と中をすべて復元する
+	                        parentSelect.value = pOpt.value;
+	                        buildOptions(childSelect, children, child.id);
+	                        buildOptions(grandChildSelect, grandChildren, categoryId);
+	                        return;
+	                    }
+	                }
+	            }
+	        }
+
+	        async function onCategoryChange(id, target, next) {
+	            finalInput.value = id;
+	            if (!id) {
+	                if (target) target.style.display = 'none';
+	                if (next) next.style.display = 'none';
+	            }
+	            searchForm.submit();
+	        }
+
+	        parentSelect.addEventListener('change', e => onCategoryChange(e.target.value, childSelect, grandChildSelect));
+	        childSelect.addEventListener('change', e => onCategoryChange(e.target.value, grandChildSelect, null));
+	        grandChildSelect.addEventListener('change', e => {
+	            finalInput.value = e.target.value || childSelect.value;
+	            searchForm.submit();
+	        });
+
+	        // 復元実行
+	        await completeRestore();
+	    });
 	</script>
-	
 </body>
 
 </html>

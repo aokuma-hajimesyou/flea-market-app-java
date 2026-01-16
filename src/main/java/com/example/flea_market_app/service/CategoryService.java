@@ -16,6 +16,16 @@ public class CategoryService {
 		this.categoryRepository = categoryRepository;
 	}
 
+	// --- 追加: 第1階層（親がいない）カテゴリーのみを取得 ---
+	public List<Category> getRootCategories() {
+		return categoryRepository.findByParentIsNull();
+	}
+
+	// --- 追加: 指定した親IDに紐づく子カテゴリーを取得 ---
+	public List<Category> getChildCategories(Long parentId) {
+		return categoryRepository.findByParentId(parentId);
+	}
+
 	public List<Category> getAllCategories() {
 		return categoryRepository.findAll();
 	}
