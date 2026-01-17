@@ -1,3 +1,4 @@
+-- 1. ユーザー（初期データ）
 INSERT INTO users (name, email, password, role, enabled)
 VALUES
 ('出品者 A', 'sellerA@example.com', '{noop}password', 'USER', TRUE),
@@ -7,22 +8,78 @@ VALUES
 
 -- 2. カテゴリー（階層構造）
 -- 第1階層: 親 (parent_id IS NULL)
-INSERT INTO category (name, parent_id) VALUES ('ファッション', NULL); -- ID: 1
-INSERT INTO category (name, parent_id) VALUES ('家電', NULL);         -- ID: 2
-INSERT INTO category (name, parent_id) VALUES ('本', NULL);           -- ID: 3
+INSERT INTO category (name, parent_id) VALUES 
+('ファッション', NULL),             -- ID: 1
+('ベビー・キッズ', NULL),           -- ID: 2
+('ゲーム・おもちゃ・グッズ', NULL),  -- ID: 3
+('ホビー・楽器・アート', NULL),      -- ID: 4
+('チケット', NULL),                 -- ID: 5
+('本・雑誌・漫画', NULL),           -- ID: 6
+('CD・DVD・ブルーレイ', NULL),      -- ID: 7
+('スマホ・タブレット・パソコン', NULL), -- ID: 8
+('テレビ・オーディオ・カメラ', NULL), -- ID: 9
+('生活家電・空調', NULL),           -- ID: 10
+('スポーツ', NULL),                 -- ID: 11
+('アウトドア・釣り・旅行用品', NULL), -- ID: 12
+('コスメ・美容', NULL),             -- ID: 13
+('ダイエット・健康', NULL),          -- ID: 14
+('食品・飲料・酒', NULL),           -- ID: 15
+('キッチン・日用品・その他', NULL),  -- ID: 16
+('家具・インテリア', NULL),          -- ID: 17
+('ペット用品', NULL),               -- ID: 18
+('DIY・工具', NULL),                -- ID: 19
+('フラワー・ガーデニング', NULL),    -- ID: 20
+('ハンドメイド・手芸', NULL),        -- ID: 21
+('車・バイク・自転車', NULL);         -- ID: 22
 
 -- 第2階層: 子
-INSERT INTO category (name, parent_id) VALUES ('靴', 1);             -- ID: 4 (ファッションの子)
-INSERT INTO category (name, parent_id) VALUES ('トップス', 1);       -- ID: 5 (ファッションの子)
-INSERT INTO category (name, parent_id) VALUES ('キッチン家電', 2);     -- ID: 6 (家電の子)
-INSERT INTO category (name, parent_id) VALUES ('コンピュータ', 3);     -- ID: 7 (本の子)
+INSERT INTO category (name, parent_id) VALUES 
+('靴', 1),             -- ID: 23
+('トップス', 1),       -- ID: 24
+('ベビー服', 2),       -- ID: 25
+('テレビゲーム', 3),   -- ID: 26
+('楽器/機材', 4),      -- ID: 27
+('コンピュータ', 6),   -- ID: 28
+('PC周辺機器', 8),     -- ID: 29
+('カメラ', 9),         -- ID: 30
+('キッチン家電', 10),    -- ID: 31
+('トレーニング用品', 11), -- ID: 32
+('スキンケア/基礎化粧品', 13), -- ID: 33
+('菓子', 15),          -- ID: 34
+('キッチン/食器', 16),  -- ID: 35
+('バッグ', 1),         -- ID: 36
+('アクセサリー', 1),    -- ID: 37
+('トレーディングカード', 3), -- ID: 38
+('漫画', 6),           -- ID: 39
+('スマートフォン本体', 8), -- ID: 40
+('PC/タブレット', 8),   -- ID: 41
+('メイクアップ', 13);    -- ID: 42
 
 -- 第3階層: 孫
-INSERT INTO category (name, parent_id) VALUES ('レディーススニーカー', 4); -- ID: 8
-INSERT INTO category (name, parent_id) VALUES ('パーカー', 5);            -- ID: 9
-INSERT INTO category (name, parent_id) VALUES ('炊飯器', 6);              -- ID: 10
-INSERT INTO category (name, parent_id) VALUES ('Javaプログラミング', 7);  -- ID: 11
+INSERT INTO category (name, parent_id) VALUES 
+('レディーススニーカー', 23), -- ID: 43
+('パーカー', 24),            -- ID: 44
+('男の子用(～95cm)', 25),    -- ID: 45
+('Nintendo Switch', 26),   -- ID: 46
+('エレキギター', 27),        -- ID: 47
+('Javaプログラミング', 28),  -- ID: 48
+('キーボード', 29),          -- ID: 49
+('デジタルカメラ', 30),      -- ID: 50
+('炊飯器', 31),              -- ID: 51
+('ダンベル', 32),            -- ID: 52
+('フェイスクリーム', 33),     -- ID: 53
+('チョコレート', 34),        -- ID: 54
+('調理器具', 35),            -- ID: 55
+('リュック/バックパック', 36), -- ID: 56
+('ネックレス', 37),          -- ID: 57
+('ポケモンカードゲーム', 38),  -- ID: 58
+('少年漫画', 39),            -- ID: 59
+('iPhone', 40),            -- ID: 60
+('Android本体', 40),       -- ID: 61
+('ノートPC', 41),           -- ID: 62
+('アイシャドウ', 42);         -- ID: 63
 
+-- 3. アイテム
 INSERT INTO item (user_id, name, description, price, category_id, status, image_url, created_at)
 VALUES
 (
@@ -67,33 +124,32 @@ VALUES
 ),
 (
     (SELECT id FROM users WHERE email='sellerA@example.com'),
-    'ハイカット 厚底スニーカー',
-    'スタイルアップできるスニーカーです。色はホワイト。',
-    7800.00,
-    (SELECT id FROM category WHERE name='レディーススニーカー'),
+    'iPhone 15 Pro 256GB',
+    '最新機種に買い替えたため出品します。バッテリー最大容量100%。',
+    135000.00,
+    (SELECT id FROM category WHERE name='iPhone'),
     '出品中',
-    'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=400',
+    'https://images.unsplash.com/photo-1696446701796-da61225697cc?q=80&w=400',
     CURRENT_TIMESTAMP
 ),
 (
     (SELECT id FROM users WHERE email='sellerA@example.com'),
-    'ロゴプリント スウェット',
-    'シンプルなデザインで着回しやすい一着です。綿100%で肌触りも抜群です。',
-    3500.00,
-    (SELECT id FROM category WHERE name='パーカー'),
+    'ポケモンカード リザードンVMAX',
+    '開封後すぐにスリーブに入れました。傷なしの美品です。',
+    8800.00,
+    (SELECT id FROM category WHERE name='ポケモンカードゲーム'),
     '出品中',
-    'https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?q=80&w=400',
+    'https://images.unsplash.com/photo-1613771404721-1f92d799e49f?q=80&w=400',
     CURRENT_TIMESTAMP
 ),
 (
     (SELECT id FROM users WHERE email='sellerA@example.com'),
-    '省エネ マイコン炊飯ジャー',
-    '一人暮らしに最適な3合炊きです。タイマー機能付きで便利。',
-    6800.00,
-    (SELECT id FROM category WHERE name='炊飯器'),
+    'ノースフェイス リュック 30L',
+    '通勤で使用していましたが、買い替えのため出品します。収納力抜群。',
+    9500.00,
+    (SELECT id FROM category WHERE name='リュック/バックパック'),
     '出品中',
-    -- より軽量で安定した画像URLに変更
-    'https://images.unsplash.com/photo-1544233726-9f1d2b27be8b?q=80&w=400',
+    'https://c.imgz.jp/223/64206223/64206223b_8_d_500.jpg',
     CURRENT_TIMESTAMP
 ),
 (

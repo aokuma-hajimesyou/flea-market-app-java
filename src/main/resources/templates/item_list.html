@@ -64,18 +64,20 @@
 		                <button type="submit" class="search-btn">検索</button>
 		            </div>
 
-		            <div class="category-row category-selects">
-		                <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${param.categoryId}">
+					<div class="category-row category-selects">
+					    <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${param.categoryId}">
 
-		                <select id="parentCategory" class="category-select">
-		                    <option value="">選択してください</option>
-		                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-		                </select>
+					    <select id="parentCategory" class="category-select">
+					        <option value="">カテゴリーで絞り込む</option>
+					        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+					    </select>
 
-		                <select id="childCategory" class="category-select" style="display:none;"></select>
+					    <span class="category-arrow" id="childArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+					    <select id="childCategory" class="category-select" style="display:none;"></select>
 
-		                <select id="grandChildCategory" class="category-select" style="display:none;"></select>
-		            </div>
+					    <span class="category-arrow" id="grandChildArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+					    <select id="grandChildCategory" class="category-select" style="display:none;"></select>
+					</div>
 		        </div>
 		    </form>
 		</div>
@@ -237,81 +239,88 @@
 	            } catch (e) { return null; }
 	        }
 
-	        function buildOptions(select, data, selectedId) {
-	            select.innerHTML = '<option value="">選択してください</option>';
-	            if (!data || data.length === 0) {
-	                select.style.display = 'none';
-	                return;
-	            }
-	            data.forEach(c => {
-	                const opt = document.createElement('option');
-	                opt.value = c.id;
-	                opt.text = c.name;
-	                if (c.id == selectedId) opt.selected = true;
-	                select.appendChild(opt);
-	            });
-	            select.style.display = 'inline-block';
-	        }
+			// JS内の buildOptions をこのように修正
+			function buildOptions(select, data, selectedId, arrowId) {
+			    const arrow = document.getElementById(arrowId);
+			    select.innerHTML = '<option value="">選択してください</option>';
+			    
+			    if (!data || data.length === 0) {
+			        select.style.display = 'none';
+			        if(arrow) arrow.style.display = 'none';
+			        return;
+			    }
+			    
+			    data.forEach(c => {
+			        const opt = document.createElement('option');
+			        opt.value = c.id;
+			        opt.text = c.name;
+			        if (c.id == selectedId) opt.selected = true;
+			        select.appendChild(opt);
+			    });
+			    
+			    select.style.display = 'inline-block';
+			    if(arrow) arrow.style.display = 'inline-block'; // データがあれば矢印を表示
+			}
 
 	        // --- 【完全版】全階層対応の復元ロジック ---
-	        async function completeRestore() {
-	            const urlParams = new URLSearchParams(window.location.search);
-	            const categoryId = urlParams.get('categoryId');
-	            if (!categoryId) return;
+			async function completeRestore() {
+			    const urlParams = new URLSearchParams(window.location.search);
+			    const categoryId = urlParams.get('categoryId');
+			    if (!categoryId) return;
 
-	            // すべての大カテゴリーの選択肢をループ
-	            for (let pOpt of parentSelect.options) {
-	                if (!pOpt.value) continue;
+			    for (let pOpt of parentSelect.options) {
+			        if (!pOpt.value) continue;
 
-	                // 中カテゴリーを取得
-	                const children = await getData(`/items/categories/${pOpt.value}/children`);
-	                if (!children) continue;
+			        const children = await getData(`/items/categories/${pOpt.value}/children`);
+			        if (!children) continue;
 
-	                // A. もし選択IDが大カテゴリー自身だった場合
-	                if (pOpt.value == categoryId) {
-	                    parentSelect.value = categoryId;
-	                    buildOptions(childSelect, children, null);
-	                    return;
-	                }
+			        // A. 大カテゴリーが選択されている場合
+			        if (pOpt.value == categoryId) {
+			            parentSelect.value = categoryId;
+			            buildOptions(childSelect, children, null, 'childArrow'); // 第4引数を追加
+			            return;
+			        }
 
-	                // B. 中カテゴリーの中に選択IDがあるかチェック
-	                const matchedChild = children.find(c => c.id == categoryId);
-	                if (matchedChild) {
-	                    parentSelect.value = pOpt.value;
-	                    buildOptions(childSelect, children, categoryId);
-	                    const grandChildren = await getData(`/items/categories/${categoryId}/children`);
-	                    buildOptions(grandChildSelect, grandChildren, null);
-	                    return;
-	                }
+			        // B. 中カテゴリーが選択されている場合
+			        const matchedChild = children.find(c => c.id == categoryId);
+			        if (matchedChild) {
+			            parentSelect.value = pOpt.value;
+			            buildOptions(childSelect, children, categoryId, 'childArrow'); // 第4引数を追加
+			            const grandChildren = await getData(`/items/categories/${categoryId}/children`);
+			            buildOptions(grandChildSelect, grandChildren, null, 'grandChildArrow'); // 第4引数を追加
+			            return;
+			        }
 
-	                // C. 孫カテゴリーの中に選択IDがあるか全探索
-	                for (let child of children) {
-	                    const grandChildren = await getData(`/items/categories/${child.id}/children`);
-	                    if (!grandChildren) continue;
+			        // C. 孫カテゴリーが選択されている場合
+			        for (let child of children) {
+			            const grandChildren = await getData(`/items/categories/${child.id}/children`);
+			            if (!grandChildren) continue;
 
-	                    const matchedGrand = grandChildren.find(g => g.id == categoryId);
-	                    if (matchedGrand) {
-	                        // 孫が見つかった！親と中をすべて復元する
-	                        parentSelect.value = pOpt.value;
-	                        buildOptions(childSelect, children, child.id);
-	                        buildOptions(grandChildSelect, grandChildren, categoryId);
-	                        return;
-	                    }
-	                }
-	            }
-	        }
+			            const matchedGrand = grandChildren.find(g => g.id == categoryId);
+			            if (matchedGrand) {
+			                parentSelect.value = pOpt.value;
+			                buildOptions(childSelect, children, child.id, 'childArrow'); // 第4引数を追加
+			                buildOptions(grandChildSelect, grandChildren, categoryId, 'grandChildArrow'); // 第4引数を追加
+			                return;
+			            }
+			        }
+			    }
+			}
 
-	        async function onCategoryChange(id, target, next) {
-	            finalInput.value = id;
-	            if (!id) {
-	                if (target) target.style.display = 'none';
-	                if (next) next.style.display = 'none';
-	            }
-	            searchForm.submit();
-	        }
+			async function onCategoryChange(id, target, next, arrowId, nextArrowId) {
+			    finalInput.value = id;
+			    if (!id) {
+			        if (target) target.style.display = 'none';
+			        if (next) next.style.display = 'none';
+			        if (document.getElementById(arrowId)) document.getElementById(arrowId).style.display = 'none';
+			        if (document.getElementById(nextArrowId)) document.getElementById(nextArrowId).style.display = 'none';
+			    }
+			    searchForm.submit();
+			}
 
-	        parentSelect.addEventListener('change', e => onCategoryChange(e.target.value, childSelect, grandChildSelect));
-	        childSelect.addEventListener('change', e => onCategoryChange(e.target.value, grandChildSelect, null));
+			// イベントリスナーの引数も更新
+			parentSelect.addEventListener('change', e => onCategoryChange(e.target.value, childSelect, grandChildSelect, 'childArrow', 'grandChildArrow'));
+			childSelect.addEventListener('change', e => onCategoryChange(e.target.value, grandChildSelect, null, 'grandChildArrow', null));
 	        grandChildSelect.addEventListener('change', e => {
 	            finalInput.value = e.target.value || childSelect.value;
 	            searchForm.submit();

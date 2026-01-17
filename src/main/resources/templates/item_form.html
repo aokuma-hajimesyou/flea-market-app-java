@@ -33,14 +33,25 @@
                            placeholder="例: 【美品】ワイヤレスイヤホン" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="categoryId"><i class="fas fa-list"></i> カテゴリー</label>
-                    <select id="categoryId" name="categoryId" class="input-field" required>
-                        <option value="">カテゴリーを選択してください</option>
-                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-                                th:selected="${item.category != null and item.category.id == category.id}"></option>
-                    </select>
-                </div>
+				<div class="form-group">
+				    <label for="parentCategory"><i class="fas fa-list"></i> カテゴリー</label>
+				    <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${item.category != null ? item.category.id : ''}" required>
+
+				    <div class="category-row category-selects">
+				        <select id="parentCategory" class="input-field" required>
+				            <option value="">カテゴリーを選択</option>
+				            <option th:each="category : ${categories}" 
+				                    th:value="${category.id}" 
+				                    th:text="${category.name}"></option>
+				        </select>
+
+				        <span class="category-arrow" id="childArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+				        <select id="childCategory" class="input-field" style="display:none;"></select>
+
+				        <span class="category-arrow" id="grandChildArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+				        <select id="grandChildCategory" class="input-field" style="display:none;"></select>
+				    </div>
+				</div>
 
                 <div class="form-group">
                     <label for="price"><i class="fas fa-yen-sign"></i> 販売価格</label>
@@ -83,5 +94,68 @@
     </div>
 
     <div style="height: 60px;"></div>
+	
+	<script>
+		document.addEventListener('DOMContentLoaded', async function () {
+		    const parentSelect = document.getElementById('parentCategory');
+		    const childSelect = document.getElementById('childCategory');
+		    const grandChildSelect = document.getElementById('grandChildCategory');
+		    const finalInput = document.getElementById('finalCategoryId');
+
+		    async function getData(url) {
+		        try {
+		            const res = await fetch(url);
+		            return res.ok ? await res.json() : null;
+		        } catch (e) { return null; }
+		    }
+
+		    function buildOptions(select, data, selectedId, arrowId) {
+		        const arrow = document.getElementById(arrowId);
+		        select.innerHTML = '<option value="">選択してください</option>';
+		        if (!data || data.length === 0) {
+		            select.style.display = 'none';
+		            if(arrow) arrow.style.display = 'none';
+		            return;
+		        }
+		        data.forEach(c => {
+		            const opt = document.createElement('option');
+		            opt.value = c.id;
+		            opt.text = c.name;
+		            if (c.id == selectedId) opt.selected = true;
+		            select.appendChild(opt);
+		        });
+		        select.style.display = 'inline-block';
+		        if(arrow) arrow.style.display = 'inline-block';
+		    }
+
+		    // カテゴリー選択時の挙動
+		    parentSelect.addEventListener('change', async (e) => {
+		        const id = e.target.value;
+		        finalInput.value = id;
+		        const children = await getData(`/items/categories/${id}/children`);
+		        buildOptions(childSelect, children, null, 'childArrow');
+		        grandChildSelect.style.display = 'none';
+		        document.getElementById('grandChildArrow').style.display = 'none';
+		    });
+
+		    childSelect.addEventListener('change', async (e) => {
+		        const id = e.target.value;
+		        finalInput.value = id || parentSelect.value;
+		        const grandChildren = await getData(`/items/categories/${id}/children`);
+		        buildOptions(grandChildSelect, grandChildren, null, 'grandChildArrow');
+		    });
+
+		    grandChildSelect.addEventListener('change', (e) => {
+		        finalInput.value = e.target.value || childSelect.value;
+		    });
+
+		    // --- 【編集時用】現在のカテゴリーから階層を復元 ---
+		    const existingId = finalInput.value;
+		    if (existingId) {
+		        // ここに一覧画面と同様の「全探索復元ロジック」を配置して、
+		        // 編集画面を開いた瞬間にセレクトボックスが埋まるようにします
+		    }
+		});
+	</script>
 </body>
 </html>
