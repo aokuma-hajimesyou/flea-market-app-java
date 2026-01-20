@@ -30,7 +30,7 @@ public class RecommendationService {
 		List<Item> favBased = new ArrayList<>();
 		if (!favCatIds.isEmpty()) {
 			favBased = itemRepository.findByCategoryIdInAndStatusAndUserNot(favCatIds, user.getId(), 4);
-			favBased.forEach(i -> i.setRecommendReason("お気に入りに関連"));
+			favBased.forEach(i -> i.setRecommendReason("お気に入りに登録した商品に関連"));
 		}
 
 		// 2. 閲覧履歴から「親カテゴリ」へ遡って取得（優先度：中）
@@ -40,7 +40,7 @@ public class RecommendationService {
 			viewBased = itemRepository.findRecommendedItems(viewCatIds, user.getId());
 			viewBased.forEach(i -> {
 				if (i.getRecommendReason() == null) {
-					i.setRecommendReason("最近チェックした商品に関連");
+					i.setRecommendReason("最近閲覧した商品に関連");
 				}
 			});
 		}

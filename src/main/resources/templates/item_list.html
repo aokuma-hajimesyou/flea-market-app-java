@@ -2,334 +2,316 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>商品一覧 - フリマアプリ</title>
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" th:href="@{/css/style.css}">
-	<script th:src="@{/js/style.js}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品一覧 - FleaMarketApp</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/style.js}" defer></script>
 </head>
 
 <body>
-	<header class="app-header">
-		<div class="header-inner">
-			<h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
+    <header class="app-header">
+        <div class="header-inner">
+            <h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
 
-			<div class="header-actions">
-				<div class="notification-container">
-					<a href="javascript:void(0)" class="header-link notification-icon" id="notificationBtn">
-						<i class="fas fa-bell"></i>
-						<span class="badge" th:if="${unreadCount > 0}" th:text="${unreadCount}"></span>
-					</a>
+            <div class="header-actions">
+                <div class="notification-container">
+                    <a href="javascript:void(0)" class="header-link notification-icon" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge" th:if="${unreadCount > 0}" th:text="${unreadCount}"></span>
+                    </a>
 
-					<div class="notification-modal" id="notificationModal">
-						<div class="modal-header">
-							<span>通知</span>
-							<a th:href="@{/notifications/mark-all-read}" class="mark-all-link">すべて既読</a>
-						</div>
-						<div class="modal-body">
-							<div th:each="n : ${notifications}"
-								th:classappend="${n.isRead} ? 'notification-item read' : 'notification-item unread'">
-								<a th:href="@{/notifications/{id}/read(id=${n.id})}">
-									<div class="notif-title" th:text="${n.title}">通知タイトル</div>
-									<div class="notif-message" th:text="${n.message}">メッセージ内容</div>
-									<div class="notif-time" th:text="${#temporals.format(n.createdAt, 'MM/dd HH:mm')}">
-										12/27 15:00</div>
-								</a>
-							</div>
-							<div th:if="${#lists.isEmpty(notifications)}" class="no-notif">
-								現在、通知はありません。
-							</div>
-						</div>
-					</div>
-				</div>
+                    <div class="notification-modal" id="notificationModal">
+                        <div class="modal-header">
+                            <span>通知</span>
+                            <a th:href="@{/notifications/mark-all-read}" class="mark-all-link">すべて既読</a>
+                        </div>
+                        <div class="modal-body">
+                            <div th:each="n : ${notifications}"
+                                th:classappend="${n.isRead} ? 'notification-item read' : 'notification-item unread'">
+                                <a th:href="@{/notifications/{id}/read(id=${n.id})}">
+                                    <div class="notif-title" th:text="${n.title}">通知タイトル</div>
+                                    <div class="notif-message" th:text="${n.message}">メッセージ内容</div>
+                                    <div class="notif-time" th:text="${#temporals.format(n.createdAt, 'MM/dd HH:mm')}">
+                                        12/27 15:00</div>
+                                </a>
+                            </div>
+                            <div th:if="${#lists.isEmpty(notifications)}" class="no-notif">
+                                現在、通知はありません。
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-				<a th:href="@{/my-page}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
+                <a th:href="@{/my-page}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
 
-				<form th:action="@{/logout}" method="post" style="display:inline;">
-					<button type="submit" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i></button>
-				</form>
-			</div>
-		</div>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+                </form>
+            </div>
+        </div>
 
-		<div class="search-area">
-		    <form th:action="@{/items}" method="get" class="search-form">
-		        <div class="search-row">
-		            <div class="keyword-row">
-		                <div class="input-group">
-		                    <i class="fas fa-search search-icon"></i>
-		                    <input type="text" id="keyword" name="keyword" th:value="${param.keyword}" placeholder="なにをお探しですか？">
-		                </div>
-		                <button type="submit" class="search-btn">検索</button>
-		            </div>
+        <div class="search-area">
+            <form th:action="@{/items}" method="get" class="search-form">
+                <div class="search-row">
+                    <div class="keyword-row">
+                        <div class="input-group">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="keyword" name="keyword" th:value="${param.keyword}" placeholder="なにをお探しですか？">
+                        </div>
+                        <button type="submit" class="search-btn">検索</button>
+                    </div>
 
-					<div class="category-row category-selects">
-					    <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${param.categoryId}">
+                    <div class="category-row category-selects">
+                        <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${param.categoryId}">
 
-					    <select id="parentCategory" class="category-select">
-					        <option value="">カテゴリーで絞り込む</option>
-					        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-					    </select>
+                        <select id="parentCategory" class="category-select">
+                            <option value="">カテゴリーで絞り込む</option>
+                            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                        </select>
 
-					    <span class="category-arrow" id="childArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
-					    <select id="childCategory" class="category-select" style="display:none;"></select>
+                        <span class="category-arrow" id="childArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+                        <select id="childCategory" class="category-select" style="display:none;"></select>
 
-					    <span class="category-arrow" id="grandChildArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
-					    <select id="grandChildCategory" class="category-select" style="display:none;"></select>
-					</div>
-		        </div>
-		    </form>
-		</div>
-	</header>
+                        <span class="category-arrow" id="grandChildArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+                        <select id="grandChildCategory" class="category-select" style="display:none;"></select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </header>
 
+    <main class="main-content">
+        
+        <div class="container search-result-header" th:if="${(param.keyword != null and !#strings.isEmpty(param.keyword)) or param.categoryId != null}">
+            <h2 class="result-text">
+                <span th:if="${param.keyword != null and !#strings.isEmpty(param.keyword)}" th:text="'「' + ${param.keyword} + '」の'"></span>
+                検索結果 <span class="result-count" th:text="${items.totalElements}">0</span> 件
+            </h2>
+        </div>
 
-	<div class="container">
-	    <h2>おすすめの商品</h2>
-	    <div class="item-grid">
-	        <div class="item-card" th:each="recommended : ${recommendedItems}">
-	            <a th:href="@{/items/{id}(id=${recommended.id})}" class="card-link">
-	                <div class="image-container">
-	                    <div class="recommend-reason-badge" 
-	                         th:if="${recommended.recommendReason != null}"
-	                         th:text="${recommended.recommendReason}">
-	                        お気に入り登録商品に関連
-	                    </div>
+        <div class="container" th:if="${recommendedItems != null and !#lists.isEmpty(recommendedItems) and param.keyword == null and param.categoryId == null}">
+            <h2 class="section-title">おすすめの商品</h2>
+            <div class="item-grid">
+                <div class="item-card" th:each="recommended : ${recommendedItems}">
+                    <a th:href="@{/items/{id}(id=${recommended.id})}" class="card-link">
+                        <div class="image-container">
+                            <div class="recommend-reason-badge" th:if="${recommended.recommendReason != null}" th:text="${recommended.recommendReason}"></div>
+                            <img th:src="${recommended.imageUrl != null ? recommended.imageUrl : '/images/placeholder.png'}" class="product-img">
+                            <div class="price-tag">
+                                <span class="currency">¥</span>
+                                <span th:text="${#numbers.formatDecimal(recommended.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="item-name" th:text="${recommended.name}"></h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
 
-	                    <img th:src="${recommended.imageUrl != null ? recommended.imageUrl : '/images/placeholder.png'}"
-	                        alt="商品画像" class="product-img">
+        <div class="container">
+            <h2 class="section-title" th:if="${param.keyword == null and param.categoryId == null}">新着商品</h2>
+            
+            <div class="item-grid" th:unless="${#lists.isEmpty(items.content)}">
+                <div class="item-card" th:each="item : ${items.content}">
+                    <a th:href="@{/items/{id}(id=${item.id})}" class="card-link">
+                        <div class="image-container">
+                            <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" class="product-img">
+                            <div class="price-tag">
+                                <span class="currency">¥</span>
+                                <span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                            </div>
+                            <div th:if="${item.status == 'SOLD'}" class="sold-overlay">
+                                <div class="sold-badge"></div>
+                                <span class="sold-text">SOLD</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="item-name" th:text="${item.name}"></h3>
+                            <div class="item-footer">
+                                <span class="status-label" th:unless="${item.status == 'SOLD'}" th:text="${item.status}"></span>
+                                <div class="like-count" th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
+                                    <i class="fa-heart" th:classappend="${item.isFavorited} ? 'fas' : 'far'"></i>
+                                    <span th:text="${item.favoriteCount != null ? item.favoriteCount : 0}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
 
-	                    <div class="price-tag">
-	                        <span class="currency">¥</span>
-	                        <span th:text="${#numbers.formatDecimal(recommended.price, 0, 'COMMA', 0, 'POINT')}"></span>
-	                    </div>
-	                </div>
-	                <div class="card-body">
-	                    <h3 class="item-name" th:text="${recommended.name}">商品名</h3>
-	                </div>
-	            </a>
-	        </div>
-	    </div>
-	</div>
+            <div th:if="${#lists.isEmpty(items.content)}" class="empty-state">
+                <div class="empty-state-inner">
+                    <div class="empty-icon-container">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>該当する商品が見つかりません</h3>
+                    <p>検索ワードを変えたり、カテゴリーを広げて再検索してみてください。</p>
+                    <a th:href="@{/items}" class="reset-btn">
+                        検索条件をクリアする
+                    </a>
+                </div>
+            </div>
+        </div>
 
-	<div class="container" th:if="${recommendedItems == null or #lists.isEmpty(recommendedItems)}">
-		<p>おすすめの商品はありません。</p>
-	</div>
+        <div class="pagination" th:if="${items.totalPages > 1}">
+            <a th:if="${items.hasPrevious()}" class="page-link prev"
+                th:href="@{/items(page=${items.number - 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">
+                <i class="fas fa-chevron-left"></i> 前へ
+            </a>
+            <div class="page-numbers">
+                <span th:each="i : ${#numbers.sequence(0, items.totalPages - 1)}">
+                    <a th:if="${i != items.number}" class="page-link num"
+                        th:href="@{/items(page=${i}, keyword=${param.keyword}, categoryId=${param.categoryId})}" th:text="${i + 1}"></a>
+                    <span th:if="${i == items.number}" class="page-link current" th:text="${i + 1}"></span>
+                </span>
+            </div>
+            <a th:if="${items.hasNext()}" class="page-link next"
+                th:href="@{/items(page=${items.number + 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">
+                次へ <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
 
-	<div class="container">
-		<div class="item-grid">
-			<div class="item-card" th:each="item : ${items.content}">
-				<a th:href="@{/items/{id}(id=${item.id})}" class="card-link">
-					<div class="image-container">
-						<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像"
-							class="product-img">
+        <div class="container recent-history" th:if="${itemViewHistories != null and !#lists.isEmpty(itemViewHistories)}">
+            <h2 class="section-title">最近見た商品</h2>
+            <div class="item-grid">
+                <div class="item-card" th:each="history : ${itemViewHistories}">
+                    <a th:href="@{/items/{id}(id=${history.item.id})}" class="card-link">
+                        <div class="image-container">
+                            <img th:src="${history.item.imageUrl != null ? history.item.imageUrl : '/images/placeholder.png'}" class="product-img">
+                            <div class="price-tag">
+                                <span class="currency">¥</span>
+                                <span th:text="${#numbers.formatDecimal(history.item.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="item-name" th:text="${history.item.name}"></h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
 
-						<div class="price-tag">
-							<span class="currency">¥</span>
-							<span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></span>
-						</div>
+    <a th:href="@{/items/new}" class="fab-sell">
+        <i class="fas fa-camera"></i>
+        <span class="fab-text">出品</span>
+    </a>
 
-						<div th:if="${item.status == 'SOLD'}" class="sold-overlay">
-							<div class="sold-badge"></div>
-							<span class="sold-text">SOLD</span>
-						</div>
-					</div>
-					<div class="card-body">
-						<h3 class="item-name" th:text="${item.name}">商品名</h3>
-						<div class="item-footer">
-							<span class="status-label" th:unless="${item.status == 'SOLD'}" th:text="${item.status}"></span>
-							<div class="like-count" th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
-								<i class="fa-heart" th:classappend="${item.isFavorited} ? 'fas' : 'far'"></i>
-								<span th:text="${item.favoriteCount != null ? item.favoriteCount : 0}">0</span>
-							</div>
-						</div>
-					</div>
-				</a>
-			</div>
-		</div>
-	</div>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', async function () {
+            // 通知モーダル制御
+            const btn = document.getElementById('notificationBtn');
+            const modal = document.getElementById('notificationModal');
+            if (btn && modal) {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+                });
+                document.addEventListener('click', (e) => {
+                    if (!modal.contains(e.target) && e.target !== btn) modal.style.display = 'none';
+                });
+            }
 
+            const parentSelect = document.getElementById('parentCategory');
+            const childSelect = document.getElementById('childCategory');
+            const grandChildSelect = document.getElementById('grandChildCategory');
+            const finalInput = document.getElementById('finalCategoryId');
+            const searchForm = document.querySelector('.search-form');
 
-	<div th:if="${#lists.isEmpty(items.content)}" class="no-items">
-		<p>商品が見つかりませんでした。</p>
-		<a th:href="@{/items}" class="reset-link">検索条件をクリア</a>
-	</div>
+            async function getData(url) {
+                try {
+                    const res = await fetch(url);
+                    return res.ok ? await res.json() : null;
+                } catch (e) { return null; }
+            }
 
+            function buildOptions(select, data, selectedId, arrowId) {
+                const arrow = document.getElementById(arrowId);
+                select.innerHTML = '<option value="">選択してください</option>';
+                
+                if (!data || data.length === 0) {
+                    select.style.display = 'none';
+                    if(arrow) arrow.style.display = 'none';
+                    return;
+                }
+                
+                data.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.text = c.name;
+                    if (c.id == selectedId) opt.selected = true;
+                    select.appendChild(opt);
+                });
+                
+                select.style.display = 'inline-block';
+                if(arrow) arrow.style.display = 'inline-block';
+            }
 
-	<div class="pagination" th:if="${items.totalPages > 0}">
-		<a th:if="${items.hasPrevious()}" class="page-link prev"
-			th:href="@{/items(page=${items.number - 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">
-			<i class="fas fa-chevron-left"></i> 前へ
-		</a>
+            async function completeRestore() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const categoryId = urlParams.get('categoryId');
+                if (!categoryId) return;
 
-		<div class="page-numbers">
-			<span th:each="i : ${#numbers.sequence(0, items.totalPages - 1)}">
-				<a th:if="${i != items.number}" class="page-link num"
-					th:href="@{/items(page=${i}, keyword=${param.keyword}, categoryId=${param.categoryId})}" th:text="${i + 1}"></a>
-				<span th:if="${i == items.number}" class="page-link current" th:text="${i + 1}"></span>
-			</span>
-		</div>
+                for (let pOpt of parentSelect.options) {
+                    if (!pOpt.value) continue;
+                    const children = await getData(`/items/categories/${pOpt.value}/children`);
+                    if (!children) continue;
 
-		<a th:if="${items.hasNext()}" class="page-link next"
-			th:href="@{/items(page=${items.number + 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">
-			次へ <i class="fas fa-chevron-right"></i>
-		</a>
-	</div>
+                    if (pOpt.value == categoryId) {
+                        parentSelect.value = categoryId;
+                        buildOptions(childSelect, children, null, 'childArrow');
+                        return;
+                    }
 
+                    const matchedChild = children.find(c => c.id == categoryId);
+                    if (matchedChild) {
+                        parentSelect.value = pOpt.value;
+                        buildOptions(childSelect, children, categoryId, 'childArrow');
+                        const grandChildren = await getData(`/items/categories/${categoryId}/children`);
+                        buildOptions(grandChildSelect, grandChildren, null, 'grandChildArrow');
+                        return;
+                    }
 
+                    for (let child of children) {
+                        const grandChildren = await getData(`/items/categories/${child.id}/children`);
+                        if (!grandChildren) continue;
+                        const matchedGrand = grandChildren.find(g => g.id == categoryId);
+                        if (matchedGrand) {
+                            parentSelect.value = pOpt.value;
+                            buildOptions(childSelect, children, child.id, 'childArrow');
+                            buildOptions(grandChildSelect, grandChildren, categoryId, 'grandChildArrow');
+                            return;
+                        }
+                    }
+                }
+            }
 
-	<div class="container">
-		<h2>最近見た商品</h2>
-		<div class="item-grid">
-			<div class="item-card" th:each="history : ${itemViewHistories}">
-				<a th:href="@{/items/{id}(id=${history.item.id})}" class="card-link">
-					<div class="image-container">
-						<img th:src="${history.item.imageUrl != null ? history.item.imageUrl : '/images/placeholder.png'}"
-							alt="商品画像" class="product-img">
+            async function onCategoryChange(id, target, next, arrowId, nextArrowId) {
+                finalInput.value = id;
+                if (!id) {
+                    if (target) target.style.display = 'none';
+                    if (next) next.style.display = 'none';
+                    if (document.getElementById(arrowId)) document.getElementById(arrowId).style.display = 'none';
+                    if (document.getElementById(nextArrowId)) document.getElementById(nextArrowId).style.display = 'none';
+                }
+                searchForm.submit();
+            }
 
-						<div class="price-tag">
-							<span class="currency">¥</span>
-							<span th:text="${#numbers.formatDecimal(history.item.price, 0, 'COMMA', 0, 'POINT')}"></span>
-						</div>
+            parentSelect.addEventListener('change', e => onCategoryChange(e.target.value, childSelect, grandChildSelect, 'childArrow', 'grandChildArrow'));
+            childSelect.addEventListener('change', e => onCategoryChange(e.target.value, grandChildSelect, null, 'grandChildArrow', null));
+            grandChildSelect.addEventListener('change', e => {
+                finalInput.value = e.target.value || childSelect.value;
+                searchForm.submit();
+            });
 
-					</div>
-					<div class="card-body">
-						<h3 class="item-name" th:text="${history.item.name}">商品名</h3>
-					</div>
-				</a>
-			</div>
-		</div>
-	</div>
-
-	<div class="container" th:if="${itemViewHistories == null or #lists.isEmpty(itemViewHistories)}">
-		<p>なにもありません</p>
-	</div>
-
-
-	<a th:href="@{/items/new}" class="fab-sell">
-		<i class="fas fa-camera"></i>
-		<span class="fab-text">出品</span>
-	</a>
-
-	<script th:inline="javascript">
-	    document.addEventListener('DOMContentLoaded', async function () {
-	        // --- 通知モーダル (省略) ---
-	        const btn = document.getElementById('notificationBtn');
-	        const modal = document.getElementById('notificationModal');
-	        if (btn && modal) {
-	            btn.addEventListener('click', (e) => {
-	                e.stopPropagation();
-	                modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-	            });
-	            document.addEventListener('click', (e) => {
-	                if (!modal.contains(e.target) && e.target !== btn) modal.style.display = 'none';
-	            });
-	        }
-
-	        const parentSelect = document.getElementById('parentCategory');
-	        const childSelect = document.getElementById('childCategory');
-	        const grandChildSelect = document.getElementById('grandChildCategory');
-	        const finalInput = document.getElementById('finalCategoryId');
-	        const searchForm = document.querySelector('.search-form');
-
-	        async function getData(url) {
-	            try {
-	                const res = await fetch(url);
-	                return res.ok ? await res.json() : null;
-	            } catch (e) { return null; }
-	        }
-
-			// JS内の buildOptions をこのように修正
-			function buildOptions(select, data, selectedId, arrowId) {
-			    const arrow = document.getElementById(arrowId);
-			    select.innerHTML = '<option value="">選択してください</option>';
-			    
-			    if (!data || data.length === 0) {
-			        select.style.display = 'none';
-			        if(arrow) arrow.style.display = 'none';
-			        return;
-			    }
-			    
-			    data.forEach(c => {
-			        const opt = document.createElement('option');
-			        opt.value = c.id;
-			        opt.text = c.name;
-			        if (c.id == selectedId) opt.selected = true;
-			        select.appendChild(opt);
-			    });
-			    
-			    select.style.display = 'inline-block';
-			    if(arrow) arrow.style.display = 'inline-block'; // データがあれば矢印を表示
-			}
-
-	        // --- 【完全版】全階層対応の復元ロジック ---
-			async function completeRestore() {
-			    const urlParams = new URLSearchParams(window.location.search);
-			    const categoryId = urlParams.get('categoryId');
-			    if (!categoryId) return;
-
-			    for (let pOpt of parentSelect.options) {
-			        if (!pOpt.value) continue;
-
-			        const children = await getData(`/items/categories/${pOpt.value}/children`);
-			        if (!children) continue;
-
-			        // A. 大カテゴリーが選択されている場合
-			        if (pOpt.value == categoryId) {
-			            parentSelect.value = categoryId;
-			            buildOptions(childSelect, children, null, 'childArrow'); // 第4引数を追加
-			            return;
-			        }
-
-			        // B. 中カテゴリーが選択されている場合
-			        const matchedChild = children.find(c => c.id == categoryId);
-			        if (matchedChild) {
-			            parentSelect.value = pOpt.value;
-			            buildOptions(childSelect, children, categoryId, 'childArrow'); // 第4引数を追加
-			            const grandChildren = await getData(`/items/categories/${categoryId}/children`);
-			            buildOptions(grandChildSelect, grandChildren, null, 'grandChildArrow'); // 第4引数を追加
-			            return;
-			        }
-
-			        // C. 孫カテゴリーが選択されている場合
-			        for (let child of children) {
-			            const grandChildren = await getData(`/items/categories/${child.id}/children`);
-			            if (!grandChildren) continue;
-
-			            const matchedGrand = grandChildren.find(g => g.id == categoryId);
-			            if (matchedGrand) {
-			                parentSelect.value = pOpt.value;
-			                buildOptions(childSelect, children, child.id, 'childArrow'); // 第4引数を追加
-			                buildOptions(grandChildSelect, grandChildren, categoryId, 'grandChildArrow'); // 第4引数を追加
-			                return;
-			            }
-			        }
-			    }
-			}
-
-			async function onCategoryChange(id, target, next, arrowId, nextArrowId) {
-			    finalInput.value = id;
-			    if (!id) {
-			        if (target) target.style.display = 'none';
-			        if (next) next.style.display = 'none';
-			        if (document.getElementById(arrowId)) document.getElementById(arrowId).style.display = 'none';
-			        if (document.getElementById(nextArrowId)) document.getElementById(nextArrowId).style.display = 'none';
-			    }
-			    searchForm.submit();
-			}
-
-			// イベントリスナーの引数も更新
-			parentSelect.addEventListener('change', e => onCategoryChange(e.target.value, childSelect, grandChildSelect, 'childArrow', 'grandChildArrow'));
-			childSelect.addEventListener('change', e => onCategoryChange(e.target.value, grandChildSelect, null, 'grandChildArrow', null));
-	        grandChildSelect.addEventListener('change', e => {
-	            finalInput.value = e.target.value || childSelect.value;
-	            searchForm.submit();
-	        });
-
-	        // 復元実行
-	        await completeRestore();
-	    });
-	</script>
+            await completeRestore();
+        });
+    </script>
 </body>
 
 </html>
