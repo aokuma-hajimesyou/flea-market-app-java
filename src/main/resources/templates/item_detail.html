@@ -98,11 +98,12 @@
 		    </button>
 		</form>
 
-        <div class="button-group" style="margin-top: 30px;">
-            <a th:href="@{/items}" class="button secondary" style="width: 100%; text-align: center;">
-                <i class="fas fa-arrow-left"></i> 商品一覧に戻る
-            </a>
-        </div>
+		<div class="button-group" style="margin-top: 30px;">
+		    <a th:href="@{/items}" onclick="if(document.referrer.includes('/items')) { history.back(); return false; }" 
+		       class="button secondary" style="width: 100%; text-align: center;">
+		        <i class="fas fa-arrow-left"></i> 商品一覧に戻る
+		    </a>
+		</div>
     </div>
     <div style="height: 60px;"></div>
 </body>
