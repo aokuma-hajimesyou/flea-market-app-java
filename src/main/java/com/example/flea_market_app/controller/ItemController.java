@@ -122,6 +122,10 @@ public class ItemController {
 	@GetMapping("/{id}")
 	public String showItemDetail(
 			@PathVariable("id") Long id,
+			@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam(value = "categoryId", required = false) Long categoryId,
+			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
 
@@ -142,7 +146,14 @@ public class ItemController {
 					.orElseThrow(() -> new RuntimeException("user not found"));
 			model.addAttribute("isFavorited", favoriteService.isFavorited(currentUser, id));
 			itemViewHistoryService.recordView(currentUser, item);
+			List<Item> recommendedItems = recommendationService.getRecommendedItems(currentUser);
+			model.addAttribute("recommendedItems", recommendedItems);
 		}
+
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("categoryId", categoryId);
+		model.addAttribute("page", page);
+		model.addAttribute("size", size);
 
 		return "item_detail";
 	}

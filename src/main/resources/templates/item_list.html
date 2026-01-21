@@ -45,7 +45,7 @@
                     </div>
                 </div>
 
-                <a th:href="@{/my-page}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
+                <a th:href="@{/my-page(keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size})}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
 
                 <form th:action="@{/logout}" method="post" style="display:inline;">
                     <button type="submit" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i></button>
@@ -92,7 +92,7 @@
             </h2>
         </div>
 
-        <div class="container" th:if="${recommendedItems != null and !#lists.isEmpty(recommendedItems) and param.keyword == null and param.categoryId == null}">
+        <div class="container" th:if="${recommendedItems != null and !#lists.isEmpty(recommendedItems)}">
             <h2 class="section-title">おすすめの商品</h2>
             <div class="item-grid">
                 <div class="item-card" th:each="recommended : ${recommendedItems}">
@@ -114,11 +114,12 @@
         </div>
 
         <div class="container">
-            <h2 class="section-title" th:if="${param.keyword == null and param.categoryId == null}">新着商品</h2>
+            <h2 class="section-title" th:if="${(param.keyword == null or #strings.isEmpty(param.keyword)) and param.categoryId == null}">新着商品</h2>
+            <h2 class="section-title" th:unless="${(param.keyword == null or #strings.isEmpty(param.keyword)) and param.categoryId == null}">商品一覧</h2>
             
             <div class="item-grid" th:unless="${#lists.isEmpty(items.content)}">
                 <div class="item-card" th:each="item : ${items.content}">
-                    <a th:href="@{/items/{id}(id=${item.id})}" class="card-link">
+                    <a th:href="@{/items/{id}(id=${item.id}, keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size})}" class="card-link">
                         <div class="image-container">
                             <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" class="product-img">
                             <div class="price-tag">

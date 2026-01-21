@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.service.AppOrderService;
@@ -41,13 +42,25 @@ public class UserController {
 	}
 
 	@GetMapping
-	public String myPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+	public String myPage(
+			@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam(value = "categoryId", required = false) Long categoryId,
+			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
+			@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		// --- 通知情報の追加 ---
 		model.addAttribute("user", currentUser);
 		model.addAttribute("unreadCount", notificationService.getUnreadCount(currentUser));
 		model.addAttribute("notifications", notificationService.getNotificationsForUser(currentUser));
+
+		// 絞り込み条件をmodelに追加
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("categoryId", categoryId);
+		model.addAttribute("page", page);
+		model.addAttribute("size", size);
+
 		return "my-page";
 	}
 

@@ -99,7 +99,7 @@
 		</form>
 
 		<div class="button-group" style="margin-top: 30px;">
-		    <a th:href="@{/items}" onclick="if(document.referrer.includes('/items')) { history.back(); return false; }" 
+		    <a th:href="@{/items(keyword=${keyword}, categoryId=${categoryId}, page=${page}, size=${size})}" 
 		       class="button secondary" style="width: 100%; text-align: center;">
 		        <i class="fas fa-arrow-left"></i> 商品一覧に戻る
 		    </a>
