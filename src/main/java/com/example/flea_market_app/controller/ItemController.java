@@ -74,7 +74,7 @@ public class ItemController {
 			@RequestParam(value = "keyword", required = false) String keyword,
 			@RequestParam(value = "categoryId", required = false) Long categoryId,
 			@RequestParam(value = "page", defaultValue = "0") int page,
-			@RequestParam(value = "size", defaultValue = "10") int size,
+			@RequestParam(value = "size", defaultValue = "12") int size,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
 
@@ -125,7 +125,7 @@ public class ItemController {
 			@RequestParam(value = "keyword", required = false) String keyword,
 			@RequestParam(value = "categoryId", required = false) Long categoryId,
 			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
+			@RequestParam(value = "size", required = false, defaultValue = "12") Integer size,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
 
