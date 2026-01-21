@@ -1,0 +1,260 @@
+/* ==========================================================================
+   ページ固有スタイル
+   ========================================================================== */
+
+/* --- 認証画面 (ログイン・新規登録) 専用スタイル --- */
+.auth-container {
+    max-width: 400px; /* ログイン画面は少し細身にする */
+    margin: 60px auto;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+.auth-header p {
+    color: var(--text-sub);
+    font-size: 0.9rem;
+}
+
+.auth-footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.auth-footer a {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   出品者詳細専用スタイル
+   ========================================================================== */
+/* プロフィールヘッダー */
+.seller-header {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.seller-avatar {
+    font-size: 4rem;
+    color: #ccc;
+    margin-bottom: 15px;
+}
+
+.seller-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 1.5rem;
+}
+
+.seller-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-sub);
+}
+
+/* セクションタイトル */
+.section-title { /* これは`components.css`にも同様の定義があるため、より詳細なセレクタが必要な場合は調整 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 40px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+    font-size: 1.2rem;
+}
+
+/* ==========================================================================
+   管理画面：ユーザー管理用スタイル
+   ========================================================================== */
+.user-status-active {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.user-status-banned {
+    background: #ffebee;
+    color: #c62828;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.user-role-badge {
+    background: #f0f2f5;
+    color: #555;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    border: 1px solid #ddd;
+}
+
+.user-email {
+    color: var(--text-sub);
+    font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   購入完了画面専用スタイル
+   ========================================================================== */
+.success-container {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.success-icon {
+    font-size: 5rem;
+    color: #2ecc71; /* 成功を表すグリーン */
+    margin-bottom: 20px;
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.success-message h2 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.instruction-box {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 30px auto;
+    max-width: 500px;
+    border-left: 5px solid var(--primary-color);
+    text-align: left;
+}
+
+.instruction-box p {
+    margin: 5px 0;
+    color: var(--text-sub);
+    font-size: 0.95rem;
+}
+/* ==========================================================================
+   決済確認画面専用スタイル
+   ========================================================================== */
+.payment-box {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+#payment-element {
+    margin-bottom: 20px;
+    min-height: 250px; /* 読み込み時のガタつき防止 */
+}
+
+.security-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #6b7c93; /* Stripeカラーに近いグレー */
+    margin-top: 15px;
+}
+
+.order-summary-mini {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+
+/* ==========================================================================
+   フォーム・出品画面スタイル
+   ========================================================================== */
+.form-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+.image-preview-container {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.current-img-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+}
+
+.preview-img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* 数値入力の矢印を消す（オプション） */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+}
+
+/* ==========================================================================
+   レスポンシブ (ページ固有の調整)
+   ========================================================================== */
+@media (max-width: 480px) {
+    .mypage-nav { grid-template-columns: 1fr; }
+}

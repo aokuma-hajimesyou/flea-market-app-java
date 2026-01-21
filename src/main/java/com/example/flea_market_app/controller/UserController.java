@@ -47,6 +47,7 @@ public class UserController {
 			@RequestParam(value = "categoryId", required = false) Long categoryId,
 			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
+			@RequestParam(value = "includeSold", required = false) Boolean includeSold,
 			@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("User not found"));
@@ -60,6 +61,7 @@ public class UserController {
 		model.addAttribute("categoryId", categoryId);
 		model.addAttribute("page", page);
 		model.addAttribute("size", size);
+		model.addAttribute("includeSold", includeSold);
 
 		return "my-page";
 	}

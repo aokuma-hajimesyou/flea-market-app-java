@@ -75,11 +75,12 @@ public class ItemController {
 			@RequestParam(value = "categoryId", required = false) Long categoryId,
 			@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "size", defaultValue = "12") int size,
+			@RequestParam(value = "includeSold", defaultValue = "false") boolean includeSold,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
 
 		// 階層対応した検索サービスを呼び出す
-		Page<Item> items = itemService.searchItems(keyword, categoryId, page, size);
+		Page<Item> items = itemService.searchItems(keyword, categoryId, page, size, includeSold);
 
 		// 修正：全カテゴリーではなく、第1階層（親なし）のカテゴリーのみを取得して画面に渡す
 		List<Category> categories = categoryService.getRootCategories();
@@ -108,6 +109,7 @@ public class ItemController {
 
 		model.addAttribute("items", items);
 		model.addAttribute("categories", categories);
+		model.addAttribute("includeSold", includeSold);
 
 		return "item_list";
 	}
@@ -126,6 +128,7 @@ public class ItemController {
 			@RequestParam(value = "categoryId", required = false) Long categoryId,
 			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "12") Integer size,
+			@RequestParam(value = "includeSold", required = false) Boolean includeSold,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
 
@@ -154,6 +157,7 @@ public class ItemController {
 		model.addAttribute("categoryId", categoryId);
 		model.addAttribute("page", page);
 		model.addAttribute("size", size);
+		model.addAttribute("includeSold", includeSold);
 
 		return "item_detail";
 	}
@@ -163,6 +167,8 @@ public class ItemController {
 		model.addAttribute("item", new Item());
 		// 修正：第1階層のカテゴリーのみを初期値として渡す
 		model.addAttribute("categories", categoryService.getRootCategories());
+		// サジェスト機能用に全カテゴリ情報を渡す
+		model.addAttribute("allCategoriesForSuggest", categoryService.getAllCategories());
 		return "item_form";
 	}
 
@@ -206,6 +212,8 @@ public class ItemController {
 		model.addAttribute("item", item.get());
 		// 修正：第1階層のカテゴリーのみを渡す
 		model.addAttribute("categories", categoryService.getRootCategories());
+		// サジェスト機能用に全カテゴリ情報を渡す
+		model.addAttribute("allCategoriesForSuggest", categoryService.getAllCategories());
 		return "item_form";
 	}
 
@@ -268,6 +276,7 @@ public class ItemController {
 	public String addFavorite(
 			@PathVariable("id") Long itemId,
 			@AuthenticationPrincipal UserDetails userDetails,
+			@RequestParam(required = false) Boolean includeSold,
 			RedirectAttributes redirectAttributes) {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("user not found"));
@@ -277,6 +286,9 @@ public class ItemController {
 		} catch (IllegalStateException e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 		}
+		if (includeSold != null) {
+			redirectAttributes.addAttribute("includeSold", includeSold);
+		}
 		return "redirect:/items/{id}";
 	}
 
@@ -284,14 +296,18 @@ public class ItemController {
 	public String removeFavorite(
 			@PathVariable("id") Long itemId,
 			@AuthenticationPrincipal UserDetails userDetails,
+			@RequestParam(required = false) Boolean includeSold,
 			RedirectAttributes redirectAttributes) {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("user not found"));
 		try {
 			favoriteService.removeFavorite(currentUser, itemId);
-			redirectAttributes.addFlashAttribute("successMessage", "お気に入りから削除しました");
+redirectAttributes.addFlashAttribute("successMessage", "お気に入りから削除しました");
 		} catch (IllegalStateException e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+		}
+		if (includeSold != null) {
+			redirectAttributes.addAttribute("includeSold", includeSold);
 		}
 		return "redirect:/items/{id}";
 	}
