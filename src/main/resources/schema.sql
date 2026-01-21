@@ -137,6 +137,20 @@ CREATE TABLE item_view_history (
     CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES item(id) 
 );
 
+CREATE TABLE subject (
+id SERIAL PRIMARY KEY,
+name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE Feedback(
+id SERIAL PRIMARY KEY,
+user_id INT NOT NULL,
+subject_id INT NOT NULL,
+content TEXT NOT NULL,
+status VARCHAR(20) NOT NULL DEFAULT '未対応' CHECK (status IN ('対応中','対応済み', '未対応')),
+created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+);
+
 -- ========== INDEX ==========
 -- BAN 状態、カテゴリー、検索などの高速化目的
 
