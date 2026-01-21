@@ -105,6 +105,7 @@
 		</div>
 
 	<div class="container">
+		<h2>商品一覧</h2>
 		<div class="item-grid">
 			<div class="item-card" th:each="item : ${items.content}">
 				<a th:href="@{/items/{id}(id=${item.id})}" class="card-link">
