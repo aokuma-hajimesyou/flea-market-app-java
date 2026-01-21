@@ -130,6 +130,76 @@
     transform: scale(0.98);
 }
 
+/* Sold filter toggle switch */
+.sold-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+}
+
+.switch-label {
+    font-size: 0.9rem;
+    color: var(--text-sub);
+    font-weight: 500;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+
 /* カテゴリー行全体 */
 .category-row {
     display: flex;
@@ -390,6 +460,29 @@
 .image-container { position: relative; width: 100%; padding-top: 100%; background-color: #eee; }
 .product-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
 
+.sold-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(90, 90, 90, 0.5); /* 半透明のグレー */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5; /* price-tagより手前に */
+}
+
+.sold-text {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    border: 3px solid white;
+    padding: 5px 15px;
+    transform: rotate(-15deg);
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
 .price-tag {
     position: absolute; bottom: 0; left: 0;
     background: var(--price-bg); color: #fff;
@@ -404,11 +497,55 @@
     overflow: hidden;
 }
 
-.item-footer { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-sub); }
+.card-footer {
+    padding: 0 10px 10px;
+    display: flex; /* flexboxを有効にする */
+    justify-content: space-between; /* 子要素を両端に配置 */
+    align-items: center; /* 子要素を垂直方向の中央に配置 */
+}
 
-/* ハートマーク */
-.like-count i { color: #ccc; transition: color 0.2s; }
-.is-favorited i { color: #333 !important; }
+/* 商品カード内のステータス表示用タグ */
+.item-status-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--text-main); /* デフォルトの文字色 */
+    background-color: rgba(0, 0, 0, 0.05); /* 非常に薄いグレーの背景 */
+    white-space: nowrap; /* テキストの折り返しを防ぐ */
+}
+
+/* 出品中の商品ステータス */
+.item-status-tag.status-on-sale {
+    color: #28a745; /* 緑系の文字色 */
+}
+
+/* 売却済みの商品ステータス */
+.item-status-tag.status-sold {
+    color: #dc3545; /* 赤系の文字色 */
+}
+
+.favorite-icon-container {
+    cursor: pointer;
+    font-size: 1.5rem; /* ハートアイコンを大きくする */
+    color: #ccc;
+    transition: color 0.2s ease;
+}
+
+.favorite-icon-container.is-favorited .fa-heart,
+.favorite-icon-container:hover .fa-heart {
+    color: var(--primary-color); /* お気に入り済み、またはホバーで赤色に */
+}
+
+.favorite-icon-container .fa-heart.far {
+    color: #ccc; /* 通常の（未お気に入り）状態の色 */
+}
+
+.favorite-icon-container.is-favorited .fa-heart.far {
+    color: var(--primary-color);
+}
+
 
 /* ==========================================================================
    チャットコンポーネント
