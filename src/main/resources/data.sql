@@ -79,6 +79,14 @@ INSERT INTO category (name, parent_id) VALUES
 ('ノートPC', 41),           -- ID: 62
 ('アイシャドウ', 42);         -- ID: 63
 
+
+--お問い合わせデータ
+INSERT INTO subject (name) VALUES
+('取引トラブル'),
+('通報・違反'),
+('アプリ不具合'),
+('改善要望');
+
 -- 3. アイテム
 INSERT INTO item (user_id, name, description, price, category_id, status, image_url, created_at)
 VALUES
