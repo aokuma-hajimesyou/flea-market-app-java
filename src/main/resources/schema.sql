@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS item_view_history CASCADE;
 DROP TABLE IF EXISTS category CASCADE;
 DROP TABLE IF EXISTS user_complaint CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS subject CASCADE;
+DROP TABLE IF EXISTS feedback CASCADE;
 
 -- ========== CREATE ==========
 
@@ -142,13 +144,15 @@ id SERIAL PRIMARY KEY,
 name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE Feedback(
+CREATE TABLE feedback(
 id SERIAL PRIMARY KEY,
 user_id INT NOT NULL,
 subject_id INT NOT NULL,
 content TEXT NOT NULL,
 status VARCHAR(20) NOT NULL DEFAULT '未対応' CHECK (status IN ('対応中','対応済み', '未対応')),
 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (user_id) REFERENCES users(id),
+FOREIGN KEY (subject_id) REFERENCES subject(id)
 );
 
 -- ========== INDEX ==========
