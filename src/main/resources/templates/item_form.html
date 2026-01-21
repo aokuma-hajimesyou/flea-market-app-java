@@ -33,14 +33,25 @@
                            placeholder="例: 【美品】ワイヤレスイヤホン" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="categoryId"><i class="fas fa-list"></i> カテゴリー</label>
-                    <select id="categoryId" name="categoryId" class="input-field" required>
-                        <option value="">カテゴリーを選択してください</option>
-                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-                                th:selected="${item.category != null and item.category.id == category.id}"></option>
-                    </select>
-                </div>
+				<div class="form-group">
+				    <label for="parentCategory"><i class="fas fa-list"></i> カテゴリー</label>
+				    <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${item.category != null ? item.category.id : ''}" required>
+
+				    <div class="category-row category-selects">
+				        <select id="parentCategory" class="input-field" required>
+				            <option value="">カテゴリーを選択</option>
+				            <option th:each="category : ${categories}" 
+				                    th:value="${category.id}" 
+				                    th:text="${category.name}"></option>
+				        </select>
+
+				        <span class="category-arrow" id="childArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+				        <select id="childCategory" class="input-field" style="display:none;"></select>
+
+				        <span class="category-arrow" id="grandChildArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+				        <select id="grandChildCategory" class="input-field" style="display:none;"></select>
+				    </div>
+				</div>
 
                 <div class="form-group">
                     <label for="price"><i class="fas fa-yen-sign"></i> 販売価格</label>
@@ -76,12 +87,14 @@
                     <button type="submit" class="button" style="flex: 2;">
                         <i class="fas fa-check"></i> [[${item.id == null ? '出品する' : '変更を保存する'}]]
                     </button>
-                    <a th:href="@{/items}" class="button secondary" style="flex: 1; text-align: center;">キャンセル</a>
+                    <a th:href="@{/items}" onclick="if(document.referrer.includes('/items')) { history.back(); return false; }" class="button secondary" style="flex: 1; text-align: center;">キャンセル</a>
                 </div>
             </form>
         </div>
     </div>
 
     <div style="height: 60px;"></div>
+	
+
 </body>
 </html>

@@ -101,18 +101,197 @@ ul { list-style: none; padding: 0; margin: 0; }
     opacity: 0.85;
 }
 
-/* 検索列の微調整（スマホ対応） */
-@media (max-width: 480px) {
-    .search-row {
-        flex-direction: column; /* スマホでは縦並びに */
-        gap: 10px;
+/* ==========================================================================
+   検索エリア・絞り込みボタンのブラッシュアップ
+   ========================================================================== */
+
+.search-area {
+    background-color: #ffffff;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.search-form {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.search-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 1. キーワード入力と検索ボタンの行 */
+.keyword-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.input-group {
+    flex: 1;
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.input-group input {
+    width: 100%;
+    height: 44px;
+    padding: 0 15px 0 40px;
+    background-color: #f1f2f3; /* 柔らかいグレー */
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    background-color: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(225, 58, 51, 0.1);
+}
+
+.search-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.95rem;
+    height: 44px;
+    transition: transform 0.1s active, opacity 0.2s;
+}
+
+.search-btn:hover {
+    opacity: 0.9;
+}
+
+.search-btn:active {
+    transform: scale(0.98);
+}
+
+/* カテゴリー行全体 */
+.category-row {
+    display: flex;
+    gap: 0; /* 矢印との間隔は個別に調整 */
+    align-items: center;
+    flex-wrap: wrap;
+    background: #f9f9f9;
+    padding: 8px 12px;
+    border-radius: 12px;
+}
+
+/* 矢印アイコン */
+.category-arrow {
+    color: #ccc;
+    font-size: 0.75rem;
+    margin: 0 8px;
+}
+
+/* セレクトボックス単体 */
+.category-selects select {
+    height: 34px;
+    padding: 0 28px 0 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* 角を少し落とす程度に */
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 10px;
+}
+
+/* 選択中のセレクトボックスを強調 */
+.category-selects select:not([value=""]) {
+    border-color: var(--primary-color);
+    background-color: #fffaf9;
+    color: var(--primary-color);
+}
+
+/* スマホ対応：矢印を消して2列にするなど調整 */
+@media (max-width: 600px) {
+    .category-arrow {
+        display: none !important; /* スマホでは矢印を消す */
     }
-    
-    .input-group, .select-group, .search-btn {
-        width: 100%; /* 全幅表示 */
+    .category-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 10px;
+    }
+    .category-selects select {
+        max-width: none;
+        width: 100%;
     }
 }
 
+.category-selects select:hover {
+    border-color: #bbb;
+    background-color: #fafafa;
+}
+
+.category-selects select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* 3. レスポンシブ対応 */
+@media (max-width: 600px) {
+    .category-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* スマホでは2列で整列 */
+        gap: 8px;
+    }
+    .category-selects select {
+        max-width: none;
+        width: 100%;
+        height: 40px;
+        font-size: 0.8rem;
+    }
+    /* 3つ目の要素（孫カテゴリ）が1列を占有するように設定（任意） */
+    .category-selects select:nth-child(3) {
+        grid-column: span 2;
+    }
+}
+
+/* おすすめ理由バッジのスタイル */
+.recommend-reason-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.7); /* 半透明の黒 */
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 10;
+    pointer-events: none; /* バッジがクリックを邪魔しないように */
+    white-space: nowrap;
+}
+
+/* お気に入り関連（孫カテゴリ一致）は色を変えて強調する場合 */
+.recommend-reason-badge:contains("お気に入り") {
+    background: rgba(225, 58, 51, 0.8); /* 少し赤みを入れる */
+}
 /* 4. ページネーションのボタン調整 */
 .page-link {
     display: inline-flex;
@@ -245,6 +424,7 @@ ul { list-style: none; padding: 0; margin: 0; }
 .input-group { flex: 1; position: relative; min-width: 200px; }
 .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #aaa; }
 .input-group input { padding-left: 36px; background-color: #f5f5f5; border: 1px solid var(--border-color); width: 100%; box-sizing: border-box; border-radius: 4px; height: 40px; }
+
 
 
 /* --- 認証画面 (ログイン・新規登録) 専用スタイル --- */
@@ -548,6 +728,106 @@ ul { list-style: none; padding: 0; margin: 0; }
     text-align: center;
     color: var(--text-sub);
     font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   7. 検索結果・Empty State（商品なし）
+   ========================================================================== */
+
+/* 検索結果ヘッダー */
+.search-result-header {
+    margin-bottom: 24px;
+    padding: 0 10px;
+}
+
+.result-text {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.result-count {
+    font-size: 1.4rem;
+    color: var(--primary-color); /* メルカリレッド */
+    margin: 0 4px;
+}
+
+/* 商品なし状態 (Empty State) */
+.empty-state {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 60px 20px;
+    text-align: center;
+    margin: 40px auto;
+    max-width: 600px;
+    box-shadow: var(--shadow);
+}
+
+.empty-icon-container {
+    width: 80px;
+    height: 80px;
+    background-color: #f5f5f5;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 24px;
+}
+
+.empty-icon-container i {
+    font-size: 2rem;
+    color: #ccc;
+}
+
+.empty-state h3 {
+    font-size: 1.3rem;
+    color: var(--text-main);
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.empty-state p {
+    color: var(--text-sub);
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+/* クリアボタン（リセットボタン） */
+.reset-btn {
+    display: inline-block;
+    padding: 12px 32px;
+    background-color: var(--text-main); /* 落ち着いた黒系 */
+    color: #fff !important;
+    text-decoration: none;
+    border-radius: 25px; /* 丸みのあるボタン */
+    font-weight: bold;
+    font-size: 0.95rem;
+    transition: opacity 0.2s;
+}
+
+.reset-btn:hover {
+    opacity: 0.8;
+}
+
+/* おすすめ・新着のセクションタイトル共通 */
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 30px 0 15px;
+    padding-left: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+/* モバイル対応：検索結果の文字を少し小さく */
+@media (max-width: 600px) {
+    .empty-state {
+        margin: 20px 10px;
+        padding: 40px 15px;
+    }
+    .result-text {
+        font-size: 1.1rem;
+    }
 }
 
 /* --- 出品者詳細専用スタイル --- */

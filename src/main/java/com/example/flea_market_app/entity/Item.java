@@ -64,4 +64,7 @@ public class Item {
 
 	@Transient
 	private boolean isFavorited;
+
+	@Transient
+	private String recommendReason;
 }

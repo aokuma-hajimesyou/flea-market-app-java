@@ -85,7 +85,8 @@
             <a th:href="@{/my-page/reviews}" class="button">
                 <i class="fas fa-star" style="margin-right: 8px;"></i>自分の評価
             </a>
-            <a th:href="@{/items}" class="button secondary">
+			<a th:href="@{/items}" onclick="if(document.referrer.includes('/items')) { history.back(); return false; }" 
+					       class="button secondary">
                 <i class="fas fa-list" style="margin-right: 8px;"></i>商品一覧に戻る
             </a>
             
@@ -99,28 +100,7 @@
 
     <div style="height: 40px;"></div>
 	
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-						const btn = document.getElementById('notificationBtn');
-						const modal = document.getElementById('notificationModal');
 
-						if (btn && modal) {
-							// ベルマーククリックで表示切り替え
-							btn.addEventListener('click', function(e) {
-								e.stopPropagation(); // 親要素へのクリック伝播を阻止
-								const isDisplayed = modal.style.display === 'block';
-								modal.style.display = isDisplayed ? 'none' : 'block';
-							});
-
-							// モーダル以外をクリックしたら閉じる
-							document.addEventListener('click', function(e) {
-								if (!modal.contains(e.target) && e.target !== btn) {
-									modal.style.display = 'none';
-								}
-							});
-						}
-					});
-	</script>
 	
 </body>
 
