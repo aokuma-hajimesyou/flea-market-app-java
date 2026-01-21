@@ -491,6 +491,61 @@ ul { list-style: none; padding: 0; margin: 0; }
     color: var(--accent-color);
     font-weight: bold;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center; /* 中央寄せ */
+    align-items: center;
+    gap: 8px; /* 要素間の隙間 */
+    margin: 40px 0;
+    padding: 20px 0;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-main);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    box-sizing: border-box; /* サイズ計算を安定させる */
+}
+
+/* 現在のページ */
+.page-link.current {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    cursor: default;
+}
+
+/* ホバー時（現在のページ以外） */
+.page-link:hover:not(.current) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: #fffaf9;
+}
+
+/* 前へ・次へボタンのテキスト・アイコン調整 */
+.page-link.prev, .page-link.next {
+    padding: 0 16px;
+    font-size: 0.9rem;
+    gap: 5px;
+}
 /* ==========================================================================
    4. 商品一覧 (Grid & Card)
    ========================================================================== */
