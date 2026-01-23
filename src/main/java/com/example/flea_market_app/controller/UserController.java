@@ -48,6 +48,8 @@ public class UserController {
 			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
 			@RequestParam(value = "includeSold", required = false) Boolean includeSold,
+			@RequestParam(value = "minPrice", required = false) Integer minPrice,
+			@RequestParam(value = "maxPrice", required = false) Integer maxPrice,
 			@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("User not found"));
@@ -62,6 +64,8 @@ public class UserController {
 		model.addAttribute("page", page);
 		model.addAttribute("size", size);
 		model.addAttribute("includeSold", includeSold);
+		model.addAttribute("minPrice", minPrice);
+		model.addAttribute("maxPrice", maxPrice);
 
 		return "my-page";
 	}

@@ -47,7 +47,7 @@
                     </div>
                 </div>
 
-                <a th:href="@{/my-page(keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size}, includeSold=${includeSold})}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
+                <a th:href="@{/my-page(keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
 
                 <form th:action="@{/logout}" method="post" style="display:inline;">
                     <button type="submit" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i></button>
@@ -215,7 +215,7 @@
         </div>
     </main>
 
-    <a th:href="@{/items/new}" class="fab-sell">
+    <a th:href="@{/items/new(keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}" class="fab-sell">
         <i class="fas fa-camera"></i>
         <span class="fab-text">出品</span>
     </a>

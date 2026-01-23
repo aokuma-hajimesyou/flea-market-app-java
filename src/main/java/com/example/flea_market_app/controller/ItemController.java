@@ -97,13 +97,21 @@ public class ItemController {
 			}
 		});
 
+		boolean isSearching = (keyword != null && !keyword.isEmpty()) ||
+				categoryId != null ||
+				minPrice != null ||
+				maxPrice != null ||
+				includeSold;
+
 		if (userDetails != null) {
 			User user = userService.getUserByEmail(userDetails.getUsername()).orElse(null);
 			if (user != null) {
 				List<ItemViewHistory> itemViewHistories = itemViewHistoryService.getRecordView(user);
-				List<Item> recommendedItems = recommendationService.getRecommendedItems(user);
+				if (!isSearching) {
+					List<Item> recommendedItems = recommendationService.getRecommendedItems(user);
+					model.addAttribute("recommendedItems", recommendedItems);
+				}
 				model.addAttribute("itemViewHistories", itemViewHistories);
-				model.addAttribute("recommendedItems", recommendedItems);
 				model.addAttribute("unreadCount", notificationService.getUnreadCount(user));
 				model.addAttribute("notifications", notificationService.getNotificationsForUser(user));
 			}
@@ -133,6 +141,8 @@ public class ItemController {
 			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "12") Integer size,
 			@RequestParam(value = "includeSold", required = false) Boolean includeSold,
+			@RequestParam(value = "minPrice", required = false) Integer minPrice,
+			@RequestParam(value = "maxPrice", required = false) Integer maxPrice,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
 
@@ -162,17 +172,36 @@ public class ItemController {
 		model.addAttribute("page", page);
 		model.addAttribute("size", size);
 		model.addAttribute("includeSold", includeSold);
+		model.addAttribute("minPrice", minPrice);
+		model.addAttribute("maxPrice", maxPrice);
 
 		return "item_detail";
 	}
 
 	@GetMapping("/new")
-	public String showAddItemForm(Model model) {
+	public String showAddItemForm(Model model,
+			@RequestParam(required = false) String keyword,
+			@RequestParam(required = false) Long categoryId,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer size,
+			@RequestParam(required = false) Boolean includeSold,
+			@RequestParam(required = false) Integer minPrice,
+			@RequestParam(required = false) Integer maxPrice) {
 		model.addAttribute("item", new Item());
 		// 修正：第1階層のカテゴリーのみを初期値として渡す
 		model.addAttribute("categories", categoryService.getRootCategories());
 		// サジェスト機能用に全カテゴリ情報を渡す
 		model.addAttribute("allCategoriesForSuggest", categoryService.getAllCategories());
+
+		// 検索パラメータをモデルに追加
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("categoryId", categoryId);
+		model.addAttribute("page", page);
+		model.addAttribute("size", size);
+		model.addAttribute("includeSold", includeSold);
+		model.addAttribute("minPrice", minPrice);
+		model.addAttribute("maxPrice", maxPrice);
+
 		return "item_form";
 	}
 
@@ -207,7 +236,14 @@ public class ItemController {
 	}
 
 	@GetMapping("/{id}/edit")
-	public String showEditItemForm(@PathVariable("id") Long id, Model model) {
+	public String showEditItemForm(@PathVariable("id") Long id, Model model,
+			@RequestParam(required = false) String keyword,
+			@RequestParam(required = false) Long categoryId,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer size,
+			@RequestParam(required = false) Boolean includeSold,
+			@RequestParam(required = false) Integer minPrice,
+			@RequestParam(required = false) Integer maxPrice) {
 		Optional<Item> item = itemService.getItemById(id);
 		if (item.isEmpty()) {
 			return "redirect:/items";
@@ -218,6 +254,15 @@ public class ItemController {
 		model.addAttribute("categories", categoryService.getRootCategories());
 		// サジェスト機能用に全カテゴリ情報を渡す
 		model.addAttribute("allCategoriesForSuggest", categoryService.getAllCategories());
+
+		// 検索パラメータをモデルに追加
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("categoryId", categoryId);
+		model.addAttribute("page", page);
+		model.addAttribute("size", size);
+		model.addAttribute("includeSold", includeSold);
+		model.addAttribute("minPrice", minPrice);
+		model.addAttribute("maxPrice", maxPrice);
 		return "item_form";
 	}
 
