@@ -10,7 +10,6 @@ import com.example.flea_market_app.entity.Item;
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.repository.ChatRepository;
 import com.example.flea_market_app.repository.ItemRepository;
-import com.example.flea_market_app.service.LineNotifyService;
 
 @Service
 public class ChatService {
