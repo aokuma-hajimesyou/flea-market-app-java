@@ -10,7 +10,7 @@
 <body>
     <header class="app-header">
         <div class="header-inner">
-            <h1 class="app-title"><a th:href="@{/items(keyword=${keyword}, categoryId=${categoryId}, page=${page}, size=${size}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}">FleaMarketApp</a></h1>
+            <h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
         </div>
     </header>
     
@@ -54,13 +54,11 @@
     
                     <div sec:authorize="isAuthenticated()" th:if="${item.seller.email != #authentication.name}" style="flex: 1;">
                         <form th:if="${isFavorited}" th:action="@{/items/{id}/unfavorite(id=${item.id})}" method="post">
-                            <input type="hidden" name="includeSold" th:value="${includeSold}" th:if="${includeSold != null}">
                             <button type="submit" class="button secondary" style="width: 100%; height: 55px; color: #ff4d4f; border-color: #ff4d4f;">
                                 <i class="fas fa-heart"></i> 解除
                             </button>
                         </form>
                         <form th:unless="${isFavorited}" th:action="@{/items/{id}/favorite(id=${item.id})}" method="post">
-                            <input type="hidden" name="includeSold" th:value="${includeSold}" th:if="${includeSold != null}">
                             <button type="submit" class="button secondary" style="width: 100%; height: 55px;">
                                 <i class="far fa-heart"></i> お気に入り
                             </button>
@@ -101,7 +99,7 @@
         </form>
     
         <div class="button-group" style="margin-top: 30px;">
-            <a th:href="@{/items(keyword=${keyword}, categoryId=${categoryId}, page=${page}, size=${size}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}" 
+            <a th:href="@{/items}" 
                class="button secondary" style="width: 100%; text-align: center;">
                 <i class="fas fa-arrow-left"></i> 商品一覧に戻る
             </a>

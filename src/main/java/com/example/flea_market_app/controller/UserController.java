@@ -42,30 +42,13 @@ public class UserController {
 	}
 
 	@GetMapping
-	public String myPage(
-			@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "categoryId", required = false) Long categoryId,
-			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
-			@RequestParam(value = "includeSold", required = false) Boolean includeSold,
-			@RequestParam(value = "minPrice", required = false) Integer minPrice,
-			@RequestParam(value = "maxPrice", required = false) Integer maxPrice,
-			@AuthenticationPrincipal UserDetails userDetails, Model model) {
+	public String myPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		// --- 通知情報の追加 ---
 		model.addAttribute("user", currentUser);
 		model.addAttribute("unreadCount", notificationService.getUnreadCount(currentUser));
 		model.addAttribute("notifications", notificationService.getNotificationsForUser(currentUser));
-
-		// 絞り込み条件をmodelに追加
-		model.addAttribute("keyword", keyword);
-		model.addAttribute("categoryId", categoryId);
-		model.addAttribute("page", page);
-		model.addAttribute("size", size);
-		model.addAttribute("includeSold", includeSold);
-		model.addAttribute("minPrice", minPrice);
-		model.addAttribute("maxPrice", maxPrice);
 
 		return "my-page";
 	}
