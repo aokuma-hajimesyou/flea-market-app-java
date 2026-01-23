@@ -27,25 +27,25 @@ public class ItemService {
 		this.cloudinaryService = cloudinaryService;
 	}
 
-	public Page<Item> searchItems(String keyword, Long categoryId, int page, int size, boolean includeSold) {
+	public Page<Item> searchItems(String keyword, Long categoryId, int page, int size, boolean includeSold, Integer minPrice, Integer maxPrice) {
 		Pageable pageable = PageRequest.of(page, size);
 		String status = includeSold ? null : "出品中";
 
 		// キーワードあり ＋ カテゴリー指定あり
 		if (keyword != null && !keyword.isEmpty() && categoryId != null) {
-			return itemRepository.findByNameAndHierarchyCategoryAndStatusOptional(keyword, categoryId, status, pageable);
+			return itemRepository.findByNameAndHierarchyCategoryAndStatusOptional(keyword, categoryId, status, minPrice, maxPrice, pageable);
 		}
 		// キーワードのみ
 		else if (keyword != null && !keyword.isEmpty()) {
-			return itemRepository.findByNameContainingIgnoreCaseAndStatusOptional(keyword, status, pageable);
+			return itemRepository.findByNameContainingIgnoreCaseAndStatusOptional(keyword, status, minPrice, maxPrice, pageable);
 		}
 		// カテゴリー指定のみ（階層対応メソッドを呼び出し）
 		else if (categoryId != null) {
-			return itemRepository.findByHierarchyCategoryAndStatusOptional(categoryId, status, pageable);
+			return itemRepository.findByHierarchyCategoryAndStatusOptional(categoryId, status, minPrice, maxPrice, pageable);
 		}
 		// 条件なし
 		else {
-			return itemRepository.findByStatusOptional(status, pageable);
+			return itemRepository.findByStatusOptional(status, minPrice, maxPrice, pageable);
 		}
 	}
 

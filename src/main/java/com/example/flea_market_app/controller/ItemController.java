@@ -76,11 +76,13 @@ public class ItemController {
 			@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "size", defaultValue = "12") int size,
 			@RequestParam(value = "includeSold", defaultValue = "false") boolean includeSold,
+			@RequestParam(value = "minPrice", required = false) Integer minPrice,
+			@RequestParam(value = "maxPrice", required = false) Integer maxPrice,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
 
 		// 階層対応した検索サービスを呼び出す
-		Page<Item> items = itemService.searchItems(keyword, categoryId, page, size, includeSold);
+		Page<Item> items = itemService.searchItems(keyword, categoryId, page, size, includeSold, minPrice, maxPrice);
 
 		// 修正：全カテゴリーではなく、第1階層（親なし）のカテゴリーのみを取得して画面に渡す
 		List<Category> categories = categoryService.getRootCategories();
@@ -110,6 +112,8 @@ public class ItemController {
 		model.addAttribute("items", items);
 		model.addAttribute("categories", categories);
 		model.addAttribute("includeSold", includeSold);
+		model.addAttribute("minPrice", minPrice);
+		model.addAttribute("maxPrice", maxPrice);
 
 		return "item_list";
 	}

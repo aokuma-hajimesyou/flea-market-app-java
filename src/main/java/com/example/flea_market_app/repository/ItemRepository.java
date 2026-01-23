@@ -16,11 +16,14 @@ import com.example.flea_market_app.entity.User;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	@Query("SELECT i FROM Item i WHERE " +
-			"LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) AND " +
-			"(:status IS NULL OR i.status = :status)")
+			"(LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+			"(:status IS NULL OR i.status = :status) AND " +
+			"(:minPrice IS NULL OR i.price >= :minPrice) AND (:maxPrice IS NULL OR i.price <= :maxPrice)")
 	Page<Item> findByNameContainingIgnoreCaseAndStatusOptional(
 			@Param("name") String name,
 			@Param("status") String status,
+			@Param("minPrice") Integer minPrice,
+			@Param("maxPrice") Integer maxPrice,
 			Pageable pageable);
 
 	@Query("SELECT i FROM Item i WHERE " +
@@ -41,8 +44,13 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			@Param("status") String status,
 			Pageable pageable);
 
-	@Query("SELECT i FROM Item i JOIN FETCH i.seller WHERE (:status IS NULL OR i.status = :status)")
-	Page<Item> findByStatusOptional(@Param("status") String status, Pageable pageable);
+	@Query("SELECT i FROM Item i JOIN FETCH i.seller WHERE (:status IS NULL OR i.status = :status) AND " +
+			"(:minPrice IS NULL OR i.price >= :minPrice) AND (:maxPrice IS NULL OR i.price <= :maxPrice)")
+	Page<Item> findByStatusOptional(
+		@Param("status") String status,
+		@Param("minPrice") Integer minPrice,
+		@Param("maxPrice") Integer maxPrice,
+		Pageable pageable);
 
 	List<Item> findBySeller(User seller);
 
@@ -99,21 +107,27 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			"(i.category.id = :categoryId OR " +
 			"i.category.parent.id = :categoryId OR " +
 			"i.category.parent.parent.id = :categoryId) AND " +
-			"(:status IS NULL OR i.status = :status)")
+			"(:status IS NULL OR i.status = :status) AND " +
+			"(:minPrice IS NULL OR i.price >= :minPrice) AND (:maxPrice IS NULL OR i.price <= :maxPrice)")
 	Page<Item> findByHierarchyCategoryAndStatusOptional(
 			@Param("categoryId") Long categoryId,
 			@Param("status") String status,
+			@Param("minPrice") Integer minPrice,
+			@Param("maxPrice") Integer maxPrice,
 			Pageable pageable);
 
 	@Query("SELECT i FROM Item i WHERE " +
-			"LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) AND " +
+			"(LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
 			"(i.category.id = :categoryId OR " +
 			"i.category.parent.id = :categoryId OR " +
 			"i.category.parent.parent.id = :categoryId) AND " +
-			"(:status IS NULL OR i.status = :status)")
+			"(:status IS NULL OR i.status = :status) AND " +
+			"(:minPrice IS NULL OR i.price >= :minPrice) AND (:maxPrice IS NULL OR i.price <= :maxPrice)")
 	Page<Item> findByNameAndHierarchyCategoryAndStatusOptional(
 			@Param("name") String name,
 			@Param("categoryId") Long categoryId,
 			@Param("status") String status,
+			@Param("minPrice") Integer minPrice,
+			@Param("maxPrice") Integer maxPrice,
 			Pageable pageable);
 }

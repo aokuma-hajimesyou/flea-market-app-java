@@ -66,26 +66,36 @@
                         <button type="submit" class="search-btn">検索</button>
                     </div>
 
-                    <div class="category-row category-selects">
-                        <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${param.categoryId}">
-
-                        <select id="parentCategory" class="category-select">
-                            <option value="">カテゴリーで絞り込む</option>
-                            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-                        </select>
-
-                        <span class="category-arrow" id="childArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
-                        <select id="childCategory" class="category-select" style="display:none;"></select>
-
-                        <span class="category-arrow" id="grandChildArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
-                        <select id="grandChildCategory" class="category-select" style="display:none;"></select>
-                    </div>
-                     <div class="sold-filter-row">
-                        <label class="switch">
-                            <input type="checkbox" id="includeSoldCheckbox" name="includeSold" value="true" th:checked="${includeSold}">
-                            <span class="slider round"></span>
-                        </label>
-                        <span class="switch-label">売り切れ商品も表示</span>
+                    <div class="additional-filters" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin-top: 10px;">
+                        <div class="category-row category-selects" style="flex: 2 1 250px; display: flex; gap: 5px;">
+                            <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${param.categoryId}">
+                            <select id="parentCategory" class="category-select" style="flex: 1;">
+                                <option value="">カテゴリーで絞り込む</option>
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                            </select>
+    
+                            <span class="category-arrow" id="childArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+                            <select id="childCategory" class="category-select" style="display:none; flex: 1;"></select>
+    
+                            <span class="category-arrow" id="grandChildArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
+                            <select id="grandChildCategory" class="category-select" style="display:none; flex: 1;"></select>
+                        </div>
+    
+                        <div class="price-range-row" style="flex: 1 1 200px;">
+                            <div class="input-group" style="display: flex; align-items: center;">
+                                <input type="number" name="minPrice" th:value="${minPrice}" placeholder="¥ Min" class="price-input" style="width: 48%;">
+                                <span class="price-separator" style="padding: 0 4px;">〜</span>
+                                <input type="number" name="maxPrice" th:value="${maxPrice}" placeholder="¥ Max" class="price-input" style="width: 48%;">
+                            </div>
+                        </div>
+                        
+                         <div class="sold-filter-row" style="flex-shrink: 0; display: flex; align-items: center; gap: 8px;">
+                            <label class="switch">
+                                <input type="checkbox" id="includeSoldCheckbox" name="includeSold" value="true" th:checked="${includeSold}">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="switch-label">売り切れ商品も表示</span>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -105,7 +115,7 @@
             <h2 class="section-title">おすすめの商品</h2>
             <div class="item-grid">
                 <div class="item-card" th:each="recommended : ${recommendedItems}">
-                    <a th:href="@{/items/{id}(id=${recommended.id}, keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size}, includeSold=${includeSold})}" class="card-link">
+                    <a th:href="@{/items/{id}(id=${recommended.id}, keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}" class="card-link">
                         <div class="image-container">
                             <div class="recommend-reason-badge" th:if="${recommended.recommendReason != null}" th:text="${recommended.recommendReason}"></div>
                             <img th:src="${recommended.imageUrl != null ? recommended.imageUrl : '/images/placeholder.png'}" class="product-img">
@@ -128,7 +138,7 @@
             
             <div class="item-grid" th:unless="${#lists.isEmpty(items.content)}">
                 <div class="item-card" th:each="item : ${items.content}">
-                    <a th:href="@{/items/{id}(id=${item.id}, keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size}, includeSold=${includeSold})}" class="card-link">
+                    <a th:href="@{/items/{id}(id=${item.id}, keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}" class="card-link">
                         <div class="image-container">
                             <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" class="product-img">
                             <div class="price-tag">
@@ -168,18 +178,18 @@
 
         <div class="pagination" th:if="${items.totalPages > 1}">
             <a th:if="${items.hasPrevious()}" class="page-link prev"
-                th:href="@{/items(page=${items.number - 1}, keyword=${param.keyword}, categoryId=${param.categoryId}, includeSold=${includeSold})}">
+                th:href="@{/items(page=${items.number - 1}, keyword=${param.keyword}, categoryId=${param.categoryId}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
                 <i class="fas fa-chevron-left"></i> 前へ
             </a>
             <div class="page-numbers">
                 <span th:each="i : ${#numbers.sequence(0, items.totalPages - 1)}">
                     <a th:if="${i != items.number}" class="page-link num"
-                        th:href="@{/items(page=${i}, keyword=${param.keyword}, categoryId=${param.categoryId}, includeSold=${includeSold})}" th:text="${i + 1}"></a>
+                        th:href="@{/items(page=${i}, keyword=${param.keyword}, categoryId=${param.categoryId}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}" th:text="${i + 1}"></a>
                     <span th:if="${i == items.number}" class="page-link current" th:text="${i + 1}"></span>
                 </span>
             </div>
             <a th:if="${items.hasNext()}" class="page-link next"
-                th:href="@{/items(page=${items.number + 1}, keyword=${param.keyword}, categoryId=${param.categoryId}, includeSold=${includeSold})}">
+                th:href="@{/items(page=${items.number + 1}, keyword=${param.keyword}, categoryId=${param.categoryId}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
                 次へ <i class="fas fa-chevron-right"></i>
             </a>
         </div>
@@ -188,7 +198,7 @@
             <h2 class="section-title">最近見た商品</h2>
             <div class="item-grid">
                 <div class="item-card" th:each="history : ${itemViewHistories}">
-                    <a th:href="@{/items/{id}(id=${history.item.id}, keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size}, includeSold=${includeSold})}" class="card-link">
+                    <a th:href="@{/items/{id}(id=${history.item.id}, keyword=${param.keyword}, categoryId=${param.categoryId}, page=${items.number}, size=${items.size}, includeSold=${includeSold}, minPrice=${minPrice}, maxPrice=${maxPrice})}" class="card-link">
                         <div class="image-container">
                             <img th:src="${history.item.imageUrl != null ? history.item.imageUrl : '/images/placeholder.png'}" class="product-img">
                             <div class="price-tag">
