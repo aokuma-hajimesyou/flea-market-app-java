@@ -27,9 +27,13 @@ public class ItemService {
 		this.cloudinaryService = cloudinaryService;
 	}
 
-	public Page<Item> searchItems(String keyword, Long categoryId, int page, int size, boolean includeSold, Integer minPrice, Integer maxPrice) {
-		Pageable pageable = PageRequest.of(page, size);
-		String status = includeSold ? null : "出品中";
+	public Page<Item> searchItems(SearchCriteria criteria) {
+		Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize());
+		String status = criteria.isIncludeSold() ? null : "出品中";
+		String keyword = criteria.getKeyword();
+		Long categoryId = criteria.getCategoryId();
+		Integer minPrice = criteria.getMinPrice();
+		Integer maxPrice = criteria.getMaxPrice();
 
 		// キーワードあり ＋ カテゴリー指定あり
 		if (keyword != null && !keyword.isEmpty() && categoryId != null) {

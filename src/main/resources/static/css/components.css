@@ -109,6 +109,7 @@
     box-shadow: 0 0 0 3px rgba(225, 58, 51, 0.1);
 }
 
+/* 検索ボタン */
 .search-btn {
     background-color: var(--primary-color);
     color: #fff;
@@ -127,6 +128,34 @@
 }
 
 .search-btn:active {
+    transform: scale(0.98);
+}
+
+/* クリアボタン */
+.clear-btn {
+    background-color: #fff;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 0 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.95rem;
+    height: 44px; /* 検索窓と高さを合わせる */
+    transition: transform 0.1s active, opacity 0.2s;
+    white-space: nowrap;
+    display: inline-flex; /* flexアイテムとして中央揃えできるように */
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-btn:hover {
+    opacity: 0.9;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.clear-btn:active {
     transform: scale(0.98);
 }
 

@@ -5,6 +5,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +36,7 @@ import com.example.flea_market_app.service.ItemViewHistoryService;
 import com.example.flea_market_app.service.NotificationService;
 import com.example.flea_market_app.service.RecommendationService;
 import com.example.flea_market_app.service.ReviewService;
+import com.example.flea_market_app.service.SearchCriteria;
 import com.example.flea_market_app.service.UserService;
 
 @Controller
@@ -71,20 +76,41 @@ public class ItemController {
 
 	@GetMapping
 	public String listItem(
-			@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "categoryId", required = false) Long categoryId,
-			@RequestParam(value = "page", defaultValue = "0") int page,
-			@RequestParam(value = "size", defaultValue = "12") int size,
-			@RequestParam(value = "includeSold", defaultValue = "false") boolean includeSold,
-			@RequestParam(value = "minPrice", required = false) Integer minPrice,
-			@RequestParam(value = "maxPrice", required = false) Integer maxPrice,
+			@ModelAttribute SearchCriteria criteria,
+			@RequestParam(name = "page", required = false) Integer page,
 			@AuthenticationPrincipal UserDetails userDetails,
-			Model model) {
+			Model model,
+			HttpServletRequest request) {
 
-		// 階層対応した検索サービスを呼び出す
-		Page<Item> items = itemService.searchItems(keyword, categoryId, page, size, includeSold, minPrice, maxPrice);
+		HttpSession session = request.getSession();
 
-		// 修正：全カテゴリーではなく、第1階層（親なし）のカテゴリーのみを取得して画面に渡す
+		boolean isNewSearch = request.getParameter("keyword") != null ||
+				request.getParameter("categoryId") != null ||
+				request.getParameter("minPrice") != null ||
+				request.getParameter("maxPrice") != null ||
+				request.getParameterMap().containsKey("includeSold");
+
+		SearchCriteria sessionCriteria = (SearchCriteria) session.getAttribute("searchCriteria");
+
+		if (isNewSearch) {
+			criteria.setPage(0);
+			session.setAttribute("searchCriteria", criteria);
+		} else if (page != null) {
+			if (sessionCriteria != null) {
+				sessionCriteria.setPage(page);
+				criteria = sessionCriteria;
+			} else {
+				criteria.setPage(page);
+				session.setAttribute("searchCriteria", criteria);
+			}
+		} else if (sessionCriteria != null) {
+			criteria = sessionCriteria;
+		} else {
+			session.setAttribute("searchCriteria", criteria);
+		}
+
+		Page<Item> items = itemService.searchItems(criteria);
+
 		List<Category> categories = categoryService.getRootCategories();
 
 		items.forEach(item -> {
@@ -97,13 +123,27 @@ public class ItemController {
 			}
 		});
 
+		String keyword = criteria.getKeyword();
+		Long categoryId = criteria.getCategoryId();
+		Integer minPrice = criteria.getMinPrice();
+		Integer maxPrice = criteria.getMaxPrice();
+		boolean includeSold = criteria.isIncludeSold();
+
+		boolean isSearching = (keyword != null && !keyword.isEmpty()) ||
+				categoryId != null ||
+				minPrice != null ||
+				maxPrice != null ||
+				includeSold;
+
 		if (userDetails != null) {
 			User user = userService.getUserByEmail(userDetails.getUsername()).orElse(null);
 			if (user != null) {
 				List<ItemViewHistory> itemViewHistories = itemViewHistoryService.getRecordView(user);
-				List<Item> recommendedItems = recommendationService.getRecommendedItems(user);
+				if (!isSearching) {
+					List<Item> recommendedItems = recommendationService.getRecommendedItems(user);
+					model.addAttribute("recommendedItems", recommendedItems);
+				}
 				model.addAttribute("itemViewHistories", itemViewHistories);
-				model.addAttribute("recommendedItems", recommendedItems);
 				model.addAttribute("unreadCount", notificationService.getUnreadCount(user));
 				model.addAttribute("notifications", notificationService.getNotificationsForUser(user));
 			}
@@ -111,11 +151,22 @@ public class ItemController {
 
 		model.addAttribute("items", items);
 		model.addAttribute("categories", categories);
-		model.addAttribute("includeSold", includeSold);
-		model.addAttribute("minPrice", minPrice);
-		model.addAttribute("maxPrice", maxPrice);
+		model.addAttribute("criteria", criteria);
+
+		// Pass individual criteria fields for compatibility with the form
+		model.addAttribute("includeSold", criteria.isIncludeSold());
+		model.addAttribute("minPrice", criteria.getMinPrice());
+		model.addAttribute("maxPrice", criteria.getMaxPrice());
+		model.addAttribute("categoryId", criteria.getCategoryId());
 
 		return "item_list";
+	}
+
+	@GetMapping("/clear-search")
+	public String clearSearch(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.removeAttribute("searchCriteria");
+		return "redirect:/items";
 	}
 
 	// 追加：子カテゴリーをAjaxで取得するためのAPI
@@ -128,11 +179,6 @@ public class ItemController {
 	@GetMapping("/{id}")
 	public String showItemDetail(
 			@PathVariable("id") Long id,
-			@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "categoryId", required = false) Long categoryId,
-			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-			@RequestParam(value = "size", required = false, defaultValue = "12") Integer size,
-			@RequestParam(value = "includeSold", required = false) Boolean includeSold,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model) {
 
@@ -157,12 +203,6 @@ public class ItemController {
 			model.addAttribute("recommendedItems", recommendedItems);
 		}
 
-		model.addAttribute("keyword", keyword);
-		model.addAttribute("categoryId", categoryId);
-		model.addAttribute("page", page);
-		model.addAttribute("size", size);
-		model.addAttribute("includeSold", includeSold);
-
 		return "item_detail";
 	}
 
@@ -173,6 +213,7 @@ public class ItemController {
 		model.addAttribute("categories", categoryService.getRootCategories());
 		// サジェスト機能用に全カテゴリ情報を渡す
 		model.addAttribute("allCategoriesForSuggest", categoryService.getAllCategories());
+
 		return "item_form";
 	}
 
@@ -306,7 +347,7 @@ public class ItemController {
 				.orElseThrow(() -> new RuntimeException("user not found"));
 		try {
 			favoriteService.removeFavorite(currentUser, itemId);
-redirectAttributes.addFlashAttribute("successMessage", "お気に入りから削除しました");
+			redirectAttributes.addFlashAttribute("successMessage", "お気に入りから削除しました");
 		} catch (IllegalStateException e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 		}
