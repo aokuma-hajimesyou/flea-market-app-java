@@ -31,6 +31,9 @@ public class Feedback {
 	private Subject subject;
 
 	@Column(nullable = false)
+	private String content;
+
+	@Column(nullable = false)
 	private String status = "未対応";
 
 	@Column(name = "created_at", nullable = false)

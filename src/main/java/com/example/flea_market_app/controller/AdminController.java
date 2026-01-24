@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.flea_market_app.entity.Feedback;
 import com.example.flea_market_app.service.AppOrderService;
+import com.example.flea_market_app.service.FeedbackService;
 import com.example.flea_market_app.service.ItemService;
 
 @Controller
@@ -26,10 +29,12 @@ public class AdminController {
 
 	private final ItemService itemService;
 	private final AppOrderService appOrderService;
+	private final FeedbackService feedbackService;
 
-	public AdminController(ItemService itemService, AppOrderService appOrderService) {
+	public AdminController(ItemService itemService, AppOrderService appOrderService, FeedbackService feedbackService) {
 		this.itemService = itemService;
 		this.appOrderService = appOrderService;
+		this.feedbackService = feedbackService;
 	}
 
 	@GetMapping("/items")
@@ -42,6 +47,34 @@ public class AdminController {
 	public String deleteItemByAdmin(@PathVariable("id") Long itemId) {
 		itemService.deleteItem(itemId);
 		return "redirect:/admin/items?success=deleted";
+	}
+
+	@GetMapping("/feedback")
+	public String manageFeedback(Model model) {
+		model.addAttribute("feedbacks", feedbackService.getAllFeedbacks());
+		return "admin_feedbacks";
+	}
+
+	@GetMapping("/feedback/{id}")
+	public String showFeedbackDetail(@PathVariable("id") Long id, Model model) {
+		Feedback feedback = feedbackService.getFeedbackById(id);
+		model.addAttribute("feedback", feedback);
+		return "admin_feedback_detail";
+	}
+
+	@PostMapping("feedback/{id}/update")
+	public String updateFeedbackStatus(@PathVariable("id") Long id, @RequestParam("status") String status,
+			RedirectAttributes redirectAttributes) {
+		feedbackService.updateStatus(id, status);
+		redirectAttributes.addFlashAttribute("successMessage", "ステータスを更新しました");
+		return "redirect:/admin/feedback/" + id;
+	}
+
+	@PostMapping("feedback/{id}/delete")
+	public String deleteFeedback(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+		feedbackService.deleteFeedback(id);
+		redirectAttributes.addFlashAttribute("successMessage", "お問い合わせを削除しました");
+		return "redirect:/admin/feedback";
 	}
 
 	@GetMapping("/statistics")

@@ -80,13 +80,6 @@ INSERT INTO category (name, parent_id) VALUES
 ('アイシャドウ', 42);         -- ID: 63
 
 
---お問い合わせデータ
-INSERT INTO subject (name) VALUES
-('取引トラブル'),
-('通報・違反'),
-('アプリ不具合'),
-('改善要望');
-
 -- 3. アイテム
 INSERT INTO item (user_id, name, description, price, category_id, status, image_url, created_at)
 VALUES
@@ -170,3 +163,30 @@ VALUES
     'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=400',
     CURRENT_TIMESTAMP
 );
+
+--お問い合わせジャンルデータ
+INSERT INTO subject (name) VALUES
+('取引トラブル'),
+('通報・違反'),
+('アプリ不具合'),
+('改善要望');
+
+--お問い合わせデータ
+-- 未対応のケース
+INSERT INTO feedback (user_id, subject_id, content, status, created_at)
+VALUES (1, 1, 'パスワードを忘れてしまい、再設定メールが届きません。', '未対応', CURRENT_TIMESTAMP - INTERVAL '2 days');
+
+-- 対応中のケース
+INSERT INTO feedback (user_id, subject_id, content, status, created_at)
+VALUES (1, 2, '商品を購入したのですが、決済エラーが表示されました。確認をお願いします。', '対応中', CURRENT_TIMESTAMP - INTERVAL '1 day');
+
+-- 対応済みのケース
+INSERT INTO feedback (user_id, subject_id, content, status, created_at)
+VALUES (1, 4, 'アプリの動作が重い時があります。キャッシュクリア以外に方法はありますか？', '対応済み', CURRENT_TIMESTAMP - INTERVAL '5 hours');
+
+-- 長文のケース（詳細画面での改行確認用）
+INSERT INTO feedback (user_id, subject_id, content, status, created_at)
+VALUES (1, 3, '【至急】商品が届きませんが、出品者と連絡が取れません。
+注文番号：ORD-12345
+配送状況を確認したところ、一週間前からステータスが「発送準備中」のままです。
+キャンセル可能でしょうか。', '未対応', CURRENT_TIMESTAMP);
