@@ -63,4 +63,23 @@ public class FavoriteService {
 				.orElseThrow(() -> new IllegalArgumentException("Item not found"));
 		return favoriteItemRepository.countByItem(item);
 	}
+
+	@Transactional
+	public boolean toggleFavorite(User user, Long itemId) {
+		Item item = itemRepository.findById(itemId)
+				.orElseThrow(() -> new IllegalArgumentException("Item not found"));
+		
+		if (favoriteItemRepository.existsByUserAndItem(user, item)) {
+			FavoriteItem favoriteItem = favoriteItemRepository.findByUserAndItem(user, item)
+					.orElseThrow(() -> new IllegalArgumentException("favorite not found"));
+			favoriteItemRepository.delete(favoriteItem);
+			return false; // お気に入り解除
+		} else {
+			FavoriteItem favoriteItem = new FavoriteItem();
+			favoriteItem.setUser(user);
+			favoriteItem.setItem(item);
+			favoriteItemRepository.save(favoriteItem);
+			return true; // お気に入り登録
+		}
+	}
 }

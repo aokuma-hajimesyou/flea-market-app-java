@@ -90,13 +90,13 @@
             <a th:href="@{/my-page/reviews}" class="button">
                 <i class="fas fa-star" style="margin-right: 8px;"></i>自分の評価
             </a>
+
 			
 			<a th:href="@{/my-page/feedback}" class="button">
 			    <i class="fas fa-envelope"></i> お問い合わせはこちら
 			</a>
 			
-			<a th:href="@{/items}" onclick="if(document.referrer.includes('/items')) { history.back(); return false; }" 
-					       class="button secondary">
+			<a th:href="@{/items}" onclick="if(document.referrer.includes('/items')) { history.back(); return false; }" class="button secondary">
                 <i class="fas fa-list" style="margin-right: 8px;"></i>商品一覧に戻る
             </a>
 			
