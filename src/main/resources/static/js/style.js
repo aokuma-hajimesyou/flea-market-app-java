@@ -202,3 +202,58 @@ document.addEventListener('DOMContentLoaded', async function () {
         await completeRestore();
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const includeSoldCheckbox = document.getElementById('includeSoldCheckbox');
+    if (includeSoldCheckbox) {
+        includeSoldCheckbox.addEventListener('change', function () {
+            this.closest('form').submit();
+        });
+    }
+
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+    const favoriteIcons = document.querySelectorAll('.favorite-icon-container');
+
+    favoriteIcons.forEach(iconContainer => {
+        iconContainer.addEventListener('click', function () {
+            const itemId = this.dataset.itemId;
+            if (!itemId) return;
+
+            fetch(`/api/favorites/toggle/${itemId}`, {
+                method: 'POST',
+                headers: {
+                    [csrfHeader]: csrfToken,
+                },
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    const icon = this.querySelector('.fa-heart');
+                    if (data.favorited) {
+                        this.classList.add('is-favorited');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        this.classList.remove('is-favorited');
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        });
+    });
+});

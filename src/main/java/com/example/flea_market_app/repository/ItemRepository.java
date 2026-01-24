@@ -14,15 +14,43 @@ import com.example.flea_market_app.entity.User;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-	Page<Item> findByNameContainingIgnoreCaseAndStatus(String name, String staus, Pageable pageable);
 
-	Page<Item> findByCategoryIdAndStatus(Long categoryId, String status, Pageable pageable);
-
-	Page<Item> findByNameContainingIgnoreCaseAndCategoryIdAndStatus(String name, Long categoryId, String status,
+	@Query("SELECT i FROM Item i WHERE " +
+			"(LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+			"(:status IS NULL OR i.status = :status) AND " +
+			"(:minPrice IS NULL OR i.price >= :minPrice) AND (:maxPrice IS NULL OR i.price <= :maxPrice)")
+	Page<Item> findByNameContainingIgnoreCaseAndStatusOptional(
+			@Param("name") String name,
+			@Param("status") String status,
+			@Param("minPrice") Integer minPrice,
+			@Param("maxPrice") Integer maxPrice,
 			Pageable pageable);
 
-	@Query("SELECT i FROM Item i JOIN FETCH i.seller WHERE i.status = :status")
-	Page<Item> findByStatus(String status, Pageable pageable);
+	@Query("SELECT i FROM Item i WHERE " +
+			"i.category.id = :categoryId AND " +
+			"(:status IS NULL OR i.status = :status)")
+	Page<Item> findByCategoryIdAndStatusOptional(
+			@Param("categoryId") Long categoryId,
+			@Param("status") String status,
+			Pageable pageable);
+
+	@Query("SELECT i FROM Item i WHERE " +
+			"LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) AND " +
+			"i.category.id = :categoryId AND " +
+			"(:status IS NULL OR i.status = :status)")
+	Page<Item> findByNameContainingIgnoreCaseAndCategoryIdAndStatusOptional(
+			@Param("name") String name,
+			@Param("categoryId") Long categoryId,
+			@Param("status") String status,
+			Pageable pageable);
+
+	@Query("SELECT i FROM Item i JOIN FETCH i.seller WHERE (:status IS NULL OR i.status = :status) AND " +
+			"(:minPrice IS NULL OR i.price >= :minPrice) AND (:maxPrice IS NULL OR i.price <= :maxPrice)")
+	Page<Item> findByStatusOptional(
+		@Param("status") String status,
+		@Param("minPrice") Integer minPrice,
+		@Param("maxPrice") Integer maxPrice,
+		Pageable pageable);
 
 	List<Item> findBySeller(User seller);
 
@@ -75,25 +103,31 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			@Param("categoryIds") List<Long> categoryIds,
 			@Param("userId") Long userId);
 
-	@Query("SELECT i FROM Item i WHERE i.status = :status AND (" +
-			"i.category.id = :categoryId OR " + // 孫が一致
-			"i.category.parent.id = :categoryId OR " + // 子が一致
-			"i.category.parent.parent.id = :categoryId)") // 親が一致
-	Page<Item> findByHierarchyCategoryAndStatus(
+	@Query("SELECT i FROM Item i WHERE " +
+			"(i.category.id = :categoryId OR " +
+			"i.category.parent.id = :categoryId OR " +
+			"i.category.parent.parent.id = :categoryId) AND " +
+			"(:status IS NULL OR i.status = :status) AND " +
+			"(:minPrice IS NULL OR i.price >= :minPrice) AND (:maxPrice IS NULL OR i.price <= :maxPrice)")
+	Page<Item> findByHierarchyCategoryAndStatusOptional(
 			@Param("categoryId") Long categoryId,
 			@Param("status") String status,
+			@Param("minPrice") Integer minPrice,
+			@Param("maxPrice") Integer maxPrice,
 			Pageable pageable);
 
-	// 2. キーワード ＋ 階層カテゴリー対応の絞り込み
-	@Query("SELECT i FROM Item i WHERE i.status = :status " +
-			"AND LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
-			"AND (i.category.id = :categoryId OR " +
+	@Query("SELECT i FROM Item i WHERE " +
+			"(LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+			"(i.category.id = :categoryId OR " +
 			"i.category.parent.id = :categoryId OR " +
-			"i.category.parent.parent.id = :categoryId)")
-	Page<Item> findByNameAndHierarchyCategoryAndStatus(
+			"i.category.parent.parent.id = :categoryId) AND " +
+			"(:status IS NULL OR i.status = :status) AND " +
+			"(:minPrice IS NULL OR i.price >= :minPrice) AND (:maxPrice IS NULL OR i.price <= :maxPrice)")
+	Page<Item> findByNameAndHierarchyCategoryAndStatusOptional(
 			@Param("name") String name,
 			@Param("categoryId") Long categoryId,
 			@Param("status") String status,
+			@Param("minPrice") Integer minPrice,
+			@Param("maxPrice") Integer maxPrice,
 			Pageable pageable);
-
 }

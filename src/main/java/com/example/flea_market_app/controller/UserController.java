@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.service.AppOrderService;
@@ -60,6 +62,7 @@ public class UserController {
 		model.addAttribute("user", currentUser);
 		model.addAttribute("unreadCount", notificationService.getUnreadCount(currentUser));
 		model.addAttribute("notifications", notificationService.getNotificationsForUser(currentUser));
+
 		return "my-page";
 	}
 
