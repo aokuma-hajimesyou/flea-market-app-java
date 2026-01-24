@@ -33,10 +33,32 @@ public class CloudinaryService {
 		return uploadResult.get("url").toString();
 	}
 
-	public void deleteFile(String publicId) throws IOException {
-		String[] parts = publicId.split("/");
-		String fileName = parts[parts.length - 1];
-		String publicIdWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
-		cloudinary.uploader().destroy(publicIdWithoutExtension, ObjectUtils.emptyMap());
+	public void deleteFile(String imageUrl) {
+		// 1. URLが空、またはCloudinaryのドメインを含まない場合は何もしない
+		if (imageUrl == null || imageUrl.isEmpty() || !imageUrl.contains("res.cloudinary.com")) {
+			return;
+		}
+
+		try {
+			// 2. URLから public_id を安全に抽出する
+			// 例: http://res.cloudinary.com/cloudname/image/upload/v12345/sample.jpg
+			// から "sample" を取り出す
+			String[] parts = imageUrl.split("/");
+			String fileNameWithExtension = parts[parts.length - 1]; // "sample.jpg"
+
+			int dotIndex = fileNameWithExtension.lastIndexOf('.');
+
+			if (dotIndex != -1) {
+				// ドットが見つかった場合のみ切り取る
+				String publicId = fileNameWithExtension.substring(0, dotIndex);
+
+				// 3. Cloudinaryから削除実行
+				cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+				System.out.println("Cloudinaryから画像を削除しました: " + publicId);
+			}
+		} catch (Exception e) {
+			// 画像削除の失敗で商品削除（メイン処理）を止めないよう、ログ出力に留める
+			System.err.println("Cloudinaryの画像削除に失敗しましたが、処理を続行します: " + e.getMessage());
+		}
 	}
 }

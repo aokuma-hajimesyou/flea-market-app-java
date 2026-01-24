@@ -68,11 +68,9 @@ public class ItemService {
 	public void deleteItem(Long id) {
 		itemRepository.findById(id).ifPresent(item -> {
 			if (item.getImageUrl() != null) {
-				try {
-					cloudinaryService.deleteFile(item.getImageUrl());
-				} catch (IOException e) {
-					System.err.println("Failed to delete image from Cloudinary: " + e.getMessage());
-				}
+				// CloudinaryService側でエラーハンドリングを完結させたので、
+				// ItemService側での try-catch は不要になりました。
+				cloudinaryService.deleteFile(item.getImageUrl());
 			}
 			itemRepository.deleteById(id);
 		});
