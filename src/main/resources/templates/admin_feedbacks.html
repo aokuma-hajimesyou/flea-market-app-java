@@ -56,7 +56,7 @@
                         <td>
                             <i class="far fa-user"></i> <span th:text="${f.user.name}"></span>
                         </td>
-                        <td th:text="${#temporals.format(f.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
+                        <td th:text="${#temporals.format(f.createdAt, 'yyyy/MM/dd HH:mm', 'Asia/Tokyo')}"></td>
                         <td>
                             <span class="status-badge" 
                                   th:classappend="${f.status == '未対応' ? 'status-pending' : 'status-shipped'}"
