@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	    <title>お問い合わせ - FleaMarketApp</title>
+	    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div class="container" style="max-width: 600px; margin-top: 50px;">
+	        <h2><i class="fas fa-paper-plane"></i> お問い合わせ送信</h2>
+	        <p>サービスに関するご意見・ご要望などをお寄せください。</p>
+
+	        <form th:action="@{/my-page/feedback/send}" method="post" class="admin-table-container" style="padding: 20px;">
+	            <div style="margin-bottom: 20px;">
+	                <label style="display: block; font-weight: bold; margin-bottom: 5px;">お問い合わせ種別</label>
+	                <select name="subjectId" class="form-control" required style="width: 100%; padding: 10px;">
+	                    <option value="" disabled selected>選択してください</option>
+	                    <option th:each="s : ${subjects}" th:value="${s.id}" th:text="${s.name}"></option>
+	                </select>
+	            </div>
+
+	            <div style="margin-bottom: 20px;">
+	                <label style="display: block; font-weight: bold; margin-bottom: 5px;">お問い合わせ内容</label>
+	                <textarea name="content" rows="6" class="form-control" required 
+	                          placeholder="こちらに内容を入力してください" style="width: 100%; padding: 10px;"></textarea>
+	            </div>
+
+	            <div class="button-group">
+	                <button type="submit" class="button" style="width: 100%;">送信する</button>
+	                <a th:href="@{/my-page}" class="button secondary" style="width: 100%; text-align: center; margin-top: 10px;">
+	                    マイページに戻る
+	                </a>
+	            </div>
+	        </form>
+	    </div>
+
+</body>
+</html>

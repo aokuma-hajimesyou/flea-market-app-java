@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	    <title>お問い合わせ一覧 - Admin Panel</title>
+	    <link rel="stylesheet" th:href="@{/css/style.css}">
+	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body style="background-color: #f4f7f6;">
+    <header class="app-header" style="background-color: #2c3e50;">
+        <div class="header-inner">
+            <h1 class="app-title"><a th:href="@{/dashboard}" style="color: #fff;">Admin Panel</a></h1>
+            <div class="header-nav">
+                <a th:href="@{/dashboard}" style="color: #fff; margin-right: 20px; text-decoration: none;">
+                    <i class="fas fa-chart-pie"></i> ダッシュボード
+                </a>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="button secondary" style="padding: 5px 15px; font-size: 0.8rem;">ログアウト</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="max-width: 1100px;">
+        <div class="page-header">
+            <h1><i class="fas fa-envelope"></i> お問い合わせ管理一覧</h1>
+            <p>ユーザーから届いたお問い合わせ内容の確認と対応管理が行えます。</p>
+        </div>
+		
+		<div th:if="${successMessage}" class="status-badge status-shipped" 
+					     style="width: 100%; padding: 10px; margin-bottom: 20px; text-align: center; border-radius: 5px;">
+					    <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+					</div>
+
+        <div class="admin-table-container">
+            <table class="admin-table" style="margin: 0;">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th>お問い合わせ種別（タイトル）</th>
+                        <th>送信者</th>
+                        <th>送信日時</th>
+                        <th>ステータス</th>
+                        <th style="width: 120px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="f : ${feedbacks}">
+                        <td class="item-id" th:text="${f.id}"></td>
+                        <td>
+                            <span style="font-weight: 600; color: #2c3e50;">
+                                <i class="fas fa-tag" style="font-size: 0.8rem; color: #9b59b6;"></i>
+                                <th:block th:text="${f.subject.name}"></th:block>
+                            </span>
+                        </td>
+                        <td>
+                            <i class="far fa-user"></i> <span th:text="${f.user.name}"></span>
+                        </td>
+                        <td th:text="${#temporals.format(f.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
+                        <td>
+                            <span class="status-badge" 
+                                  th:classappend="${f.status == '未対応' ? 'status-pending' : 'status-shipped'}"
+                                  th:text="${f.status}"></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/feedback/{id}(id=${f.id})}" class="button" style="padding: 5px 12px; font-size: 0.8rem;">
+                                <i class="fas fa-eye"></i> 詳細を見る
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(feedbacks)}">
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-sub);">
+                            現在、お問い合わせはありません。
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-group">
+            <a th:href="@{/dashboard}" class="button secondary">
+                <i class="fas fa-arrow-left"></i> ダッシュボードに戻る
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

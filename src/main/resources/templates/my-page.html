@@ -54,6 +54,11 @@
     <div class="container">
         <h1>マイページ</h1>
         <p style="margin-bottom: 20px;">ようこそ、<strong th:text="${user.name}"></strong>さん</p>
+		
+		<div th:if="${successMessage}" class="status-badge status-shipped" 
+							     style="width: 100%; padding: 10px; margin-bottom: 20px; text-align: center; border-radius: 5px;">
+							    <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+							</div>
 
         <section class="profile-card">
             <h2>アカウント情報</h2>
@@ -85,10 +90,20 @@
             <a th:href="@{/my-page/reviews}" class="button">
                 <i class="fas fa-star" style="margin-right: 8px;"></i>自分の評価
             </a>
+
+			
+			<a th:href="@{/my-page/feedback}" class="button">
+			    <i class="fas fa-envelope"></i> お問い合わせはこちら
+			</a>
+			
+			<a th:href="@{/items}" onclick="if(document.referrer.includes('/items')) { history.back(); return false; }" 
+
 			<a th:href="@{/items}"
+
 					       class="button secondary">
                 <i class="fas fa-list" style="margin-right: 8px;"></i>商品一覧に戻る
             </a>
+			
             
             <form th:action="@{/logout}" method="post" class="logout-form">
                 <button type="submit" class="button danger">
