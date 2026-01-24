@@ -17,7 +17,7 @@
 
         <div class="form-box">
             <div th:if="${param.error}" class="error-message">
-                <i class="fas fa-exclamation-circle"></i> メールアドレスかパスワードが正しくありません
+                <i class="fas fa-exclamation-circle"></i> メールアドレスかパスワードが正しくありません。もしくは、アカウントが無効化されています。
             </div>
             <div th:if="${param.logout}" class="success-message">
                 <i class="fas fa-check-circle"></i> ログアウトしました
