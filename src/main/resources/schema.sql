@@ -33,7 +33,7 @@ CREATE TABLE users (
 
 CREATE TABLE category (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL UNIQUE,
     parent_id INT, -- 親カテゴリーを示すカラムを追加
     FOREIGN KEY (parent_id) REFERENCES category(id) ON DELETE CASCADE
 );
