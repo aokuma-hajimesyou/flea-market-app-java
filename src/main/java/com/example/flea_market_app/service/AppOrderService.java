@@ -148,7 +148,9 @@ public class AppOrderService {
 	public BigDecimal getTotalSales(LocalDate startDate, LocalDate endDate) {
 		return appOrderRepository.findAll().stream()
 				.filter(order -> order.getStatus().equals("購入済") ||
-						order.getStatus().equals("発送済"))
+						order.getStatus().equals("発送済") ||
+						order.getStatus().equals("到着済") ||
+						order.getStatus().equals("取引完了"))
 				.filter(order -> order.getCreatedAt().toLocalDate().isAfter(startDate.minusDays(1)) &&
 						order.getCreatedAt().toLocalDate().isBefore(endDate.plusDays(1)))
 				.map(AppOrder::getPrice)

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title th:text="${seller.name} + ' - 出品者詳細'"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
     <header class="app-header">
@@ -32,7 +34,20 @@
                     <span class="stat-label">出品数</span>
                     <span class="stat-value" th:text="${#lists.size(items)}">0</span>
                 </div>
+                <div class="stat-item">
+					<span class="stat-label">フォロワー</span>
+					<span id="follower-count" class="stat-value" th:text="${followerCount}">0</span>
+				</div>
             </div>
+
+            <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.username != seller.email}" class="follow-button-container">
+				<button id="follow-btn"
+						th:data-user-id="${seller.id}"
+						th:text="${isFollowing ? 'フォロー解除' : 'フォローする'}"
+						class="button"
+						th:classappend="${isFollowing ? 'secondary' : 'primary'}">
+				</button>
+			</div>
         </div>
 
         <h2 class="section-title"><i class="fas fa-comment-dots"></i> 最近の評価</h2>
@@ -64,6 +79,10 @@
                             <span class="currency">¥</span>
                             <span th:text="${#numbers.formatInteger(item.price, 1, 'COMMA')}"></span>
                         </div>
+                        <div th:if="${item.status == '売却済'}" class="sold-overlay">
+                            <div class="sold-badge"></div>
+                            <span class="sold-text">SOLD</span>
+                        </div>
                     </div>
                     <div class="card-body">
                         <h3 class="item-name" th:text="${item.name}"></h3>
@@ -86,5 +105,58 @@
     </div>
 
     <div style="height: 60px;"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const followBtn = document.getElementById('follow-btn');
+    if (!followBtn) return;
+
+    const token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+    const header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
+    followBtn.addEventListener('click', function () {
+        const userId = this.dataset.userId;
+        const url = `/api/users/${userId}/toggle-follow`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                // ログインしていない場合などは 401 が返るのでログインページにリダイレクト
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = '/login';
+                }
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const followerCountSpan = document.getElementById('follower-count');
+            let currentFollowerCount = parseInt(followerCountSpan.textContent, 10);
+
+            if (data.following) {
+                this.textContent = 'フォロー解除';
+                this.classList.remove('primary');
+                this.classList.add('secondary');
+                followerCountSpan.textContent = currentFollowerCount + 1;
+            } else {
+                this.textContent = 'フォローする';
+                this.classList.remove('secondary');
+                this.classList.add('primary');
+                followerCountSpan.textContent = currentFollowerCount - 1;
+            }
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    });
+});
+</script>
+
 </body>
 </html>

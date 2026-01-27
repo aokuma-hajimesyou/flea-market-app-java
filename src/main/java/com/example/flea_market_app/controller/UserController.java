@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 import com.example.flea_market_app.entity.User;
 import com.example.flea_market_app.service.AppOrderService;
 import com.example.flea_market_app.service.FavoriteService;
 import com.example.flea_market_app.service.FeedbackService;
+import com.example.flea_market_app.service.FollowService;
 import com.example.flea_market_app.service.ItemService;
 import com.example.flea_market_app.service.NotificationService;
 import com.example.flea_market_app.service.ReviewService;
@@ -34,6 +34,7 @@ public class UserController {
 	private final NotificationService notificationService;
 	private final FeedbackService feedbackService;
 	private final SubjectService subjectService;
+	private final FollowService followService;
 
 	public UserController(
 			UserService userService,
@@ -43,7 +44,8 @@ public class UserController {
 			ReviewService reviewService,
 			NotificationService notificationService,
 			FeedbackService feedbackService,
-			SubjectService subjectService) {
+			SubjectService subjectService,
+			FollowService followService) {
 		this.userService = userService;
 		this.appOrderService = appOrderService;
 		this.itemService = itemService;
@@ -52,6 +54,7 @@ public class UserController {
 		this.notificationService = notificationService;
 		this.feedbackService = feedbackService;
 		this.subjectService = subjectService;
+		this.followService = followService;
 	}
 
 	@GetMapping
@@ -98,6 +101,14 @@ public class UserController {
 		return "my_favorites";
 	}
 
+	@GetMapping("/following")
+	public String showFollowingList(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+		User currentUser = userService.getUserByEmail(userDetails.getUsername())
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		model.addAttribute("followingUsers", followService.getFollowingList(currentUser));
+		return "following_list";
+	}
+
 	@GetMapping("/reviews")
 	public String myReviews(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
@@ -124,3 +135,4 @@ public class UserController {
 	}
 
 }
+

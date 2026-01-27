@@ -1138,6 +1138,50 @@ input:checked + .slider:before {
 }
 
 /* ==========================================================================
+   ユーザーカード (フォロー中一覧など)
+   ========================================================================== */
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* アイテムリストより少し小さめ */
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.user-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+    text-align: center; /* ユーザー情報を中央寄せ */
+}
+
+.user-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+.user-card .card-link {
+    display: block; /* カード全体をリンクにする */
+    padding: 15px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.user-card .user-avatar {
+    font-size: 3rem; /* アイコンを少し大きく */
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.user-card .user-name {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-main);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 長い名前は省略 */
+}
+
+/* ==========================================================================
    管理画面コンポーネント
    ========================================================================== */
 .admin-stats-grid { /* これはレイアウトに含めるべきなので、components.cssからは削除 */
@@ -1146,6 +1190,7 @@ input:checked + .slider:before {
     gap: 20px;
     margin-bottom: 40px;
 }
+
 
 .stat-card {
     background: #fff;
