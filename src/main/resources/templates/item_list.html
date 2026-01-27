@@ -177,23 +177,31 @@
             </div>
         </div>
 
-        <div class="pagination" th:if="${items.totalPages > 1}">
-            <a th:if="${items.hasPrevious()}" class="page-link prev"
-                th:href="@{/items(page=${items.number - 1})}">
-                <i class="fas fa-chevron-left"></i> 前へ
-            </a>
-            <div class="page-numbers">
-                <span th:each="i : ${#numbers.sequence(0, items.totalPages - 1)}">
-                    <a th:if="${i != items.number}" class="page-link num"
-                        th:href="@{/items(page=${i})}" th:text="${i + 1}"></a>
-                    <span th:if="${i == items.number}" class="page-link current" th:text="${i + 1}"></span>
-                </span>
-            </div>
-            <a th:if="${items.hasNext()}" class="page-link next"
-                th:href="@{/items(page=${items.number + 1})}">
-                次へ <i class="fas fa-chevron-right"></i>
-            </a>
-        </div>
+		<div class="pagination" th:if="${items.totalPages > 1}">
+		    <a th:if="${items.hasPrevious()}" class="page-link prev"
+		        th:href="@{/items(page=${items.number - 1})}">
+		        <i class="fas fa-chevron-left"></i> 前へ
+		    </a>
+
+		    <div class="page-numbers">
+		        <span th:with="
+		            start=${T(java.lang.Math).max(0, items.number - 3)},
+		            end=${T(java.lang.Math).min(items.totalPages - 1, start + 6)},
+		            adjustedStart=${T(java.lang.Math).max(0, end - 6)}
+		        ">
+		            <span th:each="i : ${#numbers.sequence(adjustedStart, end)}">
+		                <a th:if="${i != items.number}" class="page-link num"
+		                    th:href="@{/items(page=${i})}" th:text="${i + 1}"></a>
+		                <span th:if="${i == items.number}" class="page-link current" th:text="${i + 1}"></span>
+		            </span>
+		        </span>
+		    </div>
+
+		    <a th:if="${items.hasNext()}" class="page-link next"
+		        th:href="@{/items(page=${items.number + 1})}">
+		        次へ <i class="fas fa-chevron-right"></i>
+		    </a>
+		</div>
 
         <div class="container recent-history" th:if="${itemViewHistories != null and !#lists.isEmpty(itemViewHistories)}">
             <h2 class="section-title">最近見た商品</h2>
