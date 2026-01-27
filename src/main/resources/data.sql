@@ -64,7 +64,7 @@ ON CONFLICT (name) DO NOTHING;
 -- ==========================================================================
 INSERT INTO item (user_id, name, description, price, category_id, status, image_url, created_at)
 VALUES
-(1, 'ナイキ エアマックス 270', '数回使用した程度の美品です。', 12800.00, (SELECT id FROM category WHERE name='レディーススニーカー'), '出品中', 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400', CURRENT_TIMESTAMP),
+(1, 'ナイキ エアマックス 270', '数回使用した程度の美品です。', 12800.00, (SELECT id FROM category WHERE name='レディーススニーカー'), '売却済', 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400', CURRENT_TIMESTAMP),
 (1, 'オーバーサイズ グレーパーカー', '厚手パーカー。Lサイズ。', 4500.00, (SELECT id FROM category WHERE name='パーカー'), '出品中', 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=400', CURRENT_TIMESTAMP),
 (1, '圧力IH式 炊飯器 5.5合', '2024年製。モチモチのご飯が炊けます。', 18000.00, (SELECT id FROM category WHERE name='炊飯器'), '出品中', 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?q=80&w=400', CURRENT_TIMESTAMP),
 (1, 'Spring Boot 実践ガイド', 'Javaフレームワークの解説書。', 3200.00, (SELECT id FROM category WHERE name='Javaプログラミング'), '出品中', 'https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=400', CURRENT_TIMESTAMP),

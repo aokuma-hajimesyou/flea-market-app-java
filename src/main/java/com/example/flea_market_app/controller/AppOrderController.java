@@ -170,14 +170,11 @@ public class AppOrderController {
 			notificationService.createNotification(
 					seller,
 					"商品到着通知",
-					"「" + order.getItem().getName() + "」が購入者に到着しました。評価を行って取引を完了させてください。",
+					"「" + order.getItem().getName() + "」が購入者に到着しました。",
 					"/my-page/sales");
 
-			redirectAttributes.addFlashAttribute("successMessage", "商品を到着済みにしました。");
-
-			// 取引完了・評価へリダイレクト
-			return "redirect:/reviews/new/" + orderId;
-
+			            // 取引完了・評価へリダイレクト
+			            return "redirect:/reviews/new/" + orderId;
 		} catch (IllegalArgumentException e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 			return "redirect:/my-page/orders";

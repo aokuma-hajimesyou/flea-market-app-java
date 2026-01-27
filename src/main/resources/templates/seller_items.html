@@ -36,8 +36,15 @@
         <div class="management-grid">
             <div class="manage-item-card" th:each="item : ${sellingItems}">
                 <a th:href="@{/items/{id}(id=${item.id})}" style="text-decoration: none; color: inherit;">
-                    <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" 
-                         class="manage-item-image" alt="商品画像">
+                    <div style="position: relative; height: 180px; background-color: #eee;">
+                        <img th:src="${item.imageUrl != null ? item.imageUrl : ''}" 
+                             class="manage-item-image" alt="商品画像"
+                             onerror="this.style.display='none'">
+                        <div th:if="${item.status == '売却済'}" class="sold-overlay">
+                            <div class="sold-badge"></div>
+                            <span class="sold-text">SOLD</span>
+                        </div>
+                    </div>
                     <div class="manage-item-content">
                         <span class="status-label" 
                               th:classappend="${item.status == '出品中' ? 'status-on-sale' : 'status-sold'}"

@@ -1,6 +1,7 @@
 -- ========== DROP ==========
 DROP TABLE IF EXISTS chat CASCADE;
 DROP TABLE IF EXISTS favorite_item CASCADE;
+DROP TABLE IF EXISTS user_follows CASCADE;
 DROP TABLE IF EXISTS review CASCADE;
 DROP TABLE IF EXISTS notification CASCADE;
 DROP TABLE IF EXISTS app_order CASCADE;
@@ -91,6 +92,17 @@ CREATE TABLE favorite_item (
     FOREIGN KEY (item_id) REFERENCES item(id)
 );
 
+-- ユーザーフォロー
+CREATE TABLE user_follows (
+    id SERIAL PRIMARY KEY,
+    follower_id INT NOT NULL, -- フォローするユーザー
+    followed_id INT NOT NULL, -- フォローされるユーザー
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (follower_id, followed_id), -- 重複フォロー禁止
+    FOREIGN KEY (follower_id) REFERENCES users(id),
+    FOREIGN KEY (followed_id) REFERENCES users(id)
+);
+
 -- 購入後レビュー
 CREATE TABLE review (
     id SERIAL PRIMARY KEY,
@@ -173,6 +185,9 @@ CREATE INDEX idx_chat_sender_id ON chat(sender_id);
 
 CREATE INDEX idx_fav_user_id ON favorite_item(user_id);
 CREATE INDEX idx_fav_item_id ON favorite_item(item_id);
+
+CREATE INDEX idx_uf_follower_id ON user_follows(follower_id);
+CREATE INDEX idx_uf_followed_id ON user_follows(followed_id);
 
 CREATE INDEX idx_review_order_id ON review(order_id);
 
