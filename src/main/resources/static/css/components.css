@@ -228,97 +228,6 @@ input:checked + .slider:before {
     transform: translateX(20px);
 }
 
-
-/* カテゴリー行全体 */
-.category-row {
-    display: flex;
-    gap: 0; /* 矢印との間隔は個別に調整 */
-    align-items: center;
-    flex-wrap: wrap;
-    background: #f9f9f9;
-    padding: 8px 12px;
-    border-radius: 12px;
-}
-
-/* 矢印アイコン */
-.category-arrow {
-    color: #ccc;
-    font-size: 0.75rem;
-    margin: 0 8px;
-}
-
-/* セレクトボックス単体 */
-.category-selects select {
-    height: 34px;
-    padding: 0 28px 0 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #333;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px; /* 角を少し落とす程度に */
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 10px;
-}
-
-/* 選択中のセレクトボックスを強調 */
-.category-selects select:not([value=""]) {
-    border-color: var(--primary-color);
-    background-color: #fffaf9;
-    color: var(--primary-color);
-}
-
-/* スマホ対応：矢印を消して2列にするなど調整 */
-@media (max-width: 600px) {
-    .category-arrow {
-        display: none !important; /* スマホでは矢印を消す */
-    }
-    .category-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        padding: 10px;
-    }
-    .category-selects select {
-        max-width: none;
-        width: 100%;
-    }
-}
-
-.category-selects select:hover {
-    border-color: #bbb;
-    background-color: #fafafa;
-}
-
-.category-selects select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 600px) {
-    .category-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* スマホでは2列で整列 */
-        gap: 8px;
-    }
-    .category-selects select {
-        max-width: none;
-        width: 100%;
-        height: 40px;
-        font-size: 0.8rem;
-    }
-    /* 3つ目の要素（孫カテゴリ）が1列を占有するように設定（任意） */
-    .category-selects select:nth-child(3) {
-        grid-column: span 2;
-    }
-}
-
 /* おすすめ理由バッジのスタイル */
 .recommend-reason-badge {
     position: absolute;
@@ -339,6 +248,165 @@ input:checked + .slider:before {
 .recommend-reason-badge:contains("お気に入り") {
     background: rgba(225, 58, 51, 0.8); /* 少し赤みを入れる */
 }
+
+/* ==========================================================================
+   検索フィルターコントロール
+   ========================================================================== */
+
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* 隙間を調整 */
+    align-items: flex-end;
+    padding: 20px;
+    background-color: #f8f9fa; /* 背景色を少し変更 */
+    border-radius: 12px;
+    margin-top: 16px;
+    border: 1px solid #e9ecef;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group.category-group {
+    flex: 1 1 auto; /* 可変領域 */
+    min-width: 250px;
+}
+
+.filter-group.sort-group {
+    flex: 0 0 180px; /* 固定幅 */
+}
+
+.filter-group.price-group {
+    flex: 0 0 200px; /* 固定幅 */
+}
+
+.filter-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    margin-left: 4px; /* 少しインデント */
+}
+
+/* フォーム要素の共通スタイル */
+.category-select,
+.sort-select,
+.price-input {
+    height: 42px;
+    padding: 0 12px;
+    font-size: 0.9rem;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    width: 100%; /* 親要素の幅に合わせる */
+    min-width: 0; /* flexアイテムのデフォルトのmin-widthを上書き */
+}
+
+.category-select:focus,
+.sort-select:focus,
+.price-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(225, 58, 51, 0.1);
+}
+
+.category-select,
+.sort-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    padding-right: 30px;
+}
+
+/* カテゴリー選択のコンテナ */
+.category-selects {
+    display: flex;
+    gap: 8px;
+    flex-grow: 1; /* 親のfilter-group.category-groupの残りのスペースを埋める */
+}
+
+.category-selects select {
+    white-space: nowrap; /* テキストの折り返しを防ぐ */
+    overflow: hidden; /* はみ出たテキストを隠す */
+    text-overflow: ellipsis; /* はみ出たテキストを...で表示 */
+    min-width: 100px; /* 各セレクトボックスの最小幅 */
+}
+
+
+/* 価格入力のコンテナ */
+.price-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.price-range-inputs span {
+    color: var(--text-sub);
+    font-weight: 600;
+}
+
+/* 売り切れ表示のトグル (ラベルとの位置関係調整) */
+.filter-group.sold-toggle {
+    flex: 0 1 auto; /* growしない、shrinkする、basisはauto */
+    align-items: center;
+    flex-direction: row;
+    gap: 12px;
+    justify-content: center;
+    background: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    min-height: 42px;
+}
+
+.filter-group.sold-toggle .switch-label {
+    margin-left: 0;
+}
+
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+    }
+
+    .filter-group {
+        flex-basis: auto;
+        min-width: 0;
+    }
+
+    .filter-group.category-group {
+        min-width: 0;
+    }
+
+    .category-selects {
+        flex-direction: column;
+        gap: 12px; /* 縦に並べたときの隙間 */
+    }
+
+    .category-selects select {
+        width: 100%;
+        min-width: 0; /* スマホではmin-widthをリセット */
+    }
+
+    .filter-group.sold-toggle {
+        flex-direction: row;
+        justify-content: flex-start;
+        flex-basis: auto;
+    }
+}
+
+
 
 /* ==========================================================================
    ページネーション

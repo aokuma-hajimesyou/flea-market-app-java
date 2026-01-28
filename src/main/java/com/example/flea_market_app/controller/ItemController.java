@@ -78,6 +78,7 @@ public class ItemController {
 	public String listItem(
 			@ModelAttribute SearchCriteria criteria,
 			@RequestParam(name = "page", required = false) Integer page,
+			@RequestParam(name = "sort", required = false) String sort,
 			@AuthenticationPrincipal UserDetails userDetails,
 			Model model,
 			HttpServletRequest request) {
@@ -88,12 +89,16 @@ public class ItemController {
 				request.getParameter("categoryId") != null ||
 				request.getParameter("minPrice") != null ||
 				request.getParameter("maxPrice") != null ||
-				request.getParameterMap().containsKey("includeSold");
+				request.getParameterMap().containsKey("includeSold") ||
+				sort != null;
 
 		SearchCriteria sessionCriteria = (SearchCriteria) session.getAttribute("searchCriteria");
 
 		if (isNewSearch) {
 			criteria.setPage(0);
+			if (sort != null) {
+				criteria.setSort(sort);
+			}
 			session.setAttribute("searchCriteria", criteria);
 		} else if (page != null) {
 			if (sessionCriteria != null) {
@@ -106,6 +111,9 @@ public class ItemController {
 		} else if (sessionCriteria != null) {
 			criteria = sessionCriteria;
 		} else {
+			if (sort != null) {
+				criteria.setSort(sort);
+			}
 			session.setAttribute("searchCriteria", criteria);
 		}
 

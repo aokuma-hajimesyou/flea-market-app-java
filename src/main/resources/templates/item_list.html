@@ -67,35 +67,45 @@
                         <a th:href="@{/items/clear-search}" class="clear-btn">クリア</a>
                     </div>
 
-                    <div class="additional-filters" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin-top: 10px;">
-                        <div class="category-row category-selects" style="flex: 2 1 250px; display: flex; gap: 5px;">
-                            <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${criteria.categoryId}">
-                            <select id="parentCategory" class="category-select" style="flex: 1;">
-                                <option value="">カテゴリーで絞り込む</option>
-                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}" th:selected="${criteria.categoryId != null and criteria.categoryId == category.id}"></option>
-                            </select>
-    
-                            <span class="category-arrow" id="childArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
-                            <select id="childCategory" class="category-select" style="display:none; flex: 1;"></select>
-    
-                            <span class="category-arrow" id="grandChildArrow" style="display:none;"><i class="fas fa-chevron-right"></i></span>
-                            <select id="grandChildCategory" class="category-select" style="display:none; flex: 1;"></select>
-                        </div>
-    
-                        <div class="price-range-row" style="flex: 1 1 200px;">
-                            <div class="input-group" style="display: flex; align-items: center;">
-                                <input type="number" name="minPrice" th:value="${criteria.minPrice}" placeholder="¥ Min" class="price-input" style="width: 48%;">
-                                <span class="price-separator" style="padding: 0 4px;">〜</span>
-                                <input type="number" name="maxPrice" th:value="${criteria.maxPrice}" placeholder="¥ Max" class="price-input" style="width: 48%;">
+                    <div class="filter-controls">
+                        <div class="filter-group category-group">
+                            <label for="parentCategory">カテゴリー</label>
+                            <div class="category-selects">
+                                <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${criteria.categoryId}">
+                                <select id="parentCategory" class="category-select" onchange="this.form.submit()">
+                                    <option value="">すべて</option>
+                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}" th:selected="${criteria.categoryId != null and criteria.categoryId == category.id}"></option>
+                                </select>
+                                <select id="childCategory" class="category-select" onchange="this.form.submit()" style="display:none;"></select>
+                                <select id="grandChildCategory" class="category-select" onchange="this.form.submit()" style="display:none;"></select>
                             </div>
                         </div>
-                        
-                         <div class="sold-filter-row" style="flex-shrink: 0; display: flex; align-items: center; gap: 8px;">
+
+                        <div class="filter-group sort-group">
+                            <label for="sort">並び替え</label>
+                            <select id="sort" name="sort" class="sort-select" onchange="this.form.submit()">
+                                <option value="createdAtDesc" th:selected="${criteria.sort == 'createdAtDesc' or criteria.sort == null}">新しい順</option>
+                                <option value="priceAsc" th:selected="${criteria.sort == 'priceAsc'}">価格が安い順</option>
+                                <option value="priceDesc" th:selected="${criteria.sort == 'priceDesc'}">価格が高い順</option>
+                                <option value="likesDesc" th:selected="${criteria.sort == 'likesDesc'}">いいねが多い順</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group price-group">
+                            <label>価格</label>
+                            <div class="price-range-inputs">
+                                <input type="number" name="minPrice" th:value="${criteria.minPrice}" placeholder="¥ Min" class="price-input">
+                                <span>〜</span>
+                                <input type="number" name="maxPrice" th:value="${criteria.maxPrice}" placeholder="¥ Max" class="price-input">
+                            </div>
+                        </div>
+
+                        <div class="filter-group sold-toggle">
+                            <label class="switch-label">売り切れも表示</label>
                             <label class="switch">
-                                <input type="checkbox" id="includeSoldCheckbox" name="includeSold" value="true" th:checked="${criteria.includeSold}">
+                                <input type="checkbox" id="includeSoldCheckbox" name="includeSold" value="true" th:checked="${criteria.includeSold}" onchange="this.form.submit()">
                                 <span class="slider round"></span>
                             </label>
-                            <span class="switch-label">売り切れ商品も表示</span>
                         </div>
                     </div>
                 </div>
