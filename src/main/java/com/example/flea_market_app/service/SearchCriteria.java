@@ -12,10 +12,19 @@ public class SearchCriteria implements Serializable {
     private boolean includeSold = false;
     private int page = 0;
     private int size = 12; // Default size
+    private String sort = "createdAtDesc";
 
     // Getters and Setters
     public String getKeyword() {
         return keyword;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
     }
 
     public void setKeyword(String keyword) {

@@ -130,4 +130,20 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			@Param("minPrice") Integer minPrice,
 			@Param("maxPrice") Integer maxPrice,
 			Pageable pageable);
+
+	@Query("SELECT i FROM Item i LEFT JOIN i.favoritedBy f " +
+			"WHERE (:status IS NULL OR i.status = :status) " +
+			"AND (:minPrice IS NULL OR i.price >= :minPrice) " +
+			"AND (:maxPrice IS NULL OR i.price <= :maxPrice) " +
+			"AND (:keyword IS NULL OR LOWER(i.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+			"AND (:categoryId IS NULL OR i.category.id = :categoryId OR i.category.parent.id = :categoryId OR i.category.parent.parent.id = :categoryId) " +
+			"GROUP BY i.id " +
+			"ORDER BY COUNT(f) DESC, i.createdAt DESC")
+	Page<Item> findAndSortByLikes(
+			@Param("keyword") String keyword,
+			@Param("categoryId") Long categoryId,
+			@Param("status") String status,
+			@Param("minPrice") Integer minPrice,
+			@Param("maxPrice") Integer maxPrice,
+			Pageable pageable);
 }
