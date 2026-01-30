@@ -70,10 +70,12 @@ public class UserController {
 	}
 
 	@GetMapping("/selling")
-	public String mySellingItems(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+	public String mySellingItems(@AuthenticationPrincipal UserDetails userDetails,
+			@RequestParam(name = "status", required = false, defaultValue = "出品中") String status, Model model) {
 		User currentUser = userService.getUserByEmail(userDetails.getUsername())
 				.orElseThrow(() -> new RuntimeException("User not found"));
-		model.addAttribute("sellingItems", itemService.getItemsBySeller(currentUser));
+		model.addAttribute("sellingItems", itemService.getItemsBySellerAndStatus(currentUser, status));
+		model.addAttribute("currentStatus", status);
 		return "seller_items";
 	}
 
