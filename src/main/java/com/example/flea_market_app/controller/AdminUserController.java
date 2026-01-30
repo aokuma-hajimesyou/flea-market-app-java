@@ -53,7 +53,7 @@ public class AdminUserController {
 				Comparator.nullsLast(String::compareToIgnoreCase))).toList();
 		case "banned" -> list.stream()
 				.sorted(Comparator.comparing(User::isBanned).reversed()).toList();
-		default -> list;
+		default -> list.stream().sorted(Comparator.comparing(User::getId)).toList();
 		};
 
 		model.addAttribute("users", list);
@@ -85,12 +85,12 @@ public class AdminUserController {
 		Long adminId = users.findByEmailIgnoreCase(auth.getName()).map(User::getId).orElse(null);
 
 		service.banUser(id, adminId, reason, disableLogin);
-		return "redirect:/admin/users?banned";
+		return "redirect:/admin/users";
 	}
 
 	@PostMapping("/{id}/unban")
 	public String unban(@PathVariable Long id) {
 		service.unbanUser(id);
-		return "redirect:/admin/users?unbanned";
+		return "redirect:/admin/users";
 	}
 }
