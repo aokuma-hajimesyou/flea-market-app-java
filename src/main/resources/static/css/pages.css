@@ -258,3 +258,118 @@ input[type=number]::-webkit-outer-spin-button {
 @media (max-width: 480px) {
     .mypage-nav { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   管理画面：お問い合わせ詳細ページ
+   ========================================================================== */
+
+.admin-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 15px; /* containerクラスの左右paddingに合わせる */
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+}
+
+.alert-success {
+    background-color: var(--success-color);
+}
+
+.detail-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+}
+
+.detail-group {
+    margin-bottom: 25px;
+}
+
+.detail-group:last-child {
+    margin-bottom: 0;
+}
+
+
+.detail-group label {
+    display: block;
+    font-weight: bold;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.detail-group p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.content-box {
+    background: #f8f9fa;
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.action-group {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.status-update-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    flex-grow: 1; /* スペースを埋める */
+}
+
+.status-update-form div {
+    flex-grow: 1; /* selectボックスが伸びるように */
+}
+
+
+.status-update-form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--text-sub);
+}
+
+.button.danger {
+    background-color: var(--danger-color);
+}
+
+.button.danger:hover {
+    background-color: #c0392b; /* 少し暗い赤 */
+}

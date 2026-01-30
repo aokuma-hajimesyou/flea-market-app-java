@@ -1,55 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	    <title>お問い合わせ詳細 - Admin Panel</title>
-	    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta charset="UTF-8">
+    <title>お問い合わせ詳細 - Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body style="background-color: #f4f7f6;">
-    <div class="container" style="max-width: 800px;">
+<body>
+
+    <div class="admin-container">
         <div class="page-header">
             <h1>お問い合わせ詳細</h1>
-            <a th:href="@{/admin/feedback}" class="button secondary">一覧に戻る</a>
-			<div style="margin-top: 20px; display: flex; gap: 10px;">
-			    <form th:action="@{/admin/feedbacks/{id}/update(id=${feedback.id})}" method="post" style="flex: 1;">
-			        </form>
-
-			    <form th:action="@{/admin/feedback/{id}/delete(id=${feedback.id})}" method="post" 
-			          onsubmit="return confirm('このお問い合わせを完全に削除してもよろしいですか？');">
-			        <button type="submit" class="button" style="background-color: #e74c3c;">お問い合わせを削除する</button>
-			    </form>
-			</div>
-			<div th:if="${successMessage}" class="status-badge status-shipped" 
-			     style="width: 100%; padding: 10px; margin-bottom: 20px; text-align: center; border-radius: 5px;">
-			    <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
-			</div>
+            <a th:href="@{/admin/feedback}" class="button secondary">
+                <i class="fas fa-arrow-left"></i> 一覧に戻る
+            </a>
         </div>
 
-        <div class="form-box">
-            <div style="margin-bottom: 20px;">
-                <label style="font-weight: bold; color: #7f8c8d;">送信者:</label>
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <div class="detail-card">
+            <div class="detail-group">
+                <label>送信者</label>
                 <p th:text="${feedback.user.name} + ' (' + ${feedback.user.email} + ')'"></p>
             </div>
-            <div style="margin-bottom: 20px;">
-                <label style="font-weight: bold; color: #7f8c8d;">種別:</label>
+            <div class="detail-group">
+                <label>種別</label>
                 <p th:text="${feedback.subject.name}"></p>
             </div>
-            <div style="margin-bottom: 20px;">
-                <label style="font-weight: bold; color: #7f8c8d;">内容:</label>
-                <div style="background: #fff; border: 1px solid #ddd; padding: 15px; border-radius: 5px; white-space: pre-wrap;" 
-                     th:text="${feedback.content}"></div>
+            <div class="detail-group">
+                <label>内容</label>
+                <div class="content-box" th:text="${feedback.content}"></div>
             </div>
             
-            <form th:action="@{/admin/feedback/{id}/update(id=${feedback.id})}" method="post">
-                <label style="font-weight: bold; color: #7f8c8d;">対応ステータス:</label>
-                <select name="status" class="form-control" style="margin-bottom: 10px;">
-                    <option value="未対応" th:selected="${feedback.status == '未対応'}">未対応</option>
-                    <option value="対応中" th:selected="${feedback.status == '対応中'}">対応中</option>
-                    <option value="対応済み" th:selected="${feedback.status == '対応済み'}">対応済み</option>
-                </select>
-                <button type="submit" class="button">ステータスを更新する</button>
-            </form>
+            <div class="action-group">
+                <form th:action="@{/admin/feedback/{id}/update(id=${feedback.id})}" method="post" class="status-update-form">
+                    <div>
+                        <label for="status-select">対応ステータス</label>
+                        <select id="status-select" name="status" class="form-control">
+                            <option value="未対応" th:selected="${feedback.status == '未対応'}">未対応</option>
+                            <option value="対応中" th:selected="${feedback.status == '対応中'}">対応中</option>
+                            <option value="対応済み" th:selected="${feedback.status == '対応済み'}">対応済み</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="button">
+                        <i class="fas fa-sync-alt"></i> ステータスを更新
+                    </button>
+                </form>
+                
+                <form th:action="@{/admin/feedback/{id}/delete(id=${feedback.id})}" method="post" onsubmit="return confirm('このお問い合わせを完全に削除してもよろしいですか？');">
+                    <button type="submit" class="button danger">
+                        <i class="fas fa-trash-alt"></i> お問い合わせを削除
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
+
 </body>
 </html>

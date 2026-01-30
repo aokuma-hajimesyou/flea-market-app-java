@@ -167,7 +167,8 @@
                     </a>
                         <div class="card-footer">
                             <span class="item-status-tag" th:classappend="${item.status == '出品中' ? 'status-on-sale' : 'status-sold'}" th:text="${item.status}">出品中</span>
-                            <div class="favorite-icon-container" th:attr="data-item-id=${item.id}" th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
+                            <div th:if="${loggedInUser == null or item.seller.id != loggedInUser.id}"
+                                 class="favorite-icon-container" th:attr="data-item-id=${item.id}" th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
                                 <i class="fa-heart" th:classappend="${item.isFavorited} ? 'fas' : 'far'"></i>
                             </div>
                         </div>                </div>

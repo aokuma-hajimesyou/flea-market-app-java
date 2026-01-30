@@ -17,6 +17,7 @@ import jakarta.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id") // IDに基づいて equals と hashCode を生成
 public class Item {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

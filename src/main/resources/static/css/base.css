@@ -13,6 +13,8 @@
     --price-bg: rgba(0, 0, 0, 0.7);
     --border-color: #ddd;
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --success-color: #2ecc71; /* 成功時の色 */
+    --danger-color: #e74c3c;  /* 危険・エラー時の色 */
 }
 
 body {

@@ -44,7 +44,7 @@
                 <div class="order-actions">
                     <form th:action="@{/orders/{id}/arrive(id=${order.id})}" method="post"
                           th:if="${order.status == '発送済'}" 
-                          onsubmit="return confirm('商品が手元に届きましたか？これ以降キャンセルはできません。');">
+                          onsubmit="return confirm('商品が手元に届きましたか？');">
                         <button type="submit" class="button">受取評価へ進む</button>
                     </form>
                     
