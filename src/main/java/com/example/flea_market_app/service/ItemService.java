@@ -67,20 +67,24 @@ public class ItemService {
 
 		Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
 
-		// キーワードあり ＋ カテゴリー指定あり
-		if (keyword != null && !keyword.isEmpty() && categoryId != null) {
-			return itemRepository.findByNameAndHierarchyCategoryAndStatusOptional(keyword, categoryId, status, minPrice, maxPrice, pageable);
-		}
-		// キーワードのみ
-		else if (keyword != null && !keyword.isEmpty()) {
+		boolean hasKeyword = keyword != null && !keyword.isEmpty();
+		boolean hasCategory = categoryId != null;
+
+		if (hasKeyword && hasCategory) {
+			List<Long> categoryIds = categoryService.getCategoryIdsWithDescendants(categoryId);
+			if (categoryIds.isEmpty()) {
+				return Page.empty(pageable);
+			}
+			return itemRepository.findByNameAndCategoryInAndStatusOptional(keyword, categoryIds, status, minPrice, maxPrice, pageable);
+		} else if (hasKeyword) {
 			return itemRepository.findByNameContainingIgnoreCaseAndStatusOptional(keyword, status, minPrice, maxPrice, pageable);
-		}
-		// カテゴリー指定のみ（階層対応メソッドを呼び出し）
-		else if (categoryId != null) {
-			return itemRepository.findByHierarchyCategoryAndStatusOptional(categoryId, status, minPrice, maxPrice, pageable);
-		}
-		// 条件なし
-		else {
+		} else if (hasCategory) {
+			List<Long> categoryIds = categoryService.getCategoryIdsWithDescendants(categoryId);
+			if (categoryIds.isEmpty()) {
+				return Page.empty(pageable);
+			}
+			return itemRepository.findByCategoryInAndStatusOptional(categoryIds, status, minPrice, maxPrice, pageable);
+		} else {
 			return itemRepository.findByStatusOptional(status, minPrice, maxPrice, pageable);
 		}
 	}
