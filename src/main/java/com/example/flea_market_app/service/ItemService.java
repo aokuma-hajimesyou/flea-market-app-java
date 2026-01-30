@@ -38,7 +38,16 @@ public class ItemService {
 
 		if ("likesDesc".equals(criteria.getSort())) {
 			Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize());
-			return itemRepository.findAndSortByLikes(keyword, categoryId, status, minPrice, maxPrice, pageable);
+
+			if (categoryId != null) {
+				List<Long> categoryIds = categoryService.getCategoryIdsWithDescendants(categoryId);
+				if (categoryIds.isEmpty()) {
+					return Page.empty(pageable); // 空のリストなら空のページを返す
+				}
+				return itemRepository.findAndSortByLikes(keyword, categoryIds, status, minPrice, maxPrice, pageable);
+			} else {
+				return itemRepository.findAndSortByLikesWithoutCategory(keyword, status, minPrice, maxPrice, pageable);
+			}
 		}
 
 		Sort sort;

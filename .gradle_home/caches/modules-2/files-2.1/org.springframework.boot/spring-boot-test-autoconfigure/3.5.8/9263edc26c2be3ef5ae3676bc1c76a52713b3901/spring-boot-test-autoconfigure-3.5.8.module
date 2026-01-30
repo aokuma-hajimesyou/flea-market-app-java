@@ -1,0 +1,146 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.springframework.boot",
+    "module": "spring-boot-test-autoconfigure",
+    "version": "3.5.8",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14.3"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-test",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-autoconfigure",
+          "version": {
+            "requires": "3.5.8"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-boot-test-autoconfigure-3.5.8.jar",
+          "url": "spring-boot-test-autoconfigure-3.5.8.jar",
+          "size": 229818,
+          "sha512": "345681d73a1fb7f921e3e04c834a3891bd6994bff3e1788d5a2521153c5c8f52344784a29460ce72a34e4eaf208f70344e15d183ecf03f09986abaa22f781d76",
+          "sha256": "81020f0e70dc56115ca0a43324df641490d55516000e1eaed09a98d04496c6e7",
+          "sha1": "bc5b80cefba075adbf99284c20318ed2bafc5655",
+          "md5": "19ba9db0b53c70f1151576d56fc57823"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-test",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-autoconfigure",
+          "version": {
+            "requires": "3.5.8"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-boot-test-autoconfigure-3.5.8.jar",
+          "url": "spring-boot-test-autoconfigure-3.5.8.jar",
+          "size": 229818,
+          "sha512": "345681d73a1fb7f921e3e04c834a3891bd6994bff3e1788d5a2521153c5c8f52344784a29460ce72a34e4eaf208f70344e15d183ecf03f09986abaa22f781d76",
+          "sha256": "81020f0e70dc56115ca0a43324df641490d55516000e1eaed09a98d04496c6e7",
+          "sha1": "bc5b80cefba075adbf99284c20318ed2bafc5655",
+          "md5": "19ba9db0b53c70f1151576d56fc57823"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "spring-boot-test-autoconfigure-3.5.8-javadoc.jar",
+          "url": "spring-boot-test-autoconfigure-3.5.8-javadoc.jar",
+          "size": 492773,
+          "sha512": "b35e96f8a16dd5c0f6687b0ef5f52b2ff7d21c728fec45a96c2ddfd739f491296a6491f42b848d0ab3581d3ba7b12bdc2b2b9059cd37ce6097faae5970af4a29",
+          "sha256": "ca3ac5174c153da85f99bd2bd38cc2eed27e1e0cfbd34e9cfa9c3c766a04f410",
+          "sha1": "bfe6512803a287d464e277d02b49640a53126d28",
+          "md5": "824122d6eda89ad0b454b9cfebbd994e"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "spring-boot-test-autoconfigure-3.5.8-sources.jar",
+          "url": "spring-boot-test-autoconfigure-3.5.8-sources.jar",
+          "size": 227447,
+          "sha512": "690b5b1210ef891ae49e3e5fbdd94dc6e4ff9b43c8e6b9210ecf6bd31b6e778c2b9d436905cb2f981e9cc9e59a5a79659bc8cedc512d3e40f3feba3addcb6306",
+          "sha256": "28deaa4f1fb16204d1e4433867887859899bee400b71bfb1286dc69052fa5336",
+          "sha1": "c298f75edd5922517f6b64c3b53a7b90e52cfe81",
+          "md5": "4ee86dd1a33b2818307c79bcdf5399c2"
+        }
+      ]
+    }
+  ]
+}

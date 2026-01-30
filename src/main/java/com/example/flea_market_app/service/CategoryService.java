@@ -1,5 +1,6 @@
 package com.example.flea_market_app.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +45,21 @@ public class CategoryService {
 
 	public void deleteCategory(Long id) {
 		categoryRepository.deleteById(id);
+	}
+
+	public List<Long> getCategoryIdsWithDescendants(Long categoryId) {
+		List<Long> ids = new ArrayList<>();
+		if (categoryId != null) {
+			collectCategoryIds(categoryId, ids);
+		}
+		return ids;
+	}
+
+	private void collectCategoryIds(Long categoryId, List<Long> ids) {
+		ids.add(categoryId);
+		List<Category> children = getChildCategories(categoryId);
+		for (Category child : children) {
+			collectCategoryIds(child.getId(), ids);
+		}
 	}
 }
