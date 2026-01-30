@@ -1,0 +1,328 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.springframework.boot",
+    "module": "spring-boot-starter-test",
+    "version": "3.5.8",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14.3"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-test",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-test-autoconfigure",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "com.jayway.jsonpath",
+          "module": "json-path",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "jakarta.xml.bind",
+          "module": "jakarta.xml.bind-api",
+          "version": {
+            "requires": "4.0.4"
+          }
+        },
+        {
+          "group": "net.minidev",
+          "module": "json-smart",
+          "version": {
+            "requires": "2.5.2"
+          }
+        },
+        {
+          "group": "org.assertj",
+          "module": "assertj-core",
+          "version": {
+            "requires": "3.27.6"
+          }
+        },
+        {
+          "group": "org.awaitility",
+          "module": "awaitility",
+          "version": {
+            "requires": "4.2.2"
+          }
+        },
+        {
+          "group": "org.hamcrest",
+          "module": "hamcrest",
+          "version": {
+            "requires": "3.0"
+          }
+        },
+        {
+          "group": "org.junit.jupiter",
+          "module": "junit-jupiter",
+          "version": {
+            "requires": "5.12.2"
+          }
+        },
+        {
+          "group": "org.mockito",
+          "module": "mockito-core",
+          "version": {
+            "requires": "5.17.0"
+          }
+        },
+        {
+          "group": "org.mockito",
+          "module": "mockito-junit-jupiter",
+          "version": {
+            "requires": "5.17.0"
+          }
+        },
+        {
+          "group": "org.skyscreamer",
+          "module": "jsonassert",
+          "version": {
+            "requires": "1.5.3"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-core",
+          "version": {
+            "requires": "6.2.14"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-test",
+          "version": {
+            "requires": "6.2.14"
+          }
+        },
+        {
+          "group": "org.xmlunit",
+          "module": "xmlunit-core",
+          "version": {
+            "requires": "2.10.4"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-boot-starter-test-3.5.8.jar",
+          "url": "spring-boot-starter-test-3.5.8.jar",
+          "size": 4792,
+          "sha512": "b43daa6af536a083c7c4edd977ee7363fe27a5aaf032247debf32a120c176c9f984fa478f76cb9c5967c33232ab21e7b7f19de647a9c284f86d698de79557d12",
+          "sha256": "8b5f1cbbfaf7dfedd0f0848fcc053b490eabd82a2bd081f2b5e44930d4466bd8",
+          "sha1": "fceec984081c1ba80b29847307161517598f425e",
+          "md5": "a1ece5e6e3a6b3f83d4013afdcdf5165"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-test",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-test-autoconfigure",
+          "version": {
+            "requires": "3.5.8"
+          }
+        },
+        {
+          "group": "com.jayway.jsonpath",
+          "module": "json-path",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "jakarta.xml.bind",
+          "module": "jakarta.xml.bind-api",
+          "version": {
+            "requires": "4.0.4"
+          }
+        },
+        {
+          "group": "net.minidev",
+          "module": "json-smart",
+          "version": {
+            "requires": "2.5.2"
+          }
+        },
+        {
+          "group": "org.assertj",
+          "module": "assertj-core",
+          "version": {
+            "requires": "3.27.6"
+          }
+        },
+        {
+          "group": "org.awaitility",
+          "module": "awaitility",
+          "version": {
+            "requires": "4.2.2"
+          }
+        },
+        {
+          "group": "org.hamcrest",
+          "module": "hamcrest",
+          "version": {
+            "requires": "3.0"
+          }
+        },
+        {
+          "group": "org.junit.jupiter",
+          "module": "junit-jupiter",
+          "version": {
+            "requires": "5.12.2"
+          }
+        },
+        {
+          "group": "org.mockito",
+          "module": "mockito-core",
+          "version": {
+            "requires": "5.17.0"
+          }
+        },
+        {
+          "group": "org.mockito",
+          "module": "mockito-junit-jupiter",
+          "version": {
+            "requires": "5.17.0"
+          }
+        },
+        {
+          "group": "org.skyscreamer",
+          "module": "jsonassert",
+          "version": {
+            "requires": "1.5.3"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-core",
+          "version": {
+            "requires": "6.2.14"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-test",
+          "version": {
+            "requires": "6.2.14"
+          }
+        },
+        {
+          "group": "org.xmlunit",
+          "module": "xmlunit-core",
+          "version": {
+            "requires": "2.10.4"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-boot-starter-test-3.5.8.jar",
+          "url": "spring-boot-starter-test-3.5.8.jar",
+          "size": 4792,
+          "sha512": "b43daa6af536a083c7c4edd977ee7363fe27a5aaf032247debf32a120c176c9f984fa478f76cb9c5967c33232ab21e7b7f19de647a9c284f86d698de79557d12",
+          "sha256": "8b5f1cbbfaf7dfedd0f0848fcc053b490eabd82a2bd081f2b5e44930d4466bd8",
+          "sha1": "fceec984081c1ba80b29847307161517598f425e",
+          "md5": "a1ece5e6e3a6b3f83d4013afdcdf5165"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "spring-boot-starter-test-3.5.8-javadoc.jar",
+          "url": "spring-boot-starter-test-3.5.8-javadoc.jar",
+          "size": 4792,
+          "sha512": "dcbc241be39fcb6ea4cf3b63416af9b96b77646fd098bb97d9403b3edc74b3a083295e06dd29cc6d455bc7f97869fd5cdb825f634c07aba77927744457662e6e",
+          "sha256": "b6b9a2b577d1e0b6f7bc2df7aac2a6f93252f211cd6e2cfb7f691906eaeb79be",
+          "sha1": "2ee61cc71b8c9ea406dd1a559dfc6a4214b17426",
+          "md5": "e591daa0caba9e9066a477e134f1601e"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "spring-boot-starter-test-3.5.8-sources.jar",
+          "url": "spring-boot-starter-test-3.5.8-sources.jar",
+          "size": 4792,
+          "sha512": "dcbc241be39fcb6ea4cf3b63416af9b96b77646fd098bb97d9403b3edc74b3a083295e06dd29cc6d455bc7f97869fd5cdb825f634c07aba77927744457662e6e",
+          "sha256": "b6b9a2b577d1e0b6f7bc2df7aac2a6f93252f211cd6e2cfb7f691906eaeb79be",
+          "sha1": "2ee61cc71b8c9ea406dd1a559dfc6a4214b17426",
+          "md5": "e591daa0caba9e9066a477e134f1601e"
+        }
+      ]
+    }
+  ]
+}
