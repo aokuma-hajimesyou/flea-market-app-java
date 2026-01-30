@@ -154,6 +154,7 @@ public class ItemController {
 				model.addAttribute("itemViewHistories", itemViewHistories);
 				model.addAttribute("unreadCount", notificationService.getUnreadCount(user));
 				model.addAttribute("notifications", notificationService.getNotificationsForUser(user));
+				model.addAttribute("loggedInUser", user);
 			}
 		}
 
