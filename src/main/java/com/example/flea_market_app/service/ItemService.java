@@ -120,6 +120,10 @@ public class ItemService {
 		return itemRepository.findBySeller(Seller);
 	}
 
+	public List<Item> getItemsBySellerAndStatus(User seller, String status) {
+		return itemRepository.findBySellerAndStatus(seller, status);
+	}
+
 	public void markItemAsSold(Long itemId) {
 		itemRepository.findById(itemId).ifPresent(item -> {
 			item.setStatus("売却済");

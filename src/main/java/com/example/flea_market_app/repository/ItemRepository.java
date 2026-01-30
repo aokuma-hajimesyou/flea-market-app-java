@@ -54,6 +54,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	List<Item> findBySeller(User seller);
 
+	List<Item> findBySellerAndStatus(User seller, String status);
+
 	@Query(value = """
 			SELECT * FROM item i
 			WHERE i.category_id IN (:categoryIds)

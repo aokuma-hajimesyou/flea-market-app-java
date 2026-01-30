@@ -27,10 +27,18 @@
             </div>
         </div>
 
+        <!-- Status filter tabs -->
+        <div class="tabs">
+            <a th:href="@{/my-page/selling(status='出品中')}" class="tab-item" th:classappend="${currentStatus == '出品中' ? 'active' : ''}">販売中</a>
+            <a th:href="@{/my-page/selling(status='売却済')}" class="tab-item" th:classappend="${currentStatus == '売却済' ? 'active' : ''}">売却済み</a>
+        </div>
+
+
         <div th:if="${#lists.isEmpty(sellingItems)}" class="empty-state">
             <i class="fas fa-box" style="font-size: 3rem; color: #ccc;"></i>
-            <p>まだ出品している商品はありません。</p>
-            <a th:href="@{/items/new}" class="button">最初の商品を出品する</a>
+            <p th:if="${currentStatus == '出品中'}">まだ出品している商品はありません。</p>
+            <p th:if="${currentStatus == '売却済'}">売却済みの商品はありません。</p>
+            <a th:if="${currentStatus == '出品中'}" th:href="@{/items/new}" class="button">最初の商品を出品する</a>
         </div>
 
         <div class="management-grid">
@@ -56,7 +64,7 @@
                     </div>
                 </a>
 
-                <div class="manage-actions">
+                <div class="manage-actions" th:if="${item.status == '出品中'}">
                     <a th:href="@{/items/{id}/edit(id=${item.id})}" class="button secondary">
                         <i class="fas fa-edit"></i> 編集
                     </a>
