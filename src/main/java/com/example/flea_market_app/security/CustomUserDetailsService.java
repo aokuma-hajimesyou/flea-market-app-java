@@ -2,6 +2,7 @@ package com.example.flea_market_app.security;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +15,8 @@ import com.example.flea_market_app.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Service("userDetailsService")
+@Primary
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
