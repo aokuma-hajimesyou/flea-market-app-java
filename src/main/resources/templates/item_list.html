@@ -2,243 +2,329 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>商品一覧 - FleaMarketApp</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <script th:src="@{/js/style.js}" defer></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<title>商品一覧 - FleaMarketApp</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+	<script th:src="@{/js/style.js}" defer></script>
 </head>
 
 <body>
-    <header class="app-header">
-        <div class="header-inner">
-            <h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
+	<!-- Filter Sidebar -->
+	<div id="filterSidebar" class="filter-sidebar">
+		<div class="sidebar-header">
+			<h3 class="sidebar-title">絞り込み</h3>
+			<a href="javascript:void(0)" class="close-btn" id="closeFilterBtn">&times;</a>
+		</div>
+		<div class="sidebar-content">
+			<form th:action="@{/items}" method="get" class="search-form">
+				<div class="sidebar-form-inner">
+					<div class="keyword-row">
+						<div class="input-group">
+							<i class="fas fa-search search-icon"></i>
+							<input type="text" id="keyword" name="keyword" th:value="${criteria.keyword}"
+								placeholder="なにをお探しですか？">
+						</div>
+					</div>
 
-            <div class="header-actions">
-                <div class="notification-container">
-                    <a href="javascript:void(0)" class="header-link notification-icon" id="notificationBtn">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge" th:if="${unreadCount > 0}" th:text="${unreadCount}"></span>
-                    </a>
+					<div class="filter-controls">
+						<div class="filter-group category-group">
+							<label for="parentCategory">カテゴリー</label>
+							<div class="category-selects">
+								<input type="hidden" id="finalCategoryId" name="categoryId"
+									th:value="${criteria.categoryId}">
+								<select id="parentCategory" class="category-select">
+									<option value="">すべて</option>
+									<option th:each="category : ${categories}" th:value="${category.id}"
+										th:text="${category.name}"
+										th:selected="${criteria.categoryId != null and criteria.categoryId == category.id}">
+									</option>
+								</select>
+								<select id="childCategory" class="category-select" style="display:none;"></select>
+								<select id="grandChildCategory" class="category-select" style="display:none;"></select>
+							</div>
+						</div>
 
-                    <div class="notification-modal" id="notificationModal">
-                        <div class="modal-header">
-                            <span>通知</span>
-                            <a th:href="@{/notifications/mark-all-read}" class="mark-all-link">すべて既読</a>
-                        </div>
-                        <div class="modal-body">
-                            <div th:each="n : ${notifications}"
-                                th:classappend="${n.isRead} ? 'notification-item read' : 'notification-item unread'">
-                                <a th:href="@{/notifications/{id}/read(id=${n.id})}">
-                                    <div class="notif-title" th:text="${n.title}">通知タイトル</div>
-                                    <div class="notif-message" th:text="${n.message}">メッセージ内容</div>
-                                    <div class="notif-time" th:text="${#temporals.format(n.createdAt, 'MM/dd HH:mm')}">
-                                        12/27 15:00</div>
-                                </a>
-                            </div>
-                            <div th:if="${#lists.isEmpty(notifications)}" class="no-notif">
-                                現在、通知はありません。
-                            </div>
-                        </div>
-                    </div>
-                </div>
+						<div class="filter-group sort-group">
+							<label for="sort">並び替え</label>
+							<select id="sort" name="sort" class="sort-select">
+								<option value="createdAtDesc"
+									th:selected="${criteria.sort == 'createdAtDesc' or criteria.sort == null}">新しい順
+								</option>
+								<option value="priceAsc" th:selected="${criteria.sort == 'priceAsc'}">価格が安い順</option>
+								<option value="priceDesc" th:selected="${criteria.sort == 'priceDesc'}">価格が高い順</option>
+								<option value="likesDesc" th:selected="${criteria.sort == 'likesDesc'}">いいねが多い順</option>
+							</select>
+						</div>
 
-                <a th:href="@{/my-page}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
+						<div class="filter-group price-group">
+							<label>価格</label>
+							<div class="price-range-inputs">
+								<input type="number" name="minPrice" th:value="${criteria.minPrice}" placeholder="¥ Min"
+									class="price-input">
+								<span>〜</span>
+								<input type="number" name="maxPrice" th:value="${criteria.maxPrice}" placeholder="¥ Max"
+									class="price-input">
+							</div>
+						</div>
+					</div>
 
-                <form th:action="@{/logout}" method="post" style="display:inline;">
-                    <button type="submit" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i></button>
-                </form>
-            </div>
-        </div>
+					<div class="sidebar-footer">
+						<button type="button" class="clear-btn"
+							onclick="location.href='/items/clear-search'">クリア</button>
+						<button type="submit" class="search-btn">検索</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div id="overlay" class="overlay"></div>
+	<header class="app-header">
+		<div class="header-inner">
+			<h1 class="app-title"><a th:href="@{/items}">FleaMarketApp</a></h1>
 
-        <div class="search-area">
-            <form th:action="@{/items}" method="get" class="search-form">
-                <div class="search-row">
-                    <div class="keyword-row">
-                        <div class="input-group">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="text" id="keyword" name="keyword" th:value="${criteria.keyword}" placeholder="なにをお探しですか？">
-                        </div>
-                        <button type="submit" class="search-btn">検索</button>
-                        <a th:href="@{/items/clear-search}" class="clear-btn">クリア</a>
-                    </div>
+			<div class="header-actions">
+				<div class="notification-container">
+					<a href="javascript:void(0)" class="header-link notification-icon" id="notificationBtn">
+						<i class="fas fa-bell"></i>
+						<span class="badge" th:if="${unreadCount > 0}" th:text="${unreadCount}"></span>
+					</a>
 
-                    <div class="filter-controls">
-                        <div class="filter-group category-group">
-                            <label for="parentCategory">カテゴリー</label>
-                            <div class="category-selects">
-                                <input type="hidden" id="finalCategoryId" name="categoryId" th:value="${criteria.categoryId}">
-                                <select id="parentCategory" class="category-select" onchange="this.form.submit()">
-                                    <option value="">すべて</option>
-                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}" th:selected="${criteria.categoryId != null and criteria.categoryId == category.id}"></option>
-                                </select>
-                                <select id="childCategory" class="category-select" onchange="this.form.submit()" style="display:none;"></select>
-                                <select id="grandChildCategory" class="category-select" onchange="this.form.submit()" style="display:none;"></select>
-                            </div>
-                        </div>
+					<div class="notification-modal" id="notificationModal">
+						<div class="modal-header">
+							<span>通知</span>
+							<a th:href="@{/notifications/mark-all-read}" class="mark-all-link">すべて既読</a>
+						</div>
+						<div class="modal-body">
+							<div th:each="n : ${notifications}"
+								th:classappend="${n.isRead} ? 'notification-item read' : 'notification-item unread'">
+								<a th:href="@{/notifications/{id}/read(id=${n.id})}">
+									<div class="notif-title" th:text="${n.title}">通知タイトル</div>
+									<div class="notif-message" th:text="${n.message}">メッセージ内容</div>
+									<div class="notif-time" th:text="${#temporals.format(n.createdAt, 'MM/dd HH:mm')}">
+										12/27 15:00</div>
+								</a>
+							</div>
+							<div th:if="${#lists.isEmpty(notifications)}" class="no-notif">
+								現在、通知はありません。
+							</div>
+						</div>
+					</div>
+				</div>
 
-                        <div class="filter-group sort-group">
-                            <label for="sort">並び替え</label>
-                            <select id="sort" name="sort" class="sort-select" onchange="this.form.submit()">
-                                <option value="createdAtDesc" th:selected="${criteria.sort == 'createdAtDesc' or criteria.sort == null}">新しい順</option>
-                                <option value="priceAsc" th:selected="${criteria.sort == 'priceAsc'}">価格が安い順</option>
-                                <option value="priceDesc" th:selected="${criteria.sort == 'priceDesc'}">価格が高い順</option>
-                                <option value="likesDesc" th:selected="${criteria.sort == 'likesDesc'}">いいねが多い順</option>
-                            </select>
-                        </div>
 
-                        <div class="filter-group price-group">
-                            <label>価格</label>
-                            <div class="price-range-inputs">
-                                <input type="number" name="minPrice" th:value="${criteria.minPrice}" placeholder="¥ Min" class="price-input">
-                                <span>〜</span>
-                                <input type="number" name="maxPrice" th:value="${criteria.maxPrice}" placeholder="¥ Max" class="price-input">
-                            </div>
-                        </div>
+				<a th:href="@{/my-page}" class="header-link"><i class="fas fa-user"></i> マイページ</a>
 
-                        <div class="filter-group sold-toggle">
-                            <label class="switch-label">売り切れも表示</label>
-                            <label class="switch">
-                                <input type="checkbox" id="includeSoldCheckbox" name="includeSold" value="true" th:checked="${criteria.includeSold}" onchange="this.form.submit()">
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </header>
+				<form th:action="@{/logout}" method="post" style="display:inline;">
 
-    <main class="main-content">
-        
-        <div class="container search-result-header" th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword) or criteria.categoryId != null}">
-            <h2 class="result-text">
-                <span th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword)}" th:text="'「' + ${criteria.keyword} + '」の'"></span>
-                検索結果 <span class="result-count" th:text="${items.totalElements}">0</span> 件
-            </h2>
-        </div>
+					<button type="submit" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i></button>
 
-        <div class="container" th:if="${recommendedItems != null and !#lists.isEmpty(recommendedItems)}">
-            <h2 class="section-title">おすすめの商品</h2>
-            <div class="item-grid">
-                <div class="item-card" th:each="recommended : ${recommendedItems}">
-                    <a th:href="@{/items/{id}(id=${recommended.id})}" class="card-link">
-                        <div class="image-container">
-                            <div class="recommend-reason-badge" th:if="${recommended.recommendReason != null}" th:text="${recommended.recommendReason}"></div>
-                            <img th:src="${recommended.imageUrl != null ? recommended.imageUrl : '/images/placeholder.png'}" class="product-img">
-                            <div class="price-tag">
-                                <span class="currency">¥</span>
-                                <span th:text="${#numbers.formatDecimal(recommended.price, 0, 'COMMA', 0, 'POINT')}"></span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h3 class="item-name" th:text="${recommended.name}"></h3>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
+				</form>
 
-        <div class="container">
-            <h2 class="section-title" th:if="${(criteria.keyword == null or #strings.isEmpty(criteria.keyword)) and criteria.categoryId == null}">新着商品</h2>
-            <h2 class="section-title" th:unless="${(criteria.keyword == null or #strings.isEmpty(criteria.keyword)) and criteria.categoryId == null}">商品一覧</h2>
-            
-            <div class="item-grid" th:unless="${#lists.isEmpty(items.content)}">
-                <div class="item-card" th:each="item : ${items.content}">
-                    <a th:href="@{/items/{id}(id=${item.id})}" class="card-link">
-                        <div class="image-container">
-                            <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" class="product-img">
-                            <div class="price-tag">
-                                <span class="currency">¥</span>
-                                <span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></span>
-                            </div>
-                            <div th:if="${item.status == '売却済'}" class="sold-overlay">
-                                <div class="sold-badge"></div>
-                                <span class="sold-text">SOLD</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h3 class="item-name" th:text="${item.name}"></h3>
-                        </div>
-                    </a>
-                        <div class="card-footer">
-                            <span class="item-status-tag" th:classappend="${item.status == '出品中' ? 'status-on-sale' : 'status-sold'}" th:text="${item.status}">出品中</span>
-                            <div th:if="${loggedInUser == null or item.seller.id != loggedInUser.id}"
-                                 class="favorite-icon-container" th:attr="data-item-id=${item.id}" th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
-                                <i class="fa-heart" th:classappend="${item.isFavorited} ? 'fas' : 'far'"></i>
-                            </div>
-                        </div>                </div>
-            </div>
 
-            <div th:if="${#lists.isEmpty(items.content)}" class="empty-state">
-                <div class="empty-state-inner">
-                    <div class="empty-icon-container">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <h3>該当する商品が見つかりません</h3>
-                    <p>検索ワードを変えたり、カテゴリーを広げて再検索してみてください。</p>
-                    <a th:href="@{/items/clear-search}" class="reset-btn">
-                        検索条件をクリアする
-                    </a>
-                </div>
-            </div>
-        </div>
+			</div>
+		</div>
+	</header>
+
+	<main class="main-content">
+
+
+		<div class="container search-result-header"
+			th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword) or criteria.categoryId != null}">
+			<h2 class="result-text">
+				<span th:if="${criteria.keyword != null and !#strings.isEmpty(criteria.keyword)}"
+					th:text="'「' + ${criteria.keyword} + '」の'"></span>
+				検索結果 <span class="result-count" th:text="${items.totalElements}">0</span> 件
+			</h2>
+		</div>
+
+		<div class="filter-actions f">
+
+			<form th:action="@{/items}" method="get" class="simple-switch-form">
+
+				<!-- 他の検索条件を引き継ぐための隠しフィールド -->
+
+				<input type="hidden" name="keyword" th:value="${criteria.keyword}">
+
+				<input type="hidden" name="categoryId" th:value="${criteria.categoryId}">
+
+				<input type="hidden" name="sort" th:value="${criteria.sort}">
+
+				<input type="hidden" name="minPrice" th:value="${criteria.minPrice}">
+
+				<input type="hidden" name="maxPrice" th:value="${criteria.maxPrice}">
+
+
+
+				<label class="simple-switch">
+
+					<input type="checkbox" name="includeSold" value="true" th:checked="${criteria.includeSold}"
+						onchange="this.form.submit()">
+
+					売り切れも表示
+
+				</label>
+
+			</form>
+
+			<a href="javascript:void(0)" class="header-link filter-toggle-btn" id="openFilterBtn">
+
+				<i class="fas fa-filter"></i> 絞り込み
+
+			</a>
+
+		</div>
+
+
+
+		<div class="container" th:if="${recommendedItems != null and !#lists.isEmpty(recommendedItems)}">
+			<h2 class="section-title">おすすめの商品</h2>
+			<div class="item-grid">
+				<div class="item-card" th:each="recommended : ${recommendedItems}">
+					<a th:href="@{/items/{id}(id=${recommended.id})}" class="card-link">
+						<div class="image-container">
+							<div class="recommend-reason-badge" th:if="${recommended.recommendReason != null}"
+								th:text="${recommended.recommendReason}"></div>
+							<img th:src="${recommended.imageUrl != null ? recommended.imageUrl : '/images/placeholder.png'}"
+								class="product-img">
+							<div class="price-tag">
+								<span class="currency">¥</span>
+								<span
+									th:text="${#numbers.formatDecimal(recommended.price, 0, 'COMMA', 0, 'POINT')}"></span>
+							</div>
+						</div>
+						<div class="card-body">
+							<h3 class="item-name" th:text="${recommended.name}"></h3>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+
+			<div class="list-header">
+
+				<div>
+
+					<h2 class="section-title"
+						th:if="${(criteria.keyword == null or #strings.isEmpty(criteria.keyword)) and criteria.categoryId == null}">
+						新着商品</h2>
+
+					<h2 class="section-title"
+						th:unless="${(criteria.keyword == null or #strings.isEmpty(criteria.keyword)) and criteria.categoryId == null}">
+						商品一覧</h2>
+
+				</div>
+
+
+
+
+
+			</div>
+
+			<div class="item-grid" th:unless="${#lists.isEmpty(items.content)}">
+				<div class="item-card" th:each="item : ${items.content}">
+					<a th:href="@{/items/{id}(id=${item.id})}" class="card-link">
+						<div class="image-container">
+							<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}"
+								class="product-img">
+							<div class="price-tag">
+								<span class="currency">¥</span>
+								<span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></span>
+							</div>
+							<div th:if="${item.status == '売却済'}" class="sold-overlay">
+								<div class="sold-badge"></div>
+								<span class="sold-text">SOLD</span>
+							</div>
+						</div>
+						<div class="card-body">
+							<h3 class="item-name" th:text="${item.name}"></h3>
+						</div>
+					</a>
+					<div class="card-footer">
+						<span class="item-status-tag"
+							th:classappend="${item.status == '出品中' ? 'status-on-sale' : 'status-sold'}"
+							th:text="${item.status}">出品中</span>
+						<div th:if="${loggedInUser == null or item.seller.id != loggedInUser.id}"
+							class="favorite-icon-container" th:attr="data-item-id=${item.id}"
+							th:classappend="${item.isFavorited} ? 'is-favorited' : ''">
+							<i class="fa-heart" th:classappend="${item.isFavorited} ? 'fas' : 'far'"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div th:if="${#lists.isEmpty(items.content)}" class="empty-state">
+				<div class="empty-state-inner">
+					<div class="empty-icon-container">
+						<i class="fas fa-search"></i>
+					</div>
+					<h3>該当する商品が見つかりません</h3>
+					<p>検索ワードを変えたり、カテゴリーを広げて再検索してみてください。</p>
+					<a th:href="@{/items/clear-search}" class="reset-btn">
+						検索条件をクリアする
+					</a>
+				</div>
+			</div>
+		</div>
 
 		<div class="pagination" th:if="${items.totalPages > 1}">
-		    <a th:if="${items.hasPrevious()}" class="page-link prev"
-		        th:href="@{/items(page=${items.number - 1})}">
-		        <i class="fas fa-chevron-left"></i> 前へ
-		    </a>
+			<a th:if="${items.hasPrevious()}" class="page-link prev" th:href="@{/items(page=${items.number - 1})}">
+				<i class="fas fa-chevron-left"></i> 前へ
+			</a>
 
-		    <div class="page-numbers">
-		        <span th:with="
+			<div class="page-numbers">
+				<span th:with="
 		            start=${T(java.lang.Math).max(0, items.number - 3)},
 		            end=${T(java.lang.Math).min(items.totalPages - 1, start + 6)},
 		            adjustedStart=${T(java.lang.Math).max(0, end - 6)}
 		        ">
-		            <span th:each="i : ${#numbers.sequence(adjustedStart, end)}">
-		                <a th:if="${i != items.number}" class="page-link num"
-		                    th:href="@{/items(page=${i})}" th:text="${i + 1}"></a>
-		                <span th:if="${i == items.number}" class="page-link current" th:text="${i + 1}"></span>
-		            </span>
-		        </span>
-		    </div>
+					<span th:each="i : ${#numbers.sequence(adjustedStart, end)}">
+						<a th:if="${i != items.number}" class="page-link num" th:href="@{/items(page=${i})}"
+							th:text="${i + 1}"></a>
+						<span th:if="${i == items.number}" class="page-link current" th:text="${i + 1}"></span>
+					</span>
+				</span>
+			</div>
 
-		    <a th:if="${items.hasNext()}" class="page-link next"
-		        th:href="@{/items(page=${items.number + 1})}">
-		        次へ <i class="fas fa-chevron-right"></i>
-		    </a>
+			<a th:if="${items.hasNext()}" class="page-link next" th:href="@{/items(page=${items.number + 1})}">
+				次へ <i class="fas fa-chevron-right"></i>
+			</a>
 		</div>
 
-        <div class="container recent-history" th:if="${itemViewHistories != null and !#lists.isEmpty(itemViewHistories)}">
-            <h2 class="section-title">最近見た商品</h2>
-            <div class="item-grid">
-                <div class="item-card" th:each="history : ${itemViewHistories}">
-                    <a th:href="@{/items/{id}(id=${history.item.id})}" class="card-link">
-                        <div class="image-container">
-                            <img th:src="${history.item.imageUrl != null ? history.item.imageUrl : '/images/placeholder.png'}" class="product-img">
-                            <div class="price-tag">
-                                <span class="currency">¥</span>
-                                <span th:text="${#numbers.formatDecimal(history.item.price, 0, 'COMMA', 0, 'POINT')}"></span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h3 class="item-name" th:text="${history.item.name}"></h3>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </main>
+		<div class="container recent-history"
+			th:if="${itemViewHistories != null and !#lists.isEmpty(itemViewHistories)}">
+			<h2 class="section-title">最近見た商品</h2>
+			<div class="item-grid">
+				<div class="item-card" th:each="history : ${itemViewHistories}">
+					<a th:href="@{/items/{id}(id=${history.item.id})}" class="card-link">
+						<div class="image-container">
+							<img th:src="${history.item.imageUrl != null ? history.item.imageUrl : '/images/placeholder.png'}"
+								class="product-img">
+							<div class="price-tag">
+								<span class="currency">¥</span>
+								<span
+									th:text="${#numbers.formatDecimal(history.item.price, 0, 'COMMA', 0, 'POINT')}"></span>
+							</div>
+						</div>
+						<div class="card-body">
+							<h3 class="item-name" th:text="${history.item.name}"></h3>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</main>
 
-    <a th:href="@{/items/new}" class="fab-sell">
-        <i class="fas fa-camera"></i>
-        <span class="fab-text">出品</span>
-    </a>
+	<a th:href="@{/items/new}" class="fab-sell">
+		<i class="fas fa-camera"></i>
+		<span class="fab-text">出品</span>
+	</a>
 
 
 </body>

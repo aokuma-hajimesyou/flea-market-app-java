@@ -159,74 +159,9 @@
     transform: scale(0.98);
 }
 
-/* Sold filter toggle switch */
-.sold-filter-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-}
 
-.switch-label {
-    font-size: 0.9rem;
-    color: var(--text-sub);
-    font-weight: 500;
-}
 
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-}
 
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-}
-
-.slider.round {
-    border-radius: 24px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-}
-
-.slider.round:before {
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: var(--primary-color);
-}
-
-input:focus + .slider {
-    box-shadow: 0 0 1px var(--primary-color);
-}
-
-input:checked + .slider:before {
-    transform: translateX(20px);
-}
 
 /* おすすめ理由バッジのスタイル */
 .recommend-reason-badge {
@@ -300,7 +235,7 @@ input:checked + .slider:before {
     font-size: 0.9rem;
     color: #333;
     background-color: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     box-sizing: border-box;
     width: 100%; /* 親要素の幅に合わせる */
@@ -353,23 +288,7 @@ input:checked + .slider:before {
     font-weight: 600;
 }
 
-/* 売り切れ表示のトグル (ラベルとの位置関係調整) */
-.filter-group.sold-toggle {
-    flex: 0 1 auto; /* growしない、shrinkする、basisはauto */
-    align-items: center;
-    flex-direction: row;
-    gap: 12px;
-    justify-content: center;
-    background: #fff;
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    min-height: 42px;
-}
 
-.filter-group.sold-toggle .switch-label {
-    margin-left: 0;
-}
 
 
 /* レスポンシブ対応 */
@@ -399,11 +318,7 @@ input:checked + .slider:before {
         min-width: 0; /* スマホではmin-widthをリセット */
     }
 
-    .filter-group.sold-toggle {
-        flex-direction: row;
-        justify-content: flex-start;
-        flex-basis: auto;
-    }
+
 }
 
 
@@ -475,7 +390,7 @@ input:checked + .slider:before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 24px;
+    padding: 12px 0px;
     border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
@@ -608,7 +523,7 @@ input:checked + .slider:before {
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: bold;
-    color: var(--text-main); /* デフォルトの文字色 */
+    color: var(--text-sub);
     background-color: rgba(0, 0, 0, 0.05); /* 非常に薄いグレーの背景 */
     white-space: nowrap; /* テキストの折り返しを防ぐ */
 }
@@ -1116,11 +1031,6 @@ input:checked + .slider:before {
 }
 
 /* フォームとボタンの調整 */
-.ship-form {
-    margin: 0;
-    width: 100%; /* スマホでボタンを押しやすくする場合 */
-}
-
 .ship-btn {
     padding: 8px 20px !important;
     font-size: 0.85rem !important;
@@ -1741,4 +1651,200 @@ input[type=number]::-webkit-outer-spin-button {
 .tab-item.active {
     color: var(--primary-color);
     border-bottom-color: var(--primary-color);
+}
+.filter-toggle-btn {
+    /* 既存のheader-linkのスタイルを継承しつつ調整 */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem; /* アイコンを少し大きく */
+    color: var(--text-sub);
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.filter-toggle-btn:hover {
+    color: var(--primary-color);
+}
+
+.filter-toggle-btn i {
+    margin-right: 5px;
+}
+
+/* ==========================================================================
+   Filter Sidebar
+   ========================================================================== */
+.filter-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.close-btn {
+    font-size: 2rem;
+    color: var(--text-sub);
+    text-decoration: none;
+    line-height: 1;
+}
+
+.sidebar-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.sidebar-form-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar-form-inner .filter-controls {
+    flex-grow: 1;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.sidebar-form-inner .filter-group {
+    flex-basis: auto;
+    min-width: 0;
+}
+.sidebar-form-inner .category-selects {
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar-footer {
+    padding-top: 20px;
+    margin-top: auto; /* フッターを一番下に固定 */
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 10px;
+}
+.sidebar-footer .clear-btn,
+.sidebar-footer .search-btn {
+    flex: 1;
+    padding: 12px;
+    height: auto;
+    font-size: 1rem;
+}
+
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ==========================================================================
+   Item List Header
+   ========================================================================== */
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* 垂直方向中央揃え */
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    margin-bottom: 1rem;
+}
+
+.list-header .section-title {
+    margin: 0;
+    flex-shrink: 0; /* タイトルは縮まない */
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center; /* 垂直方向中央揃え */
+    gap: 15px; /* スイッチとボタンの間のスペース */
+    flex-wrap: wrap; /* 画面が狭くなったら折り返す */
+    flex-grow: 1; /* 残りのスペースを埋める（ただし、min-widthが小さい場合に限る） */
+    justify-content: flex-end; /* 右寄せ */
+	margin: 0;
+	margin-top: 30px;
+	margin-right: 250px;
+}
+
+.simple-switch-form {
+    margin: 0;
+    flex-shrink: 0; /* フォームは縮まない */
+}
+
+.simple-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    cursor: pointer;
+    padding: 5px;
+}
+
+.simple-switch input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .filter-actions {
+        width: 100%; /* 全幅を使う */
+        justify-content: flex-start; /* 左寄せ */
+    }
 }
